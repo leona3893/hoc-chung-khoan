@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}
+:root[data-theme="dark"]{color-scheme:dark}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Chứng khoán từ số 0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,800;1,400&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ground:#F3F5F7;
+  --surface:#FFFFFF;
+  --surface-2:#EAEDF1;
+  --ink:#151A21;
+  --ink-2:#39424F;
+  --muted:#5B6675;
+  --line:#DCE1E7;
+  --line-soft:#E7EBF0;
+  --accent:#B0740E;
+  --accent-ink:#8A5A08;
+  --accent-wash:#FBF0DC;
+  --up:#12864A;
+  --down:#C92A2A;
+  --ceil:#8B2FC9;
+  --floor:#1F5FD0;
+  --ref:#B0740E;
+  --shadow:0 1px 2px rgba(20,28,40,.05), 0 8px 24px -12px rgba(20,28,40,.16);
+  --radius:10px;
+  --font-body:"Be Vietnam Pro","Segoe UI",system-ui,sans-serif;
+  --font-serif:"Newsreader",Georgia,serif;
+  --font-mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",monospace;
+  --fs-xs:.75rem; --fs-sm:.875rem; --fs-base:1.0625rem; --fs-lg:1.1875rem;
+  --fs-xl:1.4rem; --fs-2xl:1.85rem;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1116;
+    --surface:#161A21;
+    --surface-2:#1D222B;
+    --ink:#E9ECF1;
+    --ink-2:#C4CBD5;
+    --muted:#94A0B0;
+    --line:#272E39;
+    --line-soft:#20262F;
+    --accent:#EFB544;
+    --accent-ink:#F2C067;
+    --accent-wash:#241D0F;
+    --up:#2FBF6B;
+    --down:#F2605B;
+    --ceil:#BE72F0;
+    --floor:#5C9CFF;
+    --ref:#EFB544;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1116;
+  --surface:#161A21;
+  --surface-2:#1D222B;
+  --ink:#E9ECF1;
+  --ink-2:#C4CBD5;
+  --muted:#94A0B0;
+  --line:#272E39;
+  --line-soft:#20262F;
+  --accent:#EFB544;
+  --accent-ink:#F2C067;
+  --accent-wash:#241D0F;
+  --up:#2FBF6B;
+  --down:#F2605B;
+  --ceil:#BE72F0;
+  --floor:#5C9CFF;
+  --ref:#EFB544;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--font-body); font-size:var(--fs-base); line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{ text-wrap:balance; margin:0; line-height:1.22; letter-spacing:-.02em; font-weight:800 }
+p{margin:0}
+a{color:var(--accent-ink)}
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px }
+
+.wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(16px,4vw,40px) }
+.masthead{
+  border-bottom:1px solid var(--line);
+  background:radial-gradient(120% 150% at 92% -20%, var(--accent-wash) 0%, transparent 58%), var(--surface);
+}
+.masthead .wrap{ padding-top:clamp(34px,6vw,60px); padding-bottom:clamp(26px,4vw,38px) }
+.eyebrow{
+  font-family:var(--font-mono); font-size:var(--fs-xs); font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--accent-ink);
+}
+h1{ font-size:clamp(2.1rem,6vw,3.3rem); letter-spacing:-.035em; margin:14px 0 0 }
+.h1-sub{ display:block; font-weight:400; font-size:clamp(1rem,2.3vw,1.2rem); color:var(--muted);
+  letter-spacing:-.01em; margin-top:14px; max-width:58ch; line-height:1.58 }
+.facts{ display:flex; flex-wrap:wrap; margin:28px 0 0; border:1px solid var(--line);
+  border-radius:var(--radius); overflow:hidden; background:var(--surface) }
+.fact{ flex:1 1 155px; padding:13px 18px; border-right:1px solid var(--line-soft) }
+.fact:last-child{border-right:0}
+.fact dt{ font-family:var(--font-mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted) }
+.fact dd{ margin:4px 0 0; font-weight:600; font-size:var(--fs-sm) }
+
+.shell{ display:grid; grid-template-columns:1fr }
+@media (min-width:1000px){
+  .shell{ grid-template-columns:238px minmax(0,1fr); gap:0 56px; align-items:start }
+}
+.rail{ display:none }
+@media (min-width:1000px){
+  .rail{ display:block; position:sticky; top:0; max-height:100vh; overflow-y:auto; padding:44px 0 40px }
+}
+.rail-title{ font-family:var(--font-mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); padding-left:12px }
+.rail ol{ list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:1px }
+.rail li{ margin:0 }
+.rail a{
+  display:grid; grid-template-columns:30px minmax(0,1fr); gap:6px; align-items:baseline;
+  padding:7px 10px; border-radius:0 6px 6px 0; text-decoration:none; color:var(--muted);
+  font-size:var(--fs-sm); line-height:1.35; border-left:2px solid transparent;
+}
+.rail a .n{ font-family:var(--font-mono); font-size:11px; font-weight:500; opacity:.8 }
+.rail a:hover{ color:var(--ink); background:var(--surface-2) }
+.rail a.on{ color:var(--ink); font-weight:600; border-left-color:var(--accent); background:var(--surface-2) }
+.rail a.done .n{ color:var(--up); opacity:1 }
+.rail-note{ margin:20px 0 0 12px; padding-left:12px; border-left:2px solid var(--line);
+  font-size:var(--fs-xs); color:var(--muted); line-height:1.55 }
+
+main{ padding:clamp(30px,5vw,52px) 0 0; min-width:0; max-width:70ch }
+
+.level{ padding-bottom:clamp(38px,6vw,60px); scroll-margin-top:20px }
+.level + .level{ border-top:1px solid var(--line); padding-top:clamp(38px,6vw,58px) }
+.level-head{ display:flex; align-items:flex-start; gap:16px }
+.level-num{
+  font-family:var(--font-mono); font-weight:700; font-size:var(--fs-2xl); line-height:1;
+  color:transparent; -webkit-text-stroke:1.4px var(--accent); flex:0 0 auto; padding-top:5px; letter-spacing:-.04em;
+}
+.level h2{ font-size:clamp(1.45rem,3.6vw,1.95rem) }
+.level-meta{ margin-top:7px; font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--muted) }
+.goal{
+  margin:22px 0 0; padding:14px 18px; background:var(--surface); border:1px solid var(--line);
+  border-left:3px solid var(--accent); border-radius:0 var(--radius) var(--radius) 0; font-size:var(--fs-sm);
+}
+.goal b{ font-weight:600 }
+
+h3{ font-size:var(--fs-lg); margin:34px 0 0; letter-spacing:-.015em; font-weight:600 }
+h3 + p, h3 + .dl, h3 + ul, h3 + ol, h3 + .board-wrap, h3 + .tbl-wrap, h3 + .aside, h3 + .formula{ margin-top:10px }
+p + p, p + ul, p + ol, p + .dl, ul + p, ol + p, .dl + p, p + .aside, .dl + .aside, ul + .aside,
+p + .warn, ul + .warn, ol + .warn, .dl + .warn, .aside + p, .warn + p, p + .board-wrap, p + .tbl-wrap,
+p + .formula, .formula + p, .board-wrap + p, .tbl-wrap + p, ul + ul, .aside + .warn{ margin-top:15px }
+
+ul, ol.steps{ margin:0; padding-left:1.2em }
+li + li{ margin-top:7px }
+li::marker{ color:var(--muted) }
+b, strong{ font-weight:600 }
+code{ font-family:var(--font-mono); font-size:.86em; background:var(--surface-2); padding:1px 5px; border-radius:4px }
+
+.dl{ margin:0; border-top:1px solid var(--line-soft) }
+.dl > div{ display:grid; grid-template-columns:1fr; gap:3px; padding:12px 0; border-bottom:1px solid var(--line-soft) }
+@media(min-width:640px){ .dl > div{ grid-template-columns:172px minmax(0,1fr); gap:0 22px; align-items:baseline } }
+.dl dt{ font-weight:600; font-size:var(--fs-sm) }
+.dl dt small{ display:block; font-family:var(--font-mono); font-weight:400; font-size:10px; color:var(--muted);
+  letter-spacing:.06em; text-transform:uppercase; margin-top:2px }
+.dl dd{ margin:0; font-size:var(--fs-sm); color:var(--ink-2) }
+
+.aside{
+  font-family:var(--font-serif); font-style:italic; font-size:1.07rem; line-height:1.62;
+  color:var(--ink-2); padding:2px 0 2px 18px; border-left:2px solid var(--accent);
+}
+.aside b{ font-style:normal; font-family:var(--font-mono); font-size:10px; font-weight:500;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--accent-ink); display:block; margin-bottom:5px }
+.warn{ padding:2px 0 2px 18px; border-left:2px solid var(--down); font-size:var(--fs-sm); color:var(--ink-2) }
+.warn b{ font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--down); display:block; margin-bottom:5px }
+
+.formula{ font-family:var(--font-mono); font-size:var(--fs-sm); background:var(--surface-2);
+  border:1px solid var(--line-soft); border-radius:var(--radius); padding:14px 16px;
+  overflow-x:auto; white-space:pre; line-height:1.7; color:var(--ink) }
+
+.board-wrap,.tbl-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface) }
+table.board{ border-collapse:collapse; width:100%; min-width:530px; font-family:var(--font-mono);
+  font-size:var(--fs-sm); font-variant-numeric:tabular-nums }
+table.board th{ text-align:right; font-weight:500; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); padding:10px 14px; border-bottom:1px solid var(--line); white-space:nowrap }
+table.board th:first-child, table.board td:first-child{ text-align:left }
+table.board td{ text-align:right; padding:9px 14px; border-bottom:1px solid var(--line-soft); white-space:nowrap }
+table.board tr:last-child td{ border-bottom:0 }
+.c-ceil{color:var(--ceil)} .c-floor{color:var(--floor)} .c-ref{color:var(--ref)}
+.c-up{color:var(--up)} .c-down{color:var(--down)}
+.legend{ display:flex; flex-wrap:wrap; gap:7px 16px; margin-top:12px; font-family:var(--font-mono); font-size:var(--fs-xs) }
+.legend span{ display:inline-flex; align-items:center; gap:6px; color:var(--muted) }
+.legend i{ width:9px; height:9px; border-radius:2px; display:inline-block }
+
+table.tbl{ border-collapse:collapse; width:100%; min-width:470px; font-size:var(--fs-sm) }
+table.tbl th{ text-align:left; font-weight:600; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); padding:10px 14px; border-bottom:1px solid var(--line) }
+table.tbl td{ padding:10px 14px; border-bottom:1px solid var(--line-soft); vertical-align:top; color:var(--ink-2) }
+table.tbl td:first-child{ color:var(--ink); font-weight:600; white-space:nowrap }
+table.tbl tr:last-child td{ border-bottom:0 }
+
+.mark{ display:inline-flex; align-items:center; gap:9px; margin-top:28px; cursor:pointer;
+  font-family:var(--font-mono); font-size:var(--fs-xs); letter-spacing:.08em; text-transform:uppercase; color:var(--muted) }
+.mark input{ width:15px; height:15px; accent-color:var(--up); cursor:pointer; margin:0 }
+.mark:hover{ color:var(--ink) }
+
+.outro{ border-top:1px solid var(--line); padding:clamp(34px,5vw,50px) 0 clamp(48px,7vw,76px) }
+.outro h2{ font-size:var(--fs-xl) }
+.plan{ list-style:none; padding:0; margin:16px 0 0; border-top:1px solid var(--line-soft) }
+.plan li{ display:grid; grid-template-columns:86px minmax(0,1fr); gap:16px; padding:12px 0;
+  border-bottom:1px solid var(--line-soft); margin:0; font-size:var(--fs-sm); color:var(--ink-2) }
+.plan .when{ font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--accent-ink); letter-spacing:.03em; padding-top:2px }
+.disclaimer{ margin-top:32px; padding-top:20px; border-top:1px solid var(--line); font-size:var(--fs-xs);
+  color:var(--muted); line-height:1.65; max-width:64ch }
+
+html{ scroll-behavior:smooth }
+@media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto } *{ animation:none !important; transition:none !important } }
+</style>
+
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Lộ trình tự học · Thị trường Việt Nam</p>
+    <h1>Chứng khoán từ số 0
+      <span class="h1-sub">Tám cấp độ, đi từ “cổ phiếu rốt cuộc là cái gì” đến “tôi có hệ thống mua bán của riêng mình”. Mỗi khái niệm đều kèm một ví dụ đời thường, và mọi con số đều theo luật chơi của HOSE, HNX, UPCoM.</span>
+    </h1>
+    <dl class="facts">
+      <div class="fact"><dt>Cấp độ</dt><dd>8 cấp, học tuần tự</dd></div>
+      <div class="fact"><dt>Thời lượng gợi ý</dt><dd>~6 tháng</dd></div>
+      <div class="fact"><dt>Vốn để bắt đầu</dt><dd>Tiền nhàn rỗi ≥ 12 tháng</dd></div>
+      <div class="fact"><dt>Cấp quan trọng nhất</dt><dd>Cấp 5 — quản trị vốn</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="wrap shell">
+  <nav class="rail" aria-label="Mục lục các cấp độ">
+    <p class="rail-title">Các cấp độ</p>
+    <ol id="toc">
+      <li><a href="#c0"><span class="n">00</span><span>Hiểu bản chất cuộc chơi</span></a></li>
+      <li><a href="#c1"><span class="n">01</span><span>Luật chơi của thị trường VN</span></a></li>
+      <li><a href="#c2"><span class="n">02</span><span>Đọc một doanh nghiệp</span></a></li>
+      <li><a href="#c3"><span class="n">03</span><span>Định giá &amp; chọn cổ phiếu</span></a></li>
+      <li><a href="#c4"><span class="n">04</span><span>Phân tích kỹ thuật</span></a></li>
+      <li><a href="#c5"><span class="n">05</span><span>Quản trị vốn &amp; tâm lý</span></a></li>
+      <li><a href="#c6"><span class="n">06</span><span>Vĩ mô, dòng tiền, chu kỳ</span></a></li>
+      <li><a href="#c7"><span class="n">07</span><span>Hệ thống của riêng bạn</span></a></li>
+      <li><a href="#ketthuc"><span class="n">→</span><span>Lộ trình 6 tháng</span></a></li>
+    </ol>
+    <p class="rail-note">Tick vào ô “Đã học xong” ở cuối mỗi cấp để đánh dấu tiến độ. Trình duyệt này sẽ nhớ giúp bạn.</p>
+  </nav>
+
+  <main>
+
+    <!-- ================= CẤP 0 ================= -->
+    <section class="level" id="c0">
+      <div class="level-head">
+        <span class="level-num">00</span>
+        <div>
+          <h2>Hiểu bản chất cuộc chơi</h2>
+          <p class="level-meta">Trước khi nạp đồng nào · 1 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> trả lời được ba câu — tiền của tôi đi đâu, tôi lãi từ đâu, và tôi có thể mất bao nhiêu. Chưa cần biết bất kỳ chỉ số nào.</p>
+
+      <h3>Cổ phiếu là gì, nói cho thật</h3>
+      <p>Cổ phiếu là <b>giấy chứng nhận bạn sở hữu một phần rất nhỏ của một doanh nghiệp</b>. Không hơn, không kém. Nó không phải con số nhấp nháy trên bảng điện — con số đó chỉ là mức giá mà người khác đang sẵn sàng trả cho phần sở hữu của bạn ngay lúc này.</p>
+      <p class="aside"><b>Ví dụ đời thường</b>Quán phở của chị Hoa trị giá 1 tỷ, chia thành 100.000 “suất”, mỗi suất 10.000đ. Bạn mua 1.000 suất — bạn sở hữu 1% quán phở. Quán bán đắt hàng, lãi 200 triệu/năm, chị Hoa chia 100 triệu cho các chủ suất: bạn nhận 1 triệu. Đó là <b>cổ tức</b>. Năm sau quán mở thêm chi nhánh, có người trả 15.000đ để mua lại suất của bạn: đó là <b>lãi vốn</b>.</p>
+
+      <h3>Tiền bạn bỏ ra đi về đâu?</h3>
+      <p>Đây là chỗ 90% người mới hiểu sai. Khi bạn mua cổ phiếu HPG trên sàn, <b>tiền của bạn không chảy vào Hòa Phát</b> — nó chảy vào túi một nhà đầu tư khác đang muốn bán. Doanh nghiệp chỉ nhận tiền trực tiếp trong hai trường hợp: lần đầu bán ra công chúng (IPO) và các đợt phát hành thêm cổ phiếu.</p>
+      <p>Hệ quả rất quan trọng: thị trường thứ cấp là nơi <b>bạn và người bán trao đổi kỳ vọng với nhau</b>. Trong ngắn hạn, lãi của bạn gần như là lỗ của người khác. Chỉ trong dài hạn, khi doanh nghiệp thực sự làm ra nhiều lợi nhuận hơn, thì tổng chiếc bánh mới to lên và tất cả cùng thắng.</p>
+
+      <h3>Bạn kiếm tiền từ đúng hai nguồn</h3>
+      <dl class="dl">
+        <div><dt>Cổ tức<small>Dividend</small></dt><dd>Phần lợi nhuận doanh nghiệp chia lại. Ở Việt Nam thường 0–10% mệnh giá/năm bằng tiền mặt. Chậm, chắc, dễ hiểu.</dd></div>
+        <div><dt>Chênh lệch giá<small>Capital gain</small></dt><dd>Mua thấp, bán cao. Nhanh, hấp dẫn, và là nơi mọi người mất tiền.</dd></div>
+      </dl>
+      <p>Về dài hạn, giá cổ phiếu bám theo <b>lợi nhuận doanh nghiệp</b>. Ngắn hạn nó bám theo <b>cảm xúc đám đông</b>. Bạn phải chọn mình chơi ván nào — và đừng dùng lý lẽ của ván này để biện minh cho quyết định ở ván kia (mua để lướt sóng, thua thì tự nhủ “đầu tư dài hạn”).</p>
+
+      <h3>Ba câu hỏi tự trả lời trước khi mở tài khoản</h3>
+      <ol class="steps">
+        <li><b>Số tiền này tôi không cần dùng trong bao lâu?</b> Nếu dưới 12 tháng, đừng mang vào thị trường. Chứng khoán không có nút “tạm dừng lỗ khi tôi cần tiền”.</li>
+        <li><b>Nếu mất 30% số này, cuộc sống tôi có sao không?</b> Nếu có — số tiền đang quá lớn. Giảm xuống.</li>
+        <li><b>Tôi muốn gì?</b> Tăng trưởng tài sản 10 năm, hay kiếm thêm thu nhập hàng tháng? Hai mục tiêu này dẫn tới hai cách chơi hoàn toàn khác nhau.</li>
+      </ol>
+
+      <p class="warn"><b>Ba điều tuyệt đối không làm khi mới bắt đầu</b>Vay tiền để đầu tư (kể cả vay người thân). Dùng margin — đòn bẩy từ công ty chứng khoán. Và mua theo “phím hàng” trong nhóm chat mà không hiểu mình đang mua cái gì.</p>
+
+      <label class="mark"><input type="checkbox" data-level="c0"> Đã học xong cấp 0</label>
+    </section>
+
+    <!-- ================= CẤP 1 ================= -->
+    <section class="level" id="c1">
+      <div class="level-head">
+        <span class="level-num">01</span>
+        <div>
+          <h2>Luật chơi của thị trường Việt Nam</h2>
+          <p class="level-meta">Cơ chế vận hành · 2 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> mở được tài khoản, đọc được bảng điện, đặt được lệnh, và biết chính xác một giao dịch tốn của bạn bao nhiêu tiền phí.</p>
+
+      <h3>Ba sàn, ba mức “dây cương”</h3>
+      <p>Việt Nam có ba nơi cổ phiếu được giao dịch, khác nhau ở độ chặt của tiêu chuẩn niêm yết và ở <b>biên độ dao động</b> — mức trần/sàn mà giá không được vượt qua trong một phiên.</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Sàn</th><th>Là gì</th><th>Biên độ/phiên</th><th>Phiên chào sàn</th></tr></thead>
+          <tbody>
+            <tr><td>HOSE</td><td>Sở GDCK TP.HCM — các doanh nghiệp lớn nhất, chuẩn cao nhất</td><td class="num">±7%</td><td class="num">±20%</td></tr>
+            <tr><td>HNX</td><td>Sở GDCK Hà Nội — quy mô vừa</td><td class="num">±10%</td><td class="num">±30%</td></tr>
+            <tr><td>UPCoM</td><td>Sàn “tập sự”, chuẩn công bố thông tin lỏng nhất</td><td class="num">±15%</td><td class="num">±40%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="aside"><b>Cách nhớ</b>Càng lên sàn cao thì “dây cương” càng chặt. HOSE là đường cao tốc có giới hạn tốc độ nghiêm; UPCoM là đường làng — đi nhanh được, nhưng lật xe cũng nhanh.</p>
+
+      <h3>Đọc bảng điện: bảng màu chỉ Việt Nam mới có</h3>
+      <p>Ở Mỹ xanh là tăng — nhưng ở Việt Nam bảng điện dùng <b>năm màu</b>, và màu mang nghĩa cố định. Đây là thứ đầu tiên phải thuộc, vì mọi thảo luận về cổ phiếu đều nói bằng ngôn ngữ này (“hôm nay tím trần”, “trắng bên mua”).</p>
+      <div class="board-wrap">
+        <table class="board">
+          <thead><tr><th>Mã</th><th>Tham chiếu</th><th>Trần</th><th>Sàn</th><th>Giá khớp</th><th>+/−</th></tr></thead>
+          <tbody>
+            <tr><td>SSI</td><td class="c-ref">32.00</td><td class="c-ceil">34.20</td><td class="c-floor">29.80</td><td class="c-ceil">34.20</td><td class="c-ceil">+2.20</td></tr>
+            <tr><td>HPG</td><td class="c-ref">27.00</td><td class="c-ceil">28.85</td><td class="c-floor">25.15</td><td class="c-up">27.90</td><td class="c-up">+0.90</td></tr>
+            <tr><td>FPT</td><td class="c-ref">118.0</td><td class="c-ceil">126.2</td><td class="c-floor">109.7</td><td class="c-ref">118.0</td><td class="c-ref">0.00</td></tr>
+            <tr><td>VNM</td><td class="c-ref">62.0</td><td class="c-ceil">66.3</td><td class="c-floor">57.7</td><td class="c-down">60.8</td><td class="c-down">−1.20</td></tr>
+            <tr><td>DIG</td><td class="c-ref">18.50</td><td class="c-ceil">19.75</td><td class="c-floor">17.25</td><td class="c-floor">17.25</td><td class="c-floor">−1.25</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="legend">
+        <span><i style="background:var(--ceil)"></i>Tím — kịch trần</span>
+        <span><i style="background:var(--up)"></i>Xanh — tăng</span>
+        <span><i style="background:var(--ref)"></i>Vàng — đứng giá tham chiếu</span>
+        <span><i style="background:var(--down)"></i>Đỏ — giảm</span>
+        <span><i style="background:var(--floor)"></i>Xanh lam — kịch sàn</span>
+      </p>
+      <p><b>Giá tham chiếu</b> là giá đóng cửa phiên trước, dùng làm gốc tính trần/sàn. Đơn vị trên bảng là <b>nghìn đồng</b>: “27.00” nghĩa là 27.000đ/cổ phiếu.</p>
+      <p>Trần/sàn còn phải làm tròn về <b>bước giá</b> hợp lệ của HOSE (dưới 10.000đ: bước 10đ; từ 10.000–49.950đ: bước 50đ; từ 50.000đ trở lên: bước 100đ) — và luôn làm tròn theo hướng <i>thu hẹp</i> biên độ. Xem DIG ở trên: 18.50 × 0,93 = 17,205 → giá sàn là 17.25 chứ không phải 17.20.</p>
+
+      <h3>Một ngày giao dịch diễn ra thế nào</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Khung giờ</th><th>Phiên</th><th>Chuyện gì xảy ra</th></tr></thead>
+          <tbody>
+            <tr><td>9:00–9:15</td><td>ATO</td><td>Khớp lệnh định kỳ mở cửa. Mọi lệnh dồn lại, hệ thống chọn <i>một</i> mức giá khớp được nhiều nhất. Chỉ HOSE có.</td></tr>
+            <tr><td>9:15–11:30</td><td>Khớp liên tục</td><td>Lệnh gặp nhau là khớp ngay, theo ưu tiên giá rồi đến thời gian.</td></tr>
+            <tr><td>11:30–13:00</td><td>Nghỉ trưa</td><td>Thị trường đóng. Đây là lúc tin tức hay được công bố.</td></tr>
+            <tr><td>13:00–14:30</td><td>Khớp liên tục</td><td>Phiên chiều.</td></tr>
+            <tr><td>14:30–14:45</td><td>ATC</td><td>Khớp lệnh định kỳ đóng cửa — quyết định giá đóng cửa, tức giá tham chiếu ngày mai. Nơi “cá mập” hay ra tay.</td></tr>
+            <tr><td>14:45–15:00</td><td>Thỏa thuận</td><td>Mua bán lô lớn, thương lượng riêng ngoài bảng khớp lệnh.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Các loại lệnh — chỉ cần thuộc bốn cái</h3>
+      <dl class="dl">
+        <div><dt>LO<small>Limit Order</small></dt><dd>Bạn ra giá cụ thể: “mua HPG giá 27.00”. Khớp đúng giá đó hoặc tốt hơn, không khớp thì nằm chờ. <b>Người mới dùng LO là chính.</b></dd></div>
+        <div><dt>MP<small>Market Price</small></dt><dd>“Mua bằng mọi giá đang có”. Khớp ngay nhưng bạn không kiểm soát được giá — nguy hiểm với cổ phiếu thanh khoản thấp.</dd></div>
+        <div><dt>ATO / ATC</dt><dd>“Mua/bán tại giá mở cửa (hoặc đóng cửa), giá nào cũng chịu”. Được ưu tiên khớp trước lệnh LO. Đặt ATC rồi giá đột ngột lên trần thì bạn vẫn phải mua ở trần.</dd></div>
+        <div><dt>Lô chẵn</dt><dd>Trên HOSE, một lô là <b>100 cổ phiếu</b>. Muốn mua HPG giá 27.000đ thì tối thiểu 2,7 triệu đồng. Lô lẻ (1–99 cp, thường phát sinh do cổ tức cổ phiếu) phải bán qua kênh riêng, giá thường thiệt.</dd></div>
+      </dl>
+
+      <h3>T+2: tiền và cổ phiếu không về ngay</h3>
+      <p>Mua cổ phiếu hôm nay (ngày T), cổ phiếu về tài khoản chiều T+1 và <b>bạn chỉ bán được từ ngày T+2</b>. Ngược lại, bán hôm nay thì tiền cũng về theo lịch tương tự.</p>
+      <p class="warn"><b>Vì sao điều này quan trọng</b>Bạn bị “nhốt” hai phiên. Mua thứ Năm, gặp tin xấu thứ Sáu — bạn chỉ đứng nhìn. Đây là lý do quy mô mỗi lệnh (cấp 5) quan trọng hơn việc chọn đúng mã.</p>
+
+      <h3>Chi phí thật của một vòng mua–bán</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Khoản</th><th>Mức phổ biến</th><th>Thu khi nào</th></tr></thead>
+          <tbody>
+            <tr><td>Phí môi giới</td><td class="num">0,10% – 0,25% giá trị</td><td>Cả lượt mua và lượt bán</td></tr>
+            <tr><td>Thuế TNCN</td><td class="num">0,10% giá trị bán</td><td>Chỉ khi bán — lãi hay lỗ đều nộp</td></tr>
+            <tr><td>Thuế cổ tức tiền mặt</td><td class="num">5%</td><td>Khấu trừ khi chia cổ tức</td></tr>
+            <tr><td>Phí lưu ký</td><td class="num">≈0,27đ/cp/tháng</td><td>Hàng tháng, nhỏ nhưng có</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Cộng lại, một vòng mua–bán tốn khoảng <b>0,4–0,6%</b>. Nghĩa là cổ phiếu phải tăng chừng đó bạn mới hòa vốn. Giao dịch 100 lần một năm là bạn tự trả đi 40–60% vốn cho phí — đây là lý do toán học vì sao “lướt sóng” liên tục gần như luôn thua.</p>
+
+      <h3>Có những thứ gì để mua?</h3>
+      <dl class="dl">
+        <div><dt>Cổ phiếu</dt><dd>Sở hữu một phần doanh nghiệp. Điểm khởi đầu chuẩn.</dd></div>
+        <div><dt>Chứng chỉ quỹ ETF<small>E1VFVN30, FUEVFVND…</small></dt><dd>Một “rổ” gồm nhiều cổ phiếu, mua 1 mã là sở hữu cả rổ. <b>Lựa chọn hợp lý nhất cho người mới.</b></dd></div>
+        <div><dt>Trái phiếu</dt><dd>Bạn cho vay, nhận lãi cố định. An toàn hơn — nhưng trái phiếu doanh nghiệp riêng lẻ thì không hề an toàn như tên gọi.</dd></div>
+        <div><dt>Chứng quyền (CW) &amp; phái sinh (VN30F1M)</dt><dd>Đòn bẩy cao, có thể mất toàn bộ. <b>Chưa xong cấp 5 thì đừng đụng vào.</b></dd></div>
+      </dl>
+
+      <h3>Mở tài khoản: ba bước</h3>
+      <ol class="steps">
+        <li>Chọn công ty chứng khoán (VPS, SSI, TCBS, VNDirect, MBS… — so phí và chất lượng app, đừng chọn theo quà tặng).</li>
+        <li>eKYC bằng CCCD gắn chip, ký hợp đồng điện tử. Thường xong trong 15 phút.</li>
+        <li>Chuyển tiền vào tài khoản chứng khoán. <b>Tuyệt đối không đăng ký margin</b> ở bước này.</li>
+      </ol>
+
+      <label class="mark"><input type="checkbox" data-level="c1"> Đã học xong cấp 1</label>
+    </section>
+
+    <!-- ================= CẤP 2 ================= -->
+    <section class="level" id="c2">
+      <div class="level-head">
+        <span class="level-num">02</span>
+        <div>
+          <h2>Đọc một doanh nghiệp</h2>
+          <p class="level-meta">Phân tích cơ bản — phần nền · 4–6 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> mở báo cáo tài chính của một công ty bất kỳ và trả lời được: công ty này kiếm tiền bằng cách nào, có thật sự kiếm được tiền không, và có đang mắc nợ nguy hiểm không.</p>
+
+      <h3>Ba bản báo cáo, ba câu hỏi khác nhau</h3>
+      <dl class="dl">
+        <div><dt>Kết quả kinh doanh<small>Đoạn phim</small></dt><dd>Trong 3 tháng (hoặc 1 năm) qua công ty bán được bao nhiêu, tốn bao nhiêu, còn lại bao nhiêu.</dd></div>
+        <div><dt>Cân đối kế toán<small>Bức ảnh chụp</small></dt><dd>Tại đúng ngày cuối kỳ, công ty <i>có</i> những gì và <i>nợ</i> những gì.</dd></div>
+        <div><dt>Lưu chuyển tiền tệ<small>Sự thật</small></dt><dd>Tiền mặt thực sự đã ra vào bao nhiêu. Đây là bản khó “làm đẹp” nhất.</dd></div>
+      </dl>
+      <p class="aside"><b>Ví dụ đời thường</b>Quán phở báo lãi 200 triệu — nhưng 150 triệu trong đó là tiền các công ty ghi sổ ăn chịu chưa trả. Báo cáo kết quả kinh doanh nói “lãi 200 triệu”. Báo cáo lưu chuyển tiền tệ nói “thực nhận 50 triệu”. Bản nào trả được lương nhân viên tháng này?</p>
+      <p><b>Lợi nhuận là ý kiến, dòng tiền là sự thật.</b> Một công ty báo lãi ba năm liền nhưng dòng tiền kinh doanh (CFO) âm ba năm liền là một dấu hiệu đỏ rất lớn.</p>
+
+      <h3>Đọc báo cáo kết quả kinh doanh theo đúng thứ tự</h3>
+      <div class="formula">Doanh thu thuần
+  − Giá vốn hàng bán        →  Lợi nhuận gộp
+  − Chi phí bán hàng &amp; QLDN
+  − Chi phí tài chính (lãi vay)
+  + Thu nhập khác           →  Lợi nhuận trước thuế
+  − Thuế TNDN               →  LỢI NHUẬN SAU THUẾ</div>
+      <p>Điều cần nhìn không phải con số cuối cùng, mà <b>lợi nhuận đến từ đâu</b>. Lãi tăng vọt nhờ bán một mảnh đất thì năm sau không lặp lại được. Lãi tăng đều nhờ doanh thu tăng và biên lợi nhuận giữ vững — đó mới là chất lượng.</p>
+
+      <h3>Bảng cân đối: một phương trình duy nhất</h3>
+      <div class="formula">TÀI SẢN  =  NỢ PHẢI TRẢ  +  VỐN CHỦ SỞ HỮU</div>
+      <p>Ba dòng đáng soi nhất với người mới:</p>
+      <ul>
+        <li><b>Hàng tồn kho</b> phình nhanh hơn doanh thu → hàng đang ế.</li>
+        <li><b>Phải thu khách hàng</b> phình nhanh hơn doanh thu → bán được nhưng chưa đòi được tiền.</li>
+        <li><b>Nợ vay / Vốn chủ sở hữu (D/E)</b> → mức độ mạo hiểm. Trên 1 là cần giải thích; trên 2 với doanh nghiệp sản xuất là đáng lo (ngân hàng và bất động sản có chuẩn riêng, cao hơn nhiều).</li>
+      </ul>
+
+      <h3>Bảy chỉ số đủ dùng cho năm đầu tiên</h3>
+      <dl class="dl">
+        <div><dt>EPS<small>Lợi nhuận / cổ phiếu</small></dt><dd>Mỗi cổ phiếu tạo ra bao nhiêu đồng lãi trong năm. Nền tảng của mọi thứ phía sau.</dd></div>
+        <div><dt>P/E<small>Giá / EPS</small></dt><dd>Bạn trả bao nhiêu đồng để mua 1 đồng lợi nhuận. P/E = 12 nghĩa là <i>nếu lợi nhuận đứng yên mãi</i>, mất 12 năm để hoàn vốn. Chỉ có nghĩa khi so với chính công ty trong quá khứ và với các công ty cùng ngành.</dd></div>
+        <div><dt>P/B<small>Giá / Giá trị sổ sách</small></dt><dd>Trả bao nhiêu cho 1 đồng tài sản ròng. Hữu ích nhất với ngân hàng, bảo hiểm, chứng khoán.</dd></div>
+        <div><dt>ROE<small>Lãi / Vốn chủ</small></dt><dd>Ban lãnh đạo dùng tiền của cổ đông hiệu quả đến đâu. ROE &gt; 15% duy trì nhiều năm là dấu hiệu doanh nghiệp tốt. Nhưng hãy kiểm tra ROE cao có phải nhờ vay nợ nhiều không.</dd></div>
+        <div><dt>Biên lợi nhuận gộp</dt><dd>Cho biết quyền lực định giá. Biên cao và ổn định → sản phẩm khó thay thế.</dd></div>
+        <div><dt>D/E</dt><dd>Đòn bẩy tài chính. Đòn bẩy khuếch đại cả lãi lẫn lỗ.</dd></div>
+        <div><dt>Tỷ suất cổ tức</dt><dd>Cổ tức tiền mặt / thị giá. So với lãi suất tiết kiệm để biết mình đang được trả bao nhiêu cho việc chấp nhận rủi ro.</dd></div>
+      </dl>
+      <p class="aside"><b>Cách nhớ P/E</b>Bạn định mua lại quán phở. Quán lãi 200 triệu/năm, chủ đòi 2,4 tỷ. P/E = 12. Câu hỏi thật sự không phải “12 là cao hay thấp”, mà là “tôi có tin năm sau quán vẫn lãi 200 triệu không?”.</p>
+
+      <p class="warn"><b>Ba cái bẫy kinh điển</b>① Lợi nhuận đột biến từ thanh lý tài sản khiến P/E trông rẻ giả tạo. ② Công ty phát hành thêm cổ phiếu → EPS bị pha loãng dù lợi nhuận không đổi. ③ Số liệu bạn xem trên app là <i>trước kiểm toán</i>; báo cáo kiểm toán đôi khi “bốc hơi” hàng trăm tỷ lợi nhuận.</p>
+
+      <h3>Lấy dữ liệu ở đâu</h3>
+      <p>Báo cáo tài chính quý và năm trên website quan hệ cổ đông của chính doanh nghiệp (nguồn gốc, đáng tin nhất), nghị quyết đại hội cổ đông, và các trang tổng hợp như CafeF, Vietstock, Fireant, SimplizeVN cho số liệu đã dựng sẵn. <b>Nguyên tắc:</b> số liệu tổng hợp để sàng lọc nhanh, nhưng trước khi xuống tiền thì mở báo cáo gốc.</p>
+
+      <label class="mark"><input type="checkbox" data-level="c2"> Đã học xong cấp 2</label>
+    </section>
+
+    <!-- ================= CẤP 3 ================= -->
+    <section class="level" id="c3">
+      <div class="level-head">
+        <span class="level-num">03</span>
+        <div>
+          <h2>Định giá &amp; chọn cổ phiếu</h2>
+          <p class="level-meta">Phân tích cơ bản — phần nâng cao · 6–8 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> phân biệt được “giá” và “giá trị”, và tự viết ra được luận điểm đầu tư ba câu cho một cổ phiếu.</p>
+
+      <h3>Giá là thứ bạn trả, giá trị là thứ bạn nhận</h3>
+      <p>Định giá không nhằm tìm ra một con số chính xác — không ai làm được. Nó nhằm trả lời: <b>ở mức giá hiện tại, thị trường đang giả định điều gì về tương lai công ty này, và giả định đó có hợp lý không?</b></p>
+
+      <h3>Bốn cách định giá, dùng cho bốn hoàn cảnh</h3>
+      <dl class="dl">
+        <div><dt>P/E so sánh</dt><dd>So P/E hiện tại với trung bình 5 năm của chính nó và với các công ty cùng ngành. Đơn giản, dùng được cho hầu hết doanh nghiệp có lợi nhuận ổn định.</dd></div>
+        <div><dt>P/B</dt><dd>Cho ngân hàng và doanh nghiệp mà tài sản là bản chất kinh doanh. Ngân hàng lỗ một quý thì P/E vô nghĩa, P/B vẫn dùng được.</dd></div>
+        <div><dt>Chiết khấu cổ tức</dt><dd>Cho doanh nghiệp trả cổ tức đều đặn (điện, nước, hạ tầng): giá trị = tổng dòng cổ tức tương lai, quy về hôm nay.</dd></div>
+        <div><dt>DCF<small>Chiết khấu dòng tiền</small></dt><dd>Chuẩn mực học thuật, nhưng cực nhạy với giả định. Với người mới, hãy hiểu <i>ý tưởng</i> — 1 đồng năm sau đáng giá ít hơn 1 đồng hôm nay — hơn là cố dựng mô hình.</dd></div>
+      </dl>
+
+      <h3>Ngành chu kỳ: cái bẫy P/E ngược đời</h3>
+      <p>Với thép, hóa chất, bất động sản, chứng khoán, vận tải biển — lợi nhuận lên xuống theo chu kỳ hàng hóa. Ở <b>đỉnh</b> chu kỳ, lợi nhuận cao ngất nên P/E trông cực rẻ. Ở <b>đáy</b> chu kỳ, lợi nhuận về gần 0 nên P/E trông đắt kinh khủng hoặc âm.</p>
+      <p class="warn"><b>Hệ quả ngược trực giác</b>Với cổ phiếu chu kỳ, P/E thấp thường là tín hiệu <i>bán</i>, còn P/E cao (hoặc lỗ) lại thường gần vùng <i>mua</i>. Đây là chỗ nhiều người mới, mới học P/E xong, mất tiền nặng nhất.</p>
+      <p>Nhóm phòng thủ thì ngược lại: điện, nước, dược, bán lẻ thiết yếu có lợi nhuận đều — P/E đọc theo nghĩa thông thường được.</p>
+
+      <h3>Lợi thế cạnh tranh: vì sao lợi nhuận này bền?</h3>
+      <p>Lợi nhuận cao luôn thu hút đối thủ. Câu hỏi sống còn là: <b>cái gì ngăn đối thủ cướp mất miếng bánh này?</b> Thường là một trong: thương hiệu, chi phí sản xuất thấp nhất ngành, chi phí chuyển đổi cao với khách hàng, hiệu ứng mạng lưới, hoặc giấy phép/vị trí độc quyền.</p>
+      <p class="aside"><b>Ví dụ đời thường</b>Quán phở lãi tốt. Sáu tháng sau, ba quán phở mở cạnh bên. Nếu quán chị Hoa vẫn đông vì nước dùng không ai bắt chước được — đó là lợi thế cạnh tranh. Nếu nó đông chỉ vì mở trước — đó không phải.</p>
+
+      <h3>Cổ tức tiền mặt và “cổ phiếu thưởng” không giống nhau</h3>
+      <p>Cổ tức <b>tiền mặt</b> là tiền thật vào tài khoản. Cổ tức bằng <b>cổ phiếu</b> hay cổ phiếu thưởng thì bạn có nhiều cổ phiếu hơn, nhưng giá bị điều chỉnh giảm tương ứng trong ngày giao dịch không hưởng quyền — <b>tổng tài sản của bạn không đổi</b>.</p>
+      <p class="aside"><b>Ví dụ đời thường</b>Cắt cái bánh pizza từ 8 miếng thành 16 miếng. Bạn có gấp đôi số miếng. Bạn vẫn có đúng chừng ấy pizza.</p>
+
+      <h3>Checklist trước khi mua một cổ phiếu</h3>
+      <ol class="steps">
+        <li>Công ty kiếm tiền bằng cách nào? Nói được trong hai câu không?</li>
+        <li>Doanh thu và lợi nhuận 5 năm qua đi theo hướng nào?</li>
+        <li>Dòng tiền kinh doanh có dương và bám sát lợi nhuận không?</li>
+        <li>Nợ vay có kiểm soát được không? Lãi vay ăn bao nhiêu phần lợi nhuận?</li>
+        <li>ROE bao nhiêu, và cao nhờ hiệu quả hay nhờ vay nợ?</li>
+        <li>Lợi thế cạnh tranh là gì? Ai có thể phá nó?</li>
+        <li>Ban lãnh đạo có sạch không? Có liên tục phát hành thêm để pha loãng cổ đông không?</li>
+        <li>Cổ đông nội bộ đang mua vào hay bán ra?</li>
+        <li>Định giá hiện tại đang giả định điều gì? Tôi có tin không?</li>
+        <li><b>Điều gì sẽ chứng minh tôi sai?</b> Không trả lời được câu này thì chưa nên mua.</li>
+      </ol>
+
+      <label class="mark"><input type="checkbox" data-level="c3"> Đã học xong cấp 3</label>
+    </section>
+
+    <!-- ================= CẤP 4 ================= -->
+    <section class="level" id="c4">
+      <div class="level-head">
+        <span class="level-num">04</span>
+        <div>
+          <h2>Phân tích kỹ thuật</h2>
+          <p class="level-meta">Đọc hành vi đám đông · 4 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> dùng đồ thị để chọn <i>thời điểm</i> và đặt <i>ngưỡng cắt lỗ</i> — không phải để tiên tri giá.</p>
+
+      <h3>Phân tích kỹ thuật thực chất là gì</h3>
+      <p>Nó dựa trên ba giả định: mọi thông tin đã phản ánh vào giá; giá di chuyển theo xu hướng; và lịch sử lặp lại vì <b>tâm lý con người lặp lại</b>. Nói cách khác, đồ thị là bản ghi cảm xúc của đám đông — chứ không phải cỗ máy dự đoán.</p>
+      <p class="warn"><b>Đặt kỳ vọng cho đúng</b>Phân tích kỹ thuật không cho bạn biết ngày mai giá bao nhiêu. Nó cho bạn một kịch bản kèm điểm mà nếu giá chạm tới thì kịch bản đó sai. Giá trị lớn nhất của nó nằm ở vế thứ hai.</p>
+
+      <h3>Nến Nhật — đơn vị chữ cái</h3>
+      <p>Một cây nến kể bốn con số của một phiên: giá mở, đóng, cao nhất, thấp nhất. <b>Thân</b> nến là khoảng cách mở–đóng, <b>bóng</b> (râu) là vùng giá đã chạm tới rồi bị đẩy về.</p>
+      <ul>
+        <li>Thân dài, bóng ngắn → một phe áp đảo dứt khoát cả phiên.</li>
+        <li>Thân ngắn, hai bóng dài → giằng co, không ai thắng. Sự lưỡng lự.</li>
+        <li>Bóng dưới rất dài → giá bị dìm xuống nhưng có lực mua đẩy ngược lên. Dấu hiệu cầu vào.</li>
+      </ul>
+
+      <h3>Xu hướng: định nghĩa bằng cấu trúc, không bằng cảm giác</h3>
+      <p><b>Tăng</b> = đỉnh sau cao hơn đỉnh trước <i>và</i> đáy sau cao hơn đáy trước. <b>Giảm</b> = ngược lại. <b>Đi ngang</b> = không thỏa cả hai. Đây là định nghĩa duy nhất bạn cần, và nó khách quan — hai người nhìn cùng biểu đồ phải ra cùng kết luận.</p>
+
+      <h3>Hỗ trợ và kháng cự là <i>vùng</i>, không phải đường kẻ</h3>
+      <p><b>Hỗ trợ</b>: vùng giá mà trước đây người mua đã từng nhảy vào chặn đà rơi. <b>Kháng cự</b>: vùng người bán đã từng ra hàng. Vùng bị phá vỡ rồi thì thường đảo vai — kháng cự cũ thành hỗ trợ mới.</p>
+      <p class="aside"><b>Ví dụ đời thường</b>Bạn từng mua một mã ở giá 30 rồi nó rơi về 24. Khi giá bò về lại 30, cảm giác của bạn là gì? “Về bờ rồi, bán thôi.” Hàng nghìn người cùng nghĩ vậy — đó chính là lý do 30 trở thành kháng cự. Kháng cự không phải phép màu, nó là <i>ký ức đám đông</i>.</p>
+
+      <h3>Khối lượng — máy đo độ tin cậy</h3>
+      <p>Giá nói <i>chuyện gì</i>, khối lượng nói <i>có bao nhiêu người đồng ý</i>. Vượt kháng cự kèm khối lượng lớn gấp 2–3 lần trung bình → đáng tin. Vượt trong khối lượng èo uột → thường là bẫy, sau đó rơi ngược lại.</p>
+
+      <h3>Chỉ báo: học đúng ba cái, hiểu chúng làm gì</h3>
+      <dl class="dl">
+        <div><dt>MA 20 / 50 / 200<small>Đường trung bình động</small></dt><dd>Giá trung bình N phiên gần nhất — làm mượt nhiễu để thấy xu hướng. Giá nằm trên MA200 thường được xem là xu hướng dài hạn còn tăng.</dd></div>
+        <div><dt>RSI<small>0–100</small></dt><dd>Đo sức mạnh của đà tăng gần đây. Trên 70 gọi là “quá mua”, dưới 30 là “quá bán”. <b>Nhưng</b> trong xu hướng tăng mạnh, RSI có thể nằm trên 70 suốt nhiều tuần — bán chỉ vì RSI &gt; 70 là sai lầm phổ biến.</dd></div>
+        <div><dt>MACD</dt><dd>Hiệu của hai đường trung bình — đo <i>gia tốc</i> của xu hướng. Hữu ích để thấy đà đang mạnh lên hay yếu đi.</dd></div>
+      </dl>
+      <p class="warn"><b>Cạm bẫy chỉ báo</b>Mọi chỉ báo đều được tính <i>từ</i> giá, nên chúng luôn đi sau giá. Chồng 6 chỉ báo lên biểu đồ không cho bạn 6 nguồn thông tin — nó cho bạn cùng một thông tin lặp lại 6 lần, và cảm giác chắc chắn giả tạo.</p>
+
+      <h3>Mô hình giá — dùng có kiểm soát</h3>
+      <p>Cờ, tam giác, hai đáy, vai–đầu–vai đều có logic tâm lý đằng sau. Nhưng não người rất giỏi nhìn ra hình thù trong đám mây. Quy tắc an toàn: <b>chỉ giao dịch mô hình khi nó xác nhận điều mà xu hướng và khối lượng đã nói</b>, không dùng nó để cãi lại xu hướng.</p>
+
+      <label class="mark"><input type="checkbox" data-level="c4"> Đã học xong cấp 4</label>
+    </section>
+
+    <!-- ================= CẤP 5 ================= -->
+    <section class="level" id="c5">
+      <div class="level-head">
+        <span class="level-num">05</span>
+        <div>
+          <h2>Quản trị vốn &amp; tâm lý</h2>
+          <p class="level-meta">Cấp quyết định bạn sống hay chết · Học suốt đời</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> đảm bảo rằng không một quyết định sai nào có thể loại bạn khỏi cuộc chơi. Nếu chỉ có thời gian cho một cấp, hãy chọn cấp này.</p>
+
+      <h3>Toán học tàn nhẫn của thua lỗ</h3>
+      <div class="formula">Lỗ  −10%   →  cần  +11%   để hòa vốn
+Lỗ  −20%   →  cần  +25%
+Lỗ  −33%   →  cần  +50%
+Lỗ  −50%   →  cần +100%
+Lỗ  −75%   →  cần +300%</div>
+      <p>Lỗ và lãi <b>không đối xứng</b>. Đây là toàn bộ lý do vì sao “giữ cho khoản lỗ nhỏ” quan trọng hơn “tìm cho được cổ phiếu tăng mạnh”.</p>
+
+      <h3>Quy mô lệnh: quyết định trước khi bấm mua</h3>
+      <p>Nguyên tắc: <b>mỗi lệnh chỉ được phép làm bạn mất tối đa 1–2% tổng tài khoản</b>. Không phải 1–2% giá trị lệnh — mà 1–2% toàn bộ vốn.</p>
+      <div class="formula">Số cổ phiếu =  (NAV × % rủi ro cho phép) ÷ (Giá mua − Giá cắt lỗ)
+
+Ví dụ:  NAV 200.000.000đ,  rủi ro 1%  → chấp nhận mất 2.000.000đ
+        Mua HPG giá 27.000đ, cắt lỗ 25.000đ  → rủi ro 2.000đ/cp
+        Số cp = 2.000.000 ÷ 2.000 = 1.000 cp  (10 lô, ~27 triệu)</div>
+      <p>Với công thức này, sai 10 lệnh liên tiếp bạn vẫn chỉ mất khoảng 10% tài khoản — vẫn còn sống, vẫn còn học được. Không có nó, hai lệnh sai là xong.</p>
+
+      <h3>Cắt lỗ: đặt trước khi mua, không phải khi đã đau</h3>
+      <p>Điểm cắt lỗ phải được xác định <b>trước khi vào lệnh</b>, và dựa trên cấu trúc giá (thủng vùng hỗ trợ, thủng MA quan trọng, luận điểm đầu tư bị bác bỏ) — chứ không dựa trên “tôi chịu được lỗ bao nhiêu tiền”.</p>
+      <p class="warn"><b>Câu nói giết nhiều tài khoản nhất</b>“Chưa bán thì chưa lỗ.” Sai. Bạn đã lỗ rồi — khoản lỗ chỉ đang chưa được ghi nhận vào cảm xúc của bạn. Trong khi đó vốn của bạn bị kẹt, và cơ hội tốt hơn thì trôi qua.</p>
+
+      <h3>Tỷ lệ lãi/lỗ và kỳ vọng toán học</h3>
+      <p>Chỉ vào lệnh khi phần thưởng kỳ vọng ít nhất gấp đôi rủi ro (R:R ≥ 1:2). Khi đó bạn <b>đúng 40% số lần vẫn có lãi</b>:</p>
+      <div class="formula">Kỳ vọng = (Tỷ lệ thắng × Lãi trung bình) − (Tỷ lệ thua × Lỗ trung bình)
+        = (0,40 × 2R) − (0,60 × 1R)
+        = 0,80R − 0,60R  =  +0,20R mỗi lệnh</div>
+      <p>Đây là bài học giải phóng nhất trong đầu tư: <b>bạn không cần đúng nhiều. Bạn cần đúng to và sai nhỏ.</b></p>
+
+      <h3>Đa dạng hóa vừa đủ</h3>
+      <ul>
+        <li>5–8 mã là hợp lý. Dưới 3 mã: một tin xấu là gãy danh mục. Trên 15 mã: bạn không còn theo dõi nổi, mà cũng chỉ ngang chỉ số — thà mua ETF.</li>
+        <li>Không quá 2–3 mã cùng một ngành. Bốn cổ phiếu bất động sản <b>không phải</b> là đa dạng hóa — chúng cùng chết vì một lý do.</li>
+        <li>Giữ luôn một phần tiền mặt. Tiền mặt là quyền được hành động khi cơ hội xuất hiện.</li>
+      </ul>
+
+      <h3>Margin — vì sao người mới phải tránh</h3>
+      <p>Margin là vay tiền công ty chứng khoán để mua thêm. Nó nhân đôi lãi <i>và</i> nhân đôi lỗ. Khi giá giảm tới ngưỡng, bạn bị <b>call margin</b> (yêu cầu nộp thêm tiền); không nộp kịp thì bị <b>force sell</b> — bán cưỡng bức ngay tại đáy, không hỏi ý bạn. Điều tệ nhất: nó tước mất khả năng chờ đợi của bạn, thứ vũ khí duy nhất mà nhà đầu tư cá nhân thực sự có.</p>
+
+      <h3>Sáu cái bẫy trong đầu bạn</h3>
+      <dl class="dl">
+        <div><dt>Ngại thua lỗ<small>Loss aversion</small></dt><dd>Mất 10 triệu đau gấp đôi niềm vui khi được 10 triệu. Kết quả: gồng lỗ rất giỏi, chốt lãi rất non. Chính xác là ngược với điều cần làm.</dd></div>
+        <div><dt>Chi phí chìm<small>Sunk cost</small></dt><dd>“Tôi đã lỗ 40% mã này rồi, bán bây giờ thì phí quá.” Số tiền đã mất không quan tâm bạn nghĩ gì. Câu hỏi đúng luôn là: <i>nếu hôm nay tôi đang cầm tiền mặt, tôi có mua mã này không?</i></dd></div>
+        <div><dt>Thiên kiến xác nhận</dt><dd>Mua xong chỉ đọc tin tốt về mã đó, vào đúng nhóm chat toàn người đang cầm mã đó. Cách chữa: viết sẵn ra điều gì sẽ chứng minh mình sai.</dd></div>
+        <div><dt>FOMO</dt><dd>Mã đã tăng 5 phiên trần, ai cũng khoe lãi, bạn nhảy vào. Bạn thường là người mua cuối cùng — người trả tiền để những người vào trước thoát hàng.</dd></div>
+        <div><dt>Neo giá<small>Anchoring</small></dt><dd>“Nó từng 50, giờ 30, rẻ quá.” Giá cũ không phải giá trị. Doanh nghiệp có thể đã xấu đi đúng bằng 40% đó.</dd></div>
+        <div><dt>Tự tin thái quá</dt><dd>Thắng 5 lệnh liền, bạn kết luận mình giỏi và tăng gấp ba khối lượng. Thị trường sẽ dạy lại bài này, học phí rất cao.</dd></div>
+      </dl>
+
+      <h3>Nhật ký giao dịch — công cụ rẻ nhất, hiệu quả nhất</h3>
+      <p>Mỗi lệnh ghi lại: mã, ngày, giá vào, <b>lý do mua</b>, điểm cắt lỗ, mục tiêu, và cảm xúc lúc đó. Khi đóng lệnh, ghi kết quả và <b>một dòng tôi đã học được gì</b>.</p>
+      <p>Sau 50 lệnh, đọc lại — bạn sẽ nhìn thấy sai lầm lặp lại của chính mình rõ hơn bất kỳ cuốn sách nào chỉ ra được. Đây là thứ chuyển bạn từ “người đoán giá” thành “người có quy trình”.</p>
+
+      <label class="mark"><input type="checkbox" data-level="c5"> Đã học xong cấp 5</label>
+    </section>
+
+    <!-- ================= CẤP 6 ================= -->
+    <section class="level" id="c6">
+      <div class="level-head">
+        <span class="level-num">06</span>
+        <div>
+          <h2>Vĩ mô, dòng tiền, chu kỳ</h2>
+          <p class="level-meta">Hiểu thủy triều, không chỉ hiểu con thuyền · 4 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> biết vì sao “cổ phiếu tốt vẫn giảm” — và nhận ra khi nào cả thị trường đang thuận hoặc nghịch chiều với bạn.</p>
+
+      <h3>Lãi suất là trọng lực của mọi tài sản</h3>
+      <p>Đây là biến số vĩ mô quan trọng nhất. Lãi suất tiết kiệm 4%/năm thì cổ phiếu có tỷ suất lợi nhuận 8% trông rất hấp dẫn. Lãi suất lên 10% thì cũng cổ phiếu đó trở nên vô duyên — mà lại còn rủi ro hơn.</p>
+      <p class="aside"><b>Cách nhớ</b>Lãi suất là trọng lực. Trọng lực yếu, mọi thứ bay lên dễ dàng — kể cả những thứ không đáng bay. Trọng lực mạnh, mọi thứ nặng trịch — kể cả những thứ tốt.</p>
+      <p>Lãi suất còn đánh vào doanh nghiệp hai lần: chi phí lãi vay tăng ăn vào lợi nhuận, và dòng tiền tương lai bị chiết khấu mạnh hơn nên định giá tụt.</p>
+
+      <h3>Các biến số cần theo dõi</h3>
+      <dl class="dl">
+        <div><dt>Lãi suất huy động &amp; điều hành</dt><dd>Xu hướng quan trọng hơn con số. Chu kỳ hạ lãi suất thường đi kèm với sóng tăng của thị trường.</dd></div>
+        <div><dt>Lạm phát (CPI)</dt><dd>Lạm phát cao buộc Ngân hàng Nhà nước siết tiền tệ → lãi suất lên → chứng khoán chịu áp lực.</dd></div>
+        <div><dt>Tỷ giá USD/VND</dt><dd>Tỷ giá căng thì khối ngoại rút vốn, doanh nghiệp vay USD chịu lỗ tỷ giá, và Ngân hàng Nhà nước phải hút tiền về để giữ giá VND.</dd></div>
+        <div><dt>Tăng trưởng tín dụng</dt><dd>Tiền được bơm ra nền kinh tế bao nhiêu. Tín dụng nới → thanh khoản dồi dào → một phần chảy sang chứng khoán.</dd></div>
+        <div><dt>Thanh khoản thị trường</dt><dd>Giá trị khớp lệnh bình quân/phiên trên HOSE. Thanh khoản cạn dần trong khi chỉ số vẫn tăng là dấu hiệu sóng đang yếu.</dd></div>
+        <div><dt>Khối ngoại &amp; tự doanh</dt><dd>Mua/bán ròng của nhà đầu tư nước ngoài và khối tự doanh công ty chứng khoán. Đọc như <i>một dữ kiện tham khảo</i>, không phải mệnh lệnh — họ cũng sai, và họ có mục tiêu khác bạn.</dd></div>
+      </dl>
+
+      <h3>Chu kỳ kinh tế và sự luân chuyển của dòng tiền</h3>
+      <p>Tiền không ở yên một chỗ. Qua mỗi giai đoạn chu kỳ, nó chảy sang nhóm ngành khác nhau — đây là lý do “mua và giữ mọi thứ mãi mãi” không phải luôn là câu trả lời ở một thị trường mới nổi như Việt Nam.</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Giai đoạn</th><th>Đặc điểm</th><th>Nhóm thường dẫn dắt</th></tr></thead>
+          <tbody>
+            <tr><td>Phục hồi sớm</td><td>Lãi suất vừa hạ, kinh tế bắt đầu ấm</td><td>Chứng khoán, ngân hàng, bất động sản</td></tr>
+            <tr><td>Tăng trưởng</td><td>Sản xuất, tiêu dùng mở rộng</td><td>Thép, xây dựng, khu công nghiệp, bán lẻ</td></tr>
+            <tr><td>Cuối chu kỳ</td><td>Lạm phát nóng, lãi suất bắt đầu lên</td><td>Dầu khí, hàng hóa cơ bản</td></tr>
+            <tr><td>Suy giảm</td><td>Lãi suất cao, cầu yếu</td><td>Điện, nước, dược — nhóm phòng thủ</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="warn"><b>Đừng máy móc</b>Đây là khung tham chiếu để đặt câu hỏi, không phải lịch trình. Thị trường Việt Nam chịu tác động rất mạnh từ chính sách và từ dòng tiền cá nhân trong nước, nên nhịp có thể lệch hẳn so với sách giáo khoa Mỹ.</p>
+
+      <h3>Lịch sự kiện nên nằm trong đầu</h3>
+      <ul>
+        <li><b>Mùa báo cáo tài chính</b> — quý I và III công bố cuối tháng 4 / tháng 10; báo cáo bán niên soát xét và báo cáo năm kiểm toán là hai mốc hay có bất ngờ.</li>
+        <li><b>Đại hội cổ đông thường niên</b> — tập trung tháng 3–4, nơi công bố kế hoạch kinh doanh và phương án cổ tức.</li>
+        <li><b>Ngày giao dịch không hưởng quyền</b> — giá bị điều chỉnh giảm; đừng hoảng khi thấy mã của mình “rơi” đúng ngày đó.</li>
+        <li><b>Đáo hạn phái sinh</b> — thứ Năm tuần thứ ba hằng tháng, phiên ATC hay biến động mạnh bất thường ở nhóm VN30.</li>
+        <li><b>Câu chuyện dài hạn</b> — nâng hạng thị trường mới nổi, vận hành hệ thống KRX, nới room ngoại: những thứ tác động tới dòng vốn tổ chức nhiều năm.</li>
+      </ul>
+
+      <label class="mark"><input type="checkbox" data-level="c6"> Đã học xong cấp 6</label>
+    </section>
+
+    <!-- ================= CẤP 7 ================= -->
+    <section class="level" id="c7">
+      <div class="level-head">
+        <span class="level-num">07</span>
+        <div>
+          <h2>Hệ thống của riêng bạn</h2>
+          <p class="level-meta">Biến kiến thức thành quy trình · Liên tục</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> có một bản kế hoạch giao dịch viết ra giấy, và tuân thủ nó ngay cả khi thị trường làm bạn muốn phá luật.</p>
+
+      <h3>Chọn trường phái phù hợp với cuộc sống của bạn</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Trường phái</th><th>Nắm giữ</th><th>Dựa chủ yếu vào</th><th>Hợp với ai</th></tr></thead>
+          <tbody>
+            <tr><td>Đầu tư giá trị</td><td>1–5 năm</td><td>Cấp 2 &amp; 3</td><td>Người kiên nhẫn, có việc chính bận rộn</td></tr>
+            <tr><td>Đầu tư tăng trưởng</td><td>6 tháng–3 năm</td><td>Cấp 3 &amp; 6</td><td>Người chịu được biến động mạnh</td></tr>
+            <tr><td>Cổ tức</td><td>Dài hạn</td><td>Cấp 2</td><td>Người cần dòng tiền đều, ngại rủi ro</td></tr>
+            <tr><td>Swing / theo sóng ngành</td><td>2 tuần–3 tháng</td><td>Cấp 4 &amp; 6</td><td>Người theo dõi được thị trường hằng ngày</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="warn"><b>Sai lầm phổ biến nhất ở cấp này</b>Đổi trường phái giữa chừng để né việc thừa nhận sai. Mua để lướt sóng, giá giảm, tự phong mình thành “nhà đầu tư dài hạn”. Trường phái phải chọn <i>trước</i> khi vào lệnh và ghi vào nhật ký.</p>
+
+      <h3>Bản kế hoạch giao dịch — sáu dòng là đủ</h3>
+      <ol class="steps">
+        <li><b>Vũ trụ cổ phiếu:</b> tôi chỉ chơi trong nhóm nào? (ví dụ: VN30 + các mã HOSE thanh khoản &gt; 20 tỷ/phiên)</li>
+        <li><b>Tiêu chí mua:</b> điều kiện cơ bản và kỹ thuật nào phải cùng thỏa mãn?</li>
+        <li><b>Quy mô lệnh:</b> rủi ro bao nhiêu % NAV mỗi lệnh, tối đa bao nhiêu mã cùng lúc?</li>
+        <li><b>Cắt lỗ:</b> đặt ở đâu, theo quy tắc nào?</li>
+        <li><b>Chốt lời:</b> theo mục tiêu giá, theo R:R, hay theo tín hiệu gãy xu hướng?</li>
+        <li><b>Điều kiện đứng ngoài:</b> khi nào tôi không giao dịch gì cả? (thị trường thủng MA200, tuần tôi đang căng thẳng, sau ba lệnh thua liên tiếp…)</li>
+      </ol>
+
+      <h3>Thử nghiệm trước khi cược thật</h3>
+      <ul>
+        <li><b>Giao dịch giấy 2–3 tháng:</b> ghi lệnh vào file, không dùng tiền thật. Đủ để lộ ra những lỗ hổng ngớ ngẩn nhất trong hệ thống.</li>
+        <li><b>Vốn nhỏ thật:</b> sau đó chạy tiền thật với số rất nhỏ. Cảm xúc khi có tiền thật là một biến số hoàn toàn khác — phải nếm nó sớm, khi học phí còn rẻ.</li>
+        <li><b>Kiểm chứng thủ công:</b> lôi biểu đồ 3 năm trước, che phần bên phải, và ra quyết định theo đúng quy tắc của mình. Đếm kết quả.</li>
+      </ul>
+
+      <h3>Đo hiệu suất cho đúng</h3>
+      <p>So sánh danh mục của bạn với <b>VN-Index cùng kỳ</b>, không so với anh hàng xóm đang khoe lệnh thắng (không ai khoe lệnh thua). Nếu ba năm liền bạn thua VN-Index, câu trả lời trung thực có thể là: mua ETF chỉ số và dành thời gian cho nghề chính của bạn — <b>đó là một quyết định đầu tư thông minh, không phải thất bại.</b></p>
+
+      <h3>Hai thói quen giữ bạn ở lại lâu dài</h3>
+      <ul>
+        <li><b>Tái cân bằng định kỳ:</b> mỗi 6–12 tháng đưa tỷ trọng về đúng kế hoạch. Việc này ép bạn bán bớt cái đã tăng nhiều và mua thêm cái đang rẻ — trái ngược hoàn toàn với bản năng.</li>
+        <li><b>Đầu tư đều đặn (DCA):</b> mỗi tháng bỏ một số tiền cố định vào thị trường, bất kể giá. Bạn ngừng phải đoán đáy, và biến biến động thành lợi thế.</li>
+      </ul>
+
+      <label class="mark"><input type="checkbox" data-level="c7"> Đã học xong cấp 7</label>
+    </section>
+
+  </main>
+</div>
+
+<div class="wrap">
+  <section class="outro" id="ketthuc">
+    <p class="eyebrow">Gợi ý thực hành</p>
+    <h2 style="margin-top:12px">Lộ trình 6 tháng đầu tiên</h2>
+    <ol class="plan">
+      <li><span class="when">Tháng 1</span><span><b>Cấp 0 + 1.</b> Mở tài khoản nhưng chưa nạp tiền. Mỗi ngày mở bảng điện 15 phút, tập đọc màu, đọc phiên ATC. Đặt lệnh ảo trên tài khoản demo.</span></li>
+      <li><span class="when">Tháng 2</span><span><b>Cấp 2.</b> Chọn 3 doanh nghiệp bạn dùng sản phẩm hằng ngày. Tải báo cáo tài chính năm gần nhất, đọc hết, tự tính EPS, P/E, ROE bằng tay.</span></li>
+      <li><span class="when">Tháng 3</span><span><b>Cấp 5 (đọc trước cấp 3–4).</b> Nạp một khoản rất nhỏ. Mua 1 chứng chỉ quỹ ETF. Bắt đầu viết nhật ký giao dịch ngay từ lệnh đầu tiên.</span></li>
+      <li><span class="when">Tháng 4</span><span><b>Cấp 3.</b> Viết luận điểm đầu tư ba câu cho 3 doanh nghiệp đã đọc. Mua 1–2 mã với quy mô nhỏ, có điểm cắt lỗ rõ ràng.</span></li>
+      <li><span class="when">Tháng 5</span><span><b>Cấp 4.</b> Mỗi ngày đọc 5 biểu đồ, chỉ dùng nến + khối lượng + MA20/50. Không thêm chỉ báo nào khác.</span></li>
+      <li><span class="when">Tháng 6</span><span><b>Cấp 6 + 7.</b> Đọc lại toàn bộ nhật ký, tìm sai lầm lặp lại. Viết bản kế hoạch giao dịch sáu dòng của riêng bạn.</span></li>
+    </ol>
+
+    <h3>Bốn cuốn sách, đọc theo thứ tự này</h3>
+    <ol class="steps">
+      <li><i>Nhà đầu tư thông minh</i> — Benjamin Graham. Chương 8 và 20 là phần quan trọng nhất; đọc riêng hai chương đó trước cũng được.</li>
+      <li><i>Trên đỉnh phố Wall</i> — Peter Lynch. Dễ đọc nhất, dạy cách tìm ý tưởng đầu tư từ đời sống hằng ngày.</li>
+      <li><i>Phân tích kỹ thuật thị trường tài chính</i> — John Murphy. Sách tra cứu cho cấp 4, không cần đọc một mạch.</li>
+      <li><i>Trading in the Zone</i> — Mark Douglas. Về tâm lý. Đọc khi bạn đã thua vài lệnh thật — lúc đó mới thấm.</li>
+    </ol>
+
+    <h3>Năm sai lầm khiến người mới rời thị trường sớm nhất</h3>
+    <ol class="steps">
+      <li>Vào thị trường bằng tiền cần dùng trong ngắn hạn.</li>
+      <li>Mua theo lời phím hàng, không hiểu mình đang sở hữu cái gì.</li>
+      <li>Không có điểm cắt lỗ, rồi “gồng” cho tới khi lỗ quá sâu để dám bán.</li>
+      <li>Dùng margin trong năm đầu tiên.</li>
+      <li>Trung bình giá xuống một cách vô kỷ luật — dồn thêm tiền vào mã đang sai, biến một khoản lỗ nhỏ thành khoản lỗ quyết định.</li>
+    </ol>
+
+    <p class="disclaimer">Trang này tổng hợp kiến thức nền tảng, không phải khuyến nghị mua bán. Các mã cổ phiếu và con số trong bảng minh họa là ví dụ để giải thích cơ chế, không phản ánh giá thị trường thực tế. Mức phí, biên độ và quy định giao dịch có thể thay đổi — hãy đối chiếu với biểu phí của công ty chứng khoán và quy chế hiện hành của HOSE, HNX, VSDC trước khi áp dụng.</p>
+  </section>
+</div>
+
+<script>
+(function(){
+  var boxes = document.querySelectorAll('.mark input[data-level]');
+  var links = document.querySelectorAll('#toc a');
+  var KEY = 'ck-tien-do';
+
+  function load(){
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }
+    catch(e){ return {}; }
+  }
+  function save(state){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+  }
+  function paint(state){
+    links.forEach(function(a){
+      var id = (a.getAttribute('href') || '').slice(1);
+      a.classList.toggle('done', !!state[id]);
+    });
+  }
+
+  var state = load();
+  boxes.forEach(function(box){
+    var id = box.getAttribute('data-level');
+    box.checked = !!state[id];
+    box.addEventListener('change', function(){
+      state[id] = box.checked;
+      if (!box.checked) { delete state[id]; }
+      save(state);
+      paint(state);
+    });
+  });
+  paint(state);
+
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
+  function spy(){
+    var best = null, bestTop = -Infinity;
+    var mark = window.scrollY + window.innerHeight * 0.3;
+    sections.forEach(function(s){
+      var top = s.offsetTop;
+      if (top <= mark && top > bestTop) { bestTop = top; best = s.id; }
+    });
+    links.forEach(function(a){
+      a.classList.toggle('on', a.getAttribute('href') === '#' + best);
+    });
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){ spy(); ticking = false; });
+  }, { passive: true });
+  spy();
+})();
+</script>
+</body>
+</html>
