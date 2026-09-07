@@ -263,6 +263,45 @@ p + .fig, ul + .fig, ol + .fig, .dl + .fig, .formula + .fig, .tbl-wrap + .fig,
     stroke-dashoffset:0 !important; transform:none !important; opacity:1 !important }
 }
 
+/* ---------- Phòng thực hành đọc nến ---------- */
+.lab{ padding-bottom:14px }
+.lab-head{ display:flex; flex-wrap:wrap; gap:12px; align-items:flex-start;
+  justify-content:space-between; margin-bottom:12px }
+.lab-t{ font-weight:700; font-size:var(--fs-sm); letter-spacing:-.01em }
+.lab-s{ font-family:var(--font-mono); font-size:10px; color:var(--muted); margin-top:3px }
+.lab-tf{ display:flex; gap:0; border:1px solid var(--line); border-radius:7px; overflow:hidden }
+.lab-tf button{ font:500 var(--fs-xs)/1 var(--font-mono); color:var(--muted); background:transparent;
+  border:0; padding:7px 12px; cursor:pointer; letter-spacing:.04em }
+.lab-tf button + button{ border-left:1px solid var(--line) }
+.lab-tf button:hover{ color:var(--ink); background:var(--surface-2) }
+.lab-tf button.on{ color:var(--ink); background:var(--surface-2); font-weight:700 }
+.lab-plot svg{ display:block; width:100%; height:auto; touch-action:manipulation }
+.lab-plot svg:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:6px }
+.lab-bar{ display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center;
+  justify-content:space-between; margin-top:10px }
+.lab-hint{ font-family:var(--font-mono); font-size:10px; color:var(--muted) }
+.lab-jumps{ display:flex; flex-wrap:wrap; gap:6px }
+.lab-jump{ font:500 10px/1 var(--font-mono); color:var(--accent-ink); background:var(--accent-wash);
+  border:1px solid var(--accent); border-color:color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius:20px; padding:6px 11px; cursor:pointer; letter-spacing:.03em }
+.lab-jump:hover{ background:var(--surface-2); color:var(--ink) }
+.lab-read{ margin-top:12px; border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--surface-2); padding:12px 14px }
+.lab-r1{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px }
+.lab-date{ font-family:var(--font-mono); font-size:var(--fs-sm); font-weight:700; color:var(--ink) }
+.lab-chg{ font-family:var(--font-mono); font-size:var(--fs-xs); font-weight:700 }
+.lab-tag{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  border:1px solid; border-radius:4px; padding:2px 7px }
+.lab-ohlc{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px 16px; margin-top:10px }
+@media(min-width:520px){ .lab-ohlc{ grid-template-columns:repeat(5,minmax(0,1fr)) } }
+.lab-ohlc div{ font-family:var(--font-mono); font-size:var(--fs-xs) }
+.lab-ohlc dt{ font-size:9.5px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase }
+.lab-ohlc dd{ margin:2px 0 0; color:var(--ink); font-weight:600 }
+.lab-why{ margin-top:11px; padding-top:10px; border-top:1px solid var(--line);
+  font-size:var(--fs-xs); color:var(--ink-2); line-height:1.6 }
+.lab-why b{ color:var(--ink); font-weight:600 }
+.lab-empty{ font-size:var(--fs-xs); color:var(--muted); font-style:italic }
+
 html{ scroll-behavior:smooth }
 @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto } *{ animation:none !important; transition:none !important } }
 </style>
@@ -820,6 +859,86 @@ html{ scroll-behavior:smooth }
       </svg>
       <figcaption>Đừng học thuộc tên mẫu nến. Hãy đọc <b>tương quan thân và bóng</b>: ai kiểm soát phiên, và đám đông đã do dự ở đâu.</figcaption>
       </figure>
+      <h3>Một cây nến là một lát thời gian</h3>
+      <p>Trước khi đọc được đồ thị, phải hiểu một điều: <b>cây nến không phải đơn vị tự nhiên của thị trường — nó là đơn vị bạn chọn</b>. Chọn khung ngày (D), mỗi nến gói cả phiên. Chọn khung 1 giờ, chính phiên đó tách thành năm nến. Giá không đổi — chỉ độ phóng thay đổi.</p>
+      <p>Dưới đây là phiên 23/07/2026 của HPG. Ở khung ngày nó chỉ là <i>một</i> cây nến bóng dưới dài; mở khung nhỏ ra, bạn thấy chính xác chuyện gì đã tạo ra cái bóng đó.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 700 296" role="img" aria-label="Cùng phiên 23/07/2026 của HPG nhìn ở ba khung thời gian">
+      <text class="t-eb" x="0" y="11">HPG · PHIÊN 23/07/2026 — CÙNG MỘT ĐOẠN GIÁ, BA KHUNG THỜI GIAN</text>
+      <line x1="44" y1="212.9" x2="596" y2="212.9" stroke="var(--line-soft)"/>
+      <text class="t-num" x="36" y="216.9" text-anchor="end" fill="var(--muted)">20.2</text>
+      <line x1="44" y1="179.3" x2="596" y2="179.3" stroke="var(--line-soft)"/>
+      <text class="t-num" x="36" y="183.3" text-anchor="end" fill="var(--muted)">20.4</text>
+      <line x1="44" y1="145.8" x2="596" y2="145.8" stroke="var(--line-soft)"/>
+      <text class="t-num" x="36" y="149.8" text-anchor="end" fill="var(--muted)">20.6</text>
+      <line x1="44" y1="112.3" x2="596" y2="112.3" stroke="var(--line-soft)"/>
+      <text class="t-num" x="36" y="116.3" text-anchor="end" fill="var(--muted)">20.8</text>
+      <line x1="44" y1="78.8" x2="596" y2="78.8" stroke="var(--line-soft)"/>
+      <text class="t-num" x="36" y="82.8" text-anchor="end" fill="var(--muted)">21.0</text>
+      <line x1="44" y1="78.8" x2="596" y2="78.8" stroke="var(--accent)" stroke-opacity=".55" stroke-dasharray="4 4"/>
+      <text class="t-num" x="698" y="82.8" text-anchor="end" fill="var(--accent-ink)" font-size="9.5">cao nhất 21.000</text>
+      <line x1="44" y1="221.2" x2="596" y2="221.2" stroke="var(--accent)" stroke-opacity=".55" stroke-dasharray="4 4"/>
+      <text class="t-num" x="698" y="225.2" text-anchor="end" fill="var(--accent-ink)" font-size="9.5">thấp nhất 20.150</text>
+      <line x1="124" y1="26" x2="124" y2="246" stroke="var(--line)"/>
+      <line x1="344" y1="26" x2="344" y2="246" stroke="var(--line)"/>
+      <text class="t-num" x="84" y="34" text-anchor="middle" fill="var(--ink)">1 NGÀY</text>
+      <text class="t-lbl" x="84" y="48" text-anchor="middle" font-size="9.5">1 nến</text>
+      <text class="t-num" x="234" y="34" text-anchor="middle" fill="var(--ink)">1 GIỜ</text>
+      <text class="t-lbl" x="234" y="48" text-anchor="middle" font-size="9.5">5 nến</text>
+      <text class="t-num" x="470" y="34" text-anchor="middle" fill="var(--ink)">15 PHÚT</text>
+      <text class="t-lbl" x="470" y="48" text-anchor="middle" font-size="9.5">16 nến</text>
+      <g data-fade=""><line x1="84.0" y1="78.8" x2="84.0" y2="221.2" stroke="var(--up)" stroke-width="1.8"/><rect x="67.0" y="112.3" width="34.0" height="16.8" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.15s"><line x1="160.0" y1="103.9" x2="160.0" y2="145.8" stroke="var(--down)" stroke-width="1.4"/><rect x="150.0" y="129.0" width="20.0" height="16.8" fill="var(--down)" rx="1"/></g>
+      <text class="t-lbl" x="160.0" y="256" text-anchor="middle" font-size="9">09h</text>
+      <g data-fade="" style="animation-delay:0.20s"><line x1="197.0" y1="120.7" x2="197.0" y2="179.3" stroke="var(--down)" stroke-width="1.4"/><rect x="187.0" y="145.8" width="20.0" height="16.8" fill="var(--down)" rx="1"/></g>
+      <text class="t-lbl" x="197.0" y="256" text-anchor="middle" font-size="9">10h</text>
+      <g data-fade="" style="animation-delay:0.25s"><line x1="234.0" y1="162.6" x2="234.0" y2="221.2" stroke="var(--down)" stroke-width="1.4"/><rect x="224.0" y="162.6" width="20.0" height="50.3" fill="var(--down)" rx="1"/></g>
+      <text class="t-lbl" x="234.0" y="256" text-anchor="middle" font-size="9">11h</text>
+      <g data-fade="" style="animation-delay:0.30s"><line x1="271.0" y1="78.8" x2="271.0" y2="212.9" stroke="var(--up)" stroke-width="1.4"/><rect x="261.0" y="120.7" width="20.0" height="92.2" fill="var(--up)" rx="1"/></g>
+      <text class="t-lbl" x="271.0" y="256" text-anchor="middle" font-size="9">13h</text>
+      <g data-fade="" style="animation-delay:0.35s"><line x1="308.0" y1="95.5" x2="308.0" y2="129.0" stroke="var(--up)" stroke-width="1.4"/><rect x="298.0" y="112.3" width="20.0" height="16.8" fill="var(--up)" rx="1"/></g>
+      <text class="t-lbl" x="308.0" y="256" text-anchor="middle" font-size="9">14h</text>
+      <g data-fade="" style="animation-delay:0.40s"><line x1="366.0" y1="103.9" x2="366.0" y2="137.4" stroke="var(--up)" stroke-width="1.1"/><rect x="361.0" y="120.7" width="10.0" height="8.4" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.42s"><line x1="380.8" y1="120.7" x2="380.8" y2="137.4" stroke="var(--down)" stroke-width="1.1"/><rect x="375.8" y="120.7" width="10.0" height="16.8" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.44s"><line x1="395.6" y1="129.0" x2="395.6" y2="145.8" stroke="var(--down)" stroke-width="1.1"/><rect x="390.6" y="129.0" width="10.0" height="16.8" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.46s"><line x1="410.4" y1="120.7" x2="410.4" y2="145.8" stroke="var(--up)" stroke-width="1.1"/><rect x="405.4" y="129.0" width="10.0" height="16.8" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.48s"><line x1="425.2" y1="129.0" x2="425.2" y2="145.8" stroke="var(--up)" stroke-width="1.1"/><rect x="420.2" y="137.4" width="10.0" height="1.6" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.50s"><line x1="440.0" y1="137.4" x2="440.0" y2="154.2" stroke="var(--down)" stroke-width="1.1"/><rect x="435.0" y="137.4" width="10.0" height="8.4" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.52s"><line x1="454.8" y1="145.8" x2="454.8" y2="179.3" stroke="var(--down)" stroke-width="1.1"/><rect x="449.8" y="145.8" width="10.0" height="16.8" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.54s"><line x1="469.6" y1="162.6" x2="469.6" y2="212.9" stroke="var(--down)" stroke-width="1.1"/><rect x="464.6" y="162.6" width="10.0" height="41.9" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.56s"><line x1="484.4" y1="187.7" x2="484.4" y2="221.2" stroke="var(--down)" stroke-width="1.1"/><rect x="479.4" y="204.5" width="10.0" height="8.4" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.58s"><line x1="499.2" y1="87.1" x2="499.2" y2="212.9" stroke="var(--up)" stroke-width="1.1"/><rect x="494.2" y="87.1" width="10.0" height="125.7" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.60s"><line x1="514.0" y1="87.1" x2="514.0" y2="129.0" stroke="var(--down)" stroke-width="1.1"/><rect x="509.0" y="95.5" width="10.0" height="33.5" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.62s"><line x1="528.8" y1="78.8" x2="528.8" y2="137.4" stroke="var(--up)" stroke-width="1.1"/><rect x="523.8" y="120.7" width="10.0" height="1.6" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.64s"><line x1="543.6" y1="103.9" x2="543.6" y2="129.0" stroke="var(--down)" stroke-width="1.1"/><rect x="538.6" y="112.3" width="10.0" height="8.4" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.66s"><line x1="558.4" y1="95.5" x2="558.4" y2="129.0" stroke="var(--up)" stroke-width="1.1"/><rect x="553.4" y="120.7" width="10.0" height="8.4" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.68s"><line x1="573.2" y1="112.3" x2="573.2" y2="129.0" stroke="var(--up)" stroke-width="1.1"/><rect x="568.2" y="120.7" width="10.0" height="1.6" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.70s"><line x1="588.0" y1="112.3" x2="588.0" y2="112.3" stroke="var(--up)" stroke-width="1.1"/><rect x="583.0" y="112.3" width="10.0" height="1.6" fill="var(--up)" rx="1"/></g>
+      <text class="t-lbl" x="366" y="256" text-anchor="middle" font-size="9">9:15</text>
+      <text class="t-lbl" x="588" y="256" text-anchor="middle" font-size="9">14:45</text>
+      <line x1="484.4" y1="227.2" x2="484.4" y2="246" stroke="var(--down)" stroke-opacity=".55" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="350" y="282" text-anchor="middle" font-size="9.5"><tspan fill="var(--down)">Sáng bị bán xuống 20.150</tspan><tspan fill="var(--muted)">  →  </tspan><tspan fill="var(--up)">chiều kéo lên, đóng cửa 20.800</tspan></text>
+      </svg>
+      <figcaption>Một cây nến ngày không giấu thông tin — nó <b>nén</b> thông tin. Cả ba khung đều chạy từ 20.150 đến 21.000; khác nhau ở chỗ khung nhỏ cho bạn thấy <b>trình tự</b> đã xảy ra. Cái bóng dưới dài của nến ngày chính là cú dìm buổi sáng bị mua ngược lại buổi chiều.</figcaption>
+      </figure>
+      <p class="aside"><b>Chọn khung nào</b>Khung càng nhỏ, tín hiệu càng nhiều và càng nhiễu — phí giao dịch cũng nhân lên theo. Với người mới: đọc <b>khung tuần</b> để biết xu hướng lớn, <b>khung ngày</b> để ra quyết định, và bỏ qua mọi khung nhỏ hơn.</p>
+      <p class="warn"><b>Một cây nến không bao giờ đủ</b>Một cây nến riêng lẻ gần như vô nghĩa. Nó chỉ có nghĩa khi đặt vào ba thứ xung quanh: nó nằm ở <i>vị trí nào</i> của xu hướng, ở <i>vùng giá nào</i>, và đi kèm <i>khối lượng bao nhiêu</i>. Bóng dưới dài ở đáy một nhịp giảm dài là một chuyện; cũng cây nến đó giữa vùng đi ngang là chuyện khác.</p>
+      <h3>Thực hành: đọc nến trên chart thật</h3>
+      <p>Lý thuyết nến chỉ vào đầu khi bạn đặt tay lên dữ liệu thật. Đây là <b>71 phiên có thật của HPG</b>: một nhịp giảm từ vùng 23.5 xuống đáy 20.1 cuối tháng 7, rồi hồi lại. Bấm vào bất kỳ cây nến nào để xem bốn giá của phiên đó, tỷ lệ thân–bóng, khối lượng so với trung bình 20 phiên — và cách đọc nó.</p>
+      <figure class="fig lab" id="lab">
+      <div class="lab-head">
+        <div><p class="lab-t">HPG · Hòa Phát</p><p class="lab-s">HOSE · giá đóng cửa thực tế, 01/06/2026 – 07/09/2026</p></div>
+        <div class="lab-tf" role="group" aria-label="Khung thời gian"><button type="button" data-tf="D" class="on" aria-pressed="true">1 ngày</button><button type="button" data-tf="W" aria-pressed="false">1 tuần</button></div>
+      </div>
+      <div class="lab-plot"><svg id="lab-svg" viewBox="0 0 720 400" tabindex="0" role="application" aria-label="Đồ thị nến HPG, bấm vào một cây nến để đọc"></svg></div>
+      <noscript><p class="lab-s">Bật JavaScript để xem đồ thị tương tác này.</p></noscript>
+      <div class="lab-bar"><span class="lab-hint">Bấm vào một cây nến · hoặc dùng phím ← →</span><span class="lab-jumps"><button type="button" class="lab-jump" data-date="2026-07-28">Thân dài</button><button type="button" class="lab-jump" data-date="2026-07-23">Bóng dưới dài</button><button type="button" class="lab-jump" data-date="2026-07-09">Doji</button><button type="button" class="lab-jump" data-date="2026-07-20">Gãy kèm KL lớn</button></span></div>
+      <div id="lab-read" class="lab-read"></div>
+      <figcaption>Dữ liệu giá và khối lượng thật của HPG (nguồn Yahoo Finance, kỳ 01/06/2026 – 07/09/2026). Mọi con số trong bảng đọc nến đều được tính trực tiếp từ bốn giá của phiên đó (ba phiên đầu tháng 9 thiếu dữ liệu khối lượng ở nguồn nên cột để trống). Đây là ví dụ học tập về cách đọc đồ thị — không phải khuyến nghị mua bán.</figcaption>
+      </figure>
+      <script type="application/json" id="lab-data">{"bars":[["2026-06-01",24000,24150,23950,24050,9668300],["2026-06-02",24000,24050,23700,23700,25529600],["2026-06-03",23700,24150,23600,24150,20573500],["2026-06-04",24150,24150,23900,23950,10065300],["2026-06-05",23950,24050,23750,23750,13891200],["2026-06-08",23650,23750,23300,23300,22769900],["2026-06-09",23350,23550,23300,23550,12441700],["2026-06-10",23550,23700,23450,23600,7505500],["2026-06-11",23500,23550,23300,23300,10177700],["2026-06-12",23550,23550,23200,23200,13271400],["2026-06-15",23550,24350,23550,24350,30695200],["2026-06-16",24250,24350,24100,24200,14145800],["2026-06-17",24200,24300,24000,24000,19039000],["2026-06-18",24050,24150,23650,23650,18040500],["2026-06-19",23800,23900,23600,23600,20055700],["2026-06-22",23700,23850,23600,23600,10684400],["2026-06-23",23650,23700,23300,23300,29071800],["2026-06-24",23400,23600,23300,23500,12927300],["2026-06-25",23500,23600,23400,23400,7659100],["2026-06-26",23400,23500,23350,23500,15468600],["2026-06-29",23550,23650,23450,23650,14158200],["2026-06-30",23700,23700,23250,23300,30593200],["2026-07-01",23700,23700,23250,23300,30593200],["2026-07-02",23500,23650,23350,23400,13367500],["2026-07-03",23400,23500,23250,23250,15935100],["2026-07-06",23400,23600,23000,23100,21299300],["2026-07-07",23200,23250,23000,23100,13839600],["2026-07-08",23150,23400,23050,23200,12499500],["2026-07-09",23200,23250,23100,23200,11643400],["2026-07-10",23200,23250,22950,22950,11906800],["2026-07-13",22950,22950,22350,22400,32309000],["2026-07-14",22300,22500,22000,22500,22481900],["2026-07-15",22500,22600,22150,22400,21464500],["2026-07-16",22300,22400,21800,22200,22880600],["2026-07-17",22200,22350,21850,21850,17006300],["2026-07-20",21750,21750,20500,20600,53245200],["2026-07-21",20500,21150,20500,20800,27198700],["2026-07-22",20900,21050,20500,20700,43471900],["2026-07-23",20700,21000,20150,20800,36967600],["2026-07-24",20700,21000,20600,20800,17632000],["2026-07-27",20900,21000,20300,20350,18166800],["2026-07-28",20150,21000,20100,21000,29151700],["2026-07-29",21050,21650,20900,21650,36250000],["2026-07-30",21650,22050,21500,21800,29968000],["2026-07-31",21800,21850,21400,21700,24111500],["2026-08-03",21700,22650,21650,22550,44448000],["2026-08-04",22550,22600,22100,22150,22694000],["2026-08-05",22350,22600,21950,22000,27963700],["2026-08-06",22250,22300,21850,21850,14369400],["2026-08-07",21900,22300,21750,22000,13018100],["2026-08-10",22250,22300,21950,22100,16732700],["2026-08-11",22200,22250,22050,22050,13694600],["2026-08-12",22000,22350,21950,22100,15925100],["2026-08-13",22200,22250,21700,21700,25702700],["2026-08-14",21700,21800,21200,21250,27443600],["2026-08-17",21250,21450,21050,21200,18455500],["2026-08-18",21150,21400,21000,21000,16367500],["2026-08-19",21100,21200,20900,21200,15312500],["2026-08-20",21250,21450,21150,21150,15156400],["2026-08-21",21150,21750,21050,21700,25138400],["2026-08-24",22000,22300,21850,22250,28790200],["2026-08-25",22250,22300,21800,21800,25844100],["2026-08-26",21800,22100,21750,22050,19394800],["2026-08-27",22050,22400,22050,22200,19201900],["2026-08-28",22250,22350,22050,22100,17126700],["2026-08-31",22100,22100,22100,22100,0],["2026-09-01",22100,22100,22100,22100,0],["2026-09-02",22100,22100,22100,22100,0],["2026-09-03",22000,22000,21550,21600,26985600],["2026-09-04",21750,21800,21600,21700,13920900],["2026-09-07",21800,22150,21550,21550,20396876]],"zone":[20100,20500],"touch":6}</script>
+      <p>Hãy thử bốn nút ví dụ ở trên theo thứ tự thời gian: <b>doji 09/07</b> (đám đông lưỡng lự), <b>cú gãy 20/07</b> (thân dài đi xuống kèm khối lượng gấp hơn hai lần — người bán thật sự quyết đoạn), <b>bóng dưới dài 23/07</b> (bị dìm xuống rồi có lực đỡ), rồi <b>thân dài 28/07</b> (đóng cửa đúng đỉnh phiên). Đó là một câu chuyện hoàn chỉnh: do dự → bán tháo → có người đỡ → người mua giành lại quyền kiểm soát.</p>
+      <p class="warn"><b>Đọc xuôi thì dễ</b>Nhìn lại quá khứ, mọi tín hiệu đều rõ ràng. Ngay cạnh cây nến 23/07 còn có những cây bóng dưới dài khác <i>không</i> dẫn tới đảo chiều nào cả. Đó là lý do bạn cần điểm cắt lỗ (cấp 5), chứ không cần thêm mẫu nến.</p>
       <h3>Xu hướng: định nghĩa bằng cấu trúc, không bằng cảm giác</h3>
       <p><b>Tăng</b> = đỉnh sau cao hơn đỉnh trước <i>và</i> đáy sau cao hơn đáy trước. <b>Giảm</b> = ngược lại. <b>Đi ngang</b> = không thỏa cả hai. Đây là định nghĩa duy nhất bạn cần, và nó khách quan — hai người nhìn cùng biểu đồ phải ra cùng kết luận.</p>
       <figure class="fig">
@@ -1290,6 +1409,224 @@ Ví dụ:  NAV 200.000.000đ,  rủi ro 1%  → chấp nhận mất 2.000.000đ
     }, { rootMargin: '0px 0px -12% 0px', threshold: 0.18 });
     figs.forEach(function(f){ io.observe(f); });
   }
+
+  (function(){
+    var host = document.getElementById('lab');
+    var tag = document.getElementById('lab-data');
+    if (!host || !tag) return;
+    var CFG, SVG = document.getElementById('lab-svg'), READ = document.getElementById('lab-read');
+    try { CFG = JSON.parse(tag.textContent); } catch(e){ return; }
+    var RAW = CFG.bars, tf = 'D', bars = RAW, sel = -1;
+    var NS = 'http://www.w3.org/2000/svg';
+    var W = 720, H = 400, L = 10, R = 664, PT = 26, PB = 258, VT = 288, VB = 348;
+
+    function vn(n){ return n.toLocaleString('vi-VN'); }
+    function dm(s){ return s.slice(8,10) + '/' + s.slice(5,7); }
+    function dmy(s){ return s.slice(8,10) + '/' + s.slice(5,7) + '/' + s.slice(0,4); }
+
+    function weekly(rows){
+      var out = [], cur = null;
+      for (var i=0;i<rows.length;i++){
+        var r = rows[i], d = new Date(r[0] + 'T00:00:00Z');
+        var wk = Math.floor((d.getTime()/86400000 + 3) / 7);
+        if (!cur || cur.wk !== wk){
+          cur = { wk:wk, k:1, b:[r[0], r[1], r[2], r[3], r[4], r[5]] };
+          out.push(cur);
+        } else {
+          var b = cur.b;
+          if (r[2] > b[2]) b[2] = r[2];
+          if (r[3] < b[3]) b[3] = r[3];
+          b[4] = r[4]; b[5] += r[5];
+          cur.k++;
+        }
+        cur.end = r[0];
+      }
+      return out.map(function(o){ var b = o.b.slice(); b[6] = o.end; b[7] = o.k; return b; });
+    }
+
+    function el(n, a){
+      var e = document.createElementNS(NS, n);
+      for (var k in a) if (a[k] !== null && a[k] !== undefined) e.setAttribute(k, a[k]);
+      return e;
+    }
+
+    function draw(){
+      while (SVG.firstChild) SVG.removeChild(SVG.firstChild);
+      var n = bars.length, i;
+      var hi = -Infinity, lo = Infinity, vmax = 0;
+      for (i=0;i<n;i++){
+        if (bars[i][2] > hi) hi = bars[i][2];
+        if (bars[i][3] < lo) lo = bars[i][3];
+        if (bars[i][5] > vmax) vmax = bars[i][5];
+      }
+      var pad = (hi - lo) * 0.06 || 1;
+      hi += pad; lo -= pad;
+      var py = function(p){ return PB - (p - lo) * (PB - PT) / (hi - lo); };
+      var pitch = (R - L) / n;
+      var cx = function(i){ return L + pitch * (i + 0.5); };
+      var bw = Math.max(2, Math.min(13, pitch * 0.66));
+
+      // luoi gia
+      var rawStep = (hi - lo) / 6, mag = Math.pow(10, Math.floor(Math.log(rawStep)/Math.LN10));
+      var nm = rawStep / mag;
+      var step = (nm <= 1 ? 1 : nm <= 2 ? 2 : nm <= 2.5 ? 2.5 : nm <= 5 ? 5 : 10) * mag;
+      var start = Math.ceil(lo / step) * step;
+      for (var p = start; p <= hi; p += step){
+        SVG.appendChild(el('line', {x1:L, y1:py(p), x2:R, y2:py(p), stroke:'var(--line-soft)'}));
+        SVG.appendChild(el('text', {x:R+8, y:py(p)+4, class:'t-num', fill:'var(--muted)'})).textContent = (p/1000).toFixed(1);
+      }
+
+      // vung gia dang chu y
+      var z = CFG.zone;
+      if (z[0] > lo && z[1] < hi){
+        SVG.appendChild(el('rect', {x:L, y:py(z[1]), width:R-L, height:Math.max(2, py(z[0])-py(z[1])),
+          fill:'var(--accent)', 'fill-opacity':'.11', stroke:'var(--accent)', 'stroke-opacity':'.42',
+          'stroke-dasharray':'5 4'}));
+        var zt = el('text', {x:L+7, y:py(z[1])-6, class:'t-num', fill:'var(--accent-ink)', 'font-size':'9.5'});
+        zt.textContent = 'vùng ' + (z[0]/1000).toFixed(1) + ' – ' + (z[1]/1000).toFixed(1)
+          + ' · ' + CFG.touch + ' phiên chạm rồi bật lên';
+        SVG.appendChild(zt);
+      }
+
+      // nen + khoi luong
+      for (i=0;i<n;i++){
+        var b = bars[i], up = b[4] >= b[1], col = up ? 'var(--up)' : 'var(--down)';
+        var g = el('g', {'data-i':i, class:'cd', style:'cursor:pointer'});
+        g.appendChild(el('line', {x1:cx(i), y1:py(b[2]), x2:cx(i), y2:py(b[3]),
+          stroke:col, 'stroke-width':Math.max(1, bw*0.16)}));
+        var yo = py(b[1]), yc = py(b[4]);
+        g.appendChild(el('rect', {x:cx(i)-bw/2, y:Math.min(yo,yc), width:bw,
+          height:Math.max(Math.abs(yc-yo), 1.4), fill:col}));
+        if (vmax > 0 && b[5] > 0){
+          var vh = (b[5]/vmax) * (VB - VT);
+          g.appendChild(el('rect', {x:cx(i)-bw/2, y:VB-vh, width:bw, height:vh,
+            fill:col, 'fill-opacity':'.42'}));
+        }
+        g.appendChild(el('rect', {x:cx(i)-pitch/2, y:PT-2, width:pitch, height:VB-PT+4,
+          fill:'transparent'}));
+        SVG.appendChild(g);
+      }
+      SVG.appendChild(el('line', {x1:L, y1:VB, x2:R, y2:VB, stroke:'var(--line)'}));
+      var vl = el('text', {x:L, y:VT-6, class:'t-num', fill:'var(--muted)', 'font-size':'9.5'});
+      vl.textContent = 'KHỐI LƯỢNG'; SVG.appendChild(vl);
+
+      // nhan thoi gian
+      var every = Math.max(1, Math.round(n / 6));
+      for (i=0;i<n;i+=every){
+        var ax = cx(i), an = 'middle';
+        if (ax - 20 < L){ ax = L; an = 'start'; }
+        else if (ax + 20 > R){ ax = R; an = 'end'; }
+        var t = el('text', {x:ax, y:370, class:'t-num', fill:'var(--muted)', 'text-anchor':an});
+        t.textContent = dm(bars[i][0]); SVG.appendChild(t);
+      }
+
+      if (sel >= 0 && sel < n){
+        var s = bars[sel];
+        SVG.appendChild(el('line', {x1:cx(sel), y1:PT-2, x2:cx(sel), y2:VB,
+          stroke:'var(--ink)', 'stroke-opacity':'.32', 'stroke-dasharray':'3 3'}));
+        SVG.appendChild(el('rect', {x:cx(sel)-Math.max(bw,7)/2-3, y:py(s[2])-4,
+          width:Math.max(bw,7)+6, height:py(s[3])-py(s[2])+8, rx:3,
+          fill:'none', stroke:'var(--ink)', 'stroke-opacity':'.55'}));
+        SVG.appendChild(el('line', {x1:L, y1:py(s[4]), x2:R, y2:py(s[4]),
+          stroke:'var(--ink)', 'stroke-opacity':'.3', 'stroke-dasharray':'2 4'}));
+      }
+    }
+
+    function avgVol(i){
+      var a = 0, k = 0;
+      for (var j = Math.max(0, i-19); j <= i; j++){ if (bars[j][5] > 0){ a += bars[j][5]; k++; } }
+      return { avg: k ? a/k : 0, n: k };
+    }
+
+    function readout(){
+      if (sel < 0){ READ.innerHTML = '<p class="lab-empty">Chưa chọn cây nến nào — bấm vào đồ thị ở trên.</p>'; return; }
+      var b = bars[sel], o=b[1], h=b[2], l=b[3], c=b[4], v=b[5];
+      var rng = h - l, body = Math.abs(c-o);
+      var upSh = h - Math.max(o,c), dnSh = Math.min(o,c) - l;
+      var pb = rng ? body/rng*100 : 0, pu = rng ? upSh/rng*100 : 0, pd = rng ? dnSh/rng*100 : 0;
+      var prev = sel > 0 ? bars[sel-1][4] : o;
+      var chg = prev ? (c-prev)/prev*100 : 0;
+      var up = c >= o, col = up ? 'var(--up)' : 'var(--down)';
+      var av = avgVol(sel), vr = av.avg ? v/av.avg : 0;
+      var partial = (tf === 'W' && b[7] && b[7] < 5);
+
+      var why = [];
+      if (rng === 0) why.push('Phiên này giá không dao động — gần như không có giao dịch đáng kể.');
+      else if (pb > 70) why.push('<b>Thân dài (' + pb.toFixed(0) + '% biên độ)</b> — phe ' + (up?'mua':'bán') + ' kiểm soát gần như cả phiên, ít giằng co.');
+      else if (pb < 12) why.push('<b>Thân rất ngắn (' + pb.toFixed(0) + '%)</b> — mở và đóng gần bằng nhau: hai phe hoà nhau, đám đông lưỡng lự.');
+      else why.push('Thân vừa (' + pb.toFixed(0) + '% biên độ) — có xu hướng nhưng vẫn còn giằng co.');
+      if (pd > 45) why.push('<b>Bóng dưới dài (' + pd.toFixed(0) + '%)</b> — giá từng bị dìm xuống ' + vn(l) + 'đ rồi được mua ngược lên: có lực đỡ ở vùng đó.');
+      if (pu > 45) why.push('<b>Bóng trên dài (' + pu.toFixed(0) + '%)</b> — có lúc lên tới ' + vn(h) + 'đ nhưng bị bán ép về: có lực cản ở trên.');
+      var ky = tf === 'W' ? ' tuần' : ' phiên';
+      if (partial){
+        why.push('<b>Tuần này chưa kết thúc</b> — mới có ' + b[7] + ' phiên, nên không so khối lượng với các tuần trọn vẹn được.');
+      } else if (v > 0 && av.avg > 0 && av.n > 3){
+        if (vr >= 2) why.push('Khối lượng <b>gấp ' + vr.toFixed(1) + ' lần</b> trung bình ' + av.n + ky + ' gần nhất — nhiều người cùng hành động, tín hiệu đáng tin hơn.');
+        else if (vr <= 0.6) why.push('Khối lượng chỉ bằng ' + Math.round(vr*100) + '% trung bình ' + av.n + ky + ' gần nhất — ít người tham gia, đừng tin vội.');
+      }
+      why.push('Đặt câu hỏi cuối cùng: cây nến này nằm ở đâu trong xu hướng, và cách vùng giá quan trọng bao xa?');
+
+      var per = tf === 'W'
+        ? 'Tuần ' + dmy(b[0]) + (b[6] && b[6] !== b[0] ? ' – ' + dm(b[6]) : '')
+        : dmy(b[0]);
+      var cells = [['Mở', o], ['Cao', h], ['Thấp', l], ['Đóng', c]].map(function(x){
+        return '<div><dt>' + x[0] + '</dt><dd>' + vn(x[1]) + '</dd></div>';
+      }).join('');
+      cells += '<div><dt>Khối lượng</dt><dd>' + (v > 0 ? vn(v) : '—') + '</dd></div>';
+
+      READ.innerHTML =
+        '<div class="lab-r1"><span class="lab-date">' + per + '</span>' +
+        '<span class="lab-chg" style="color:' + col + '">' + (chg>=0?'+':'−') + Math.abs(chg).toFixed(2) + '%</span>' +
+        '<span class="lab-tag" style="color:' + col + ';border-color:' + col + '">' +
+        (up ? 'nến tăng' : 'nến giảm') + '</span></div>' +
+        '<dl class="lab-ohlc">' + cells + '</dl>' +
+        '<div class="lab-why">' + why.join(' ') + '</div>';
+    }
+
+    function pick(i){
+      if (i < 0 || i >= bars.length) return;
+      sel = i; draw(); readout();
+    }
+
+    SVG.addEventListener('click', function(e){
+      var g = e.target.closest ? e.target.closest('[data-i]') : null;
+      if (g) pick(+g.getAttribute('data-i'));
+    });
+    SVG.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowRight'){ pick(sel < 0 ? 0 : sel+1); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft'){ pick(sel < 0 ? bars.length-1 : sel-1); e.preventDefault(); }
+    });
+    host.querySelectorAll('[data-tf]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        tf = btn.getAttribute('data-tf');
+        host.querySelectorAll('[data-tf]').forEach(function(o){
+          var on = o === btn;
+          o.classList.toggle('on', on);
+          o.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        bars = tf === 'W' ? weekly(RAW) : RAW;
+        sel = bars.length - 1; draw(); readout();
+      });
+    });
+    host.querySelectorAll('.lab-jump').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var d = btn.getAttribute('data-date');
+        if (tf !== 'D'){
+          tf = 'D'; bars = RAW;
+          host.querySelectorAll('[data-tf]').forEach(function(o){
+            var on = o.getAttribute('data-tf') === 'D';
+            o.classList.toggle('on', on);
+            o.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+        }
+        for (var i=0;i<bars.length;i++) if (bars[i][0] === d){ pick(i); break; }
+        SVG.focus({ preventScroll:true });
+      });
+    });
+
+    sel = RAW.length - 1;
+    draw(); readout();
+  })();
 
   var sections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
   function spy(){
