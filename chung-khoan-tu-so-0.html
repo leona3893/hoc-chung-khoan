@@ -222,6 +222,47 @@ table.tbl tr:last-child td{ border-bottom:0 }
 .disclaimer{ margin-top:32px; padding-top:20px; border-top:1px solid var(--line); font-size:var(--fs-xs);
   color:var(--muted); line-height:1.65; max-width:64ch }
 
+/* ---------- Hình minh hoạ ---------- */
+.fig{ margin:18px 0 0; padding:15px 16px 12px; background:var(--surface);
+  border:1px solid var(--line); border-radius:var(--radius) }
+.fig svg{ display:block; width:100%; height:auto }
+.fig figcaption{ margin-top:12px; padding-top:11px; border-top:1px solid var(--line-soft);
+  font-size:var(--fs-xs); color:var(--muted); line-height:1.62 }
+.fig figcaption b{ color:var(--ink-2); font-weight:600 }
+.fig text{ font-family:var(--font-body); fill:var(--ink-2) }
+.fig .t-eb{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.11em; fill:var(--muted) }
+.fig .t-lbl{ font-size:11px; fill:var(--muted) }
+.fig .t-key{ font-size:11.5px; font-weight:600; fill:var(--ink) }
+.fig .t-num{ font-family:var(--font-mono); font-size:11px; fill:var(--ink-2) }
+.fig .t-mono{ font-family:var(--font-mono) }
+h3 + .fig{ margin-top:12px }
+p + .fig, ul + .fig, ol + .fig, .dl + .fig, .formula + .fig, .tbl-wrap + .fig,
+.board-wrap + .fig, .aside + .fig, .warn + .fig{ margin-top:15px }
+.fig + p, .fig + .aside, .fig + .warn, .fig + ul, .fig + ol, .fig + .dl,
+.fig + .formula, .fig + .tbl-wrap, .fig + h3{ margin-top:15px }
+
+.fig.anim [data-draw]{ stroke-dasharray:2600; stroke-dashoffset:2600 }
+.fig.anim.in [data-draw]{ animation:fg-draw 1.1s ease forwards }
+@keyframes fg-draw{ to{ stroke-dashoffset:0 } }
+.fig.anim [data-rise]{ transform-box:fill-box; transform-origin:50% 100%; transform:scaleY(.02) }
+.fig.anim.in [data-rise]{ animation:fg-rise .62s cubic-bezier(.2,.75,.3,1) forwards }
+@keyframes fg-rise{ to{ transform:scaleY(1) } }
+.fig.anim [data-grow]{ transform-box:fill-box; transform-origin:0% 50%; transform:scaleX(.02) }
+.fig.anim [data-growc]{ transform-box:fill-box; transform-origin:50% 50%; transform:scaleX(.02) }
+.fig.anim.in [data-grow], .fig.anim.in [data-growc]{ animation:fg-grow .68s cubic-bezier(.2,.75,.3,1) forwards }
+@keyframes fg-grow{ to{ transform:scaleX(1) } }
+.fig.anim [data-fade]{ opacity:0 }
+.fig.anim.in [data-fade]{ animation:fg-fade .55s ease forwards }
+@keyframes fg-fade{ to{ opacity:1 } }
+.fig .playhead{ animation:fg-play 9s linear infinite }
+@keyframes fg-play{ from{ transform:translateX(0) } to{ transform:translateX(590px) } }
+@media (prefers-reduced-motion: reduce){
+  .fig .playhead{ display:none }
+  .fig.anim [data-draw], .fig.anim [data-rise], .fig.anim [data-grow],
+  .fig.anim [data-growc], .fig.anim [data-fade]{
+    stroke-dashoffset:0 !important; transform:none !important; opacity:1 !important }
+}
+
 html{ scroll-behavior:smooth }
 @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto } *{ animation:none !important; transition:none !important } }
 </style>
@@ -280,6 +321,24 @@ html{ scroll-behavior:smooth }
       <h3>Tiền bạn bỏ ra đi về đâu?</h3>
       <p>Đây là chỗ 90% người mới hiểu sai. Khi bạn mua cổ phiếu HPG trên sàn, <b>tiền của bạn không chảy vào Hòa Phát</b> — nó chảy vào túi một nhà đầu tư khác đang muốn bán. Doanh nghiệp chỉ nhận tiền trực tiếp trong hai trường hợp: lần đầu bán ra công chúng (IPO) và các đợt phát hành thêm cổ phiếu.</p>
       <p>Hệ quả rất quan trọng: thị trường thứ cấp là nơi <b>bạn và người bán trao đổi kỳ vọng với nhau</b>. Trong ngắn hạn, lãi của bạn gần như là lỗ của người khác. Chỉ trong dài hạn, khi doanh nghiệp thực sự làm ra nhiều lợi nhuận hơn, thì tổng chiếc bánh mới to lên và tất cả cùng thắng.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 220" role="img" aria-label="Tien chay di dau khi ban mua co phieu">
+      <text class="t-eb" x="0" y="11">1 · THỊ TRƯỜNG SƠ CẤP — IPO / PHÁT HÀNH THÊM</text>
+      <rect data-fade="" x="0" y="26" width="168" height="46" rx="8" fill="var(--surface-2)" stroke="var(--line)"/><text class="t-key" x="84" y="54" text-anchor="middle">Nhà đầu tư</text>
+      <g data-fade="" style="animation-delay:.15s"><line x1="176" y1="49" x2="292" y2="49" stroke="var(--up)" stroke-width="2"/><path d="M292 49 L282 44 L282 54 Z" fill="var(--up)"/><text class="t-num" x="234" y="40" text-anchor="middle" fill="var(--up)">tiền vốn</text></g>
+      <rect data-fade="" style="animation-delay:.3s" x="300" y="26" width="180" height="46" rx="8" fill="var(--up)" fill-opacity=".12" stroke="var(--up)" stroke-opacity=".55"/><text class="t-key" x="390" y="54" text-anchor="middle">Doanh nghiệp</text>
+      <text class="t-lbl" x="494" y="45">Công ty nhận</text><text class="t-lbl" x="494" y="60">tiền thật</text>
+      <line x1="0" y1="92" x2="640" y2="92" stroke="var(--line-soft)"/>
+      <text class="t-eb" x="0" y="116">2 · THỊ TRƯỜNG THỨ CẤP — SÀN HOSE/HNX/UPCOM (99% GIAO DỊCH)</text>
+      <rect data-fade="" x="0" y="132" width="152" height="46" rx="8" fill="var(--surface-2)" stroke="var(--line)"/><text class="t-key" x="76" y="160" text-anchor="middle">Bạn — mua</text>
+      <g data-fade="" style="animation-delay:.15s"><line x1="160" y1="155" x2="212" y2="155" stroke="var(--accent)" stroke-width="2"/><path d="M212 155 L202 150 L202 160 Z" fill="var(--accent)"/></g>
+      <rect data-fade="" style="animation-delay:.3s" x="220" y="132" width="168" height="46" rx="8" fill="var(--surface-2)" stroke="var(--line)"/><text class="t-key" x="304" y="160" text-anchor="middle">NĐT khác — bán</text>
+      <g data-fade="" style="animation-delay:.45s"><line x1="396" y1="155" x2="452" y2="155" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4"/><line x1="416" y1="146" x2="432" y2="164" stroke="var(--down)" stroke-width="2.2"/><line x1="432" y1="146" x2="416" y2="164" stroke="var(--down)" stroke-width="2.2"/></g>
+      <rect data-fade="" style="animation-delay:.45s" x="460" y="132" width="172" height="46" rx="8" fill="none" stroke="var(--line)" stroke-dasharray="5 4"/><text class="t-lbl" x="546" y="153" text-anchor="middle">Doanh nghiệp</text><text class="t-num" x="546" y="168" text-anchor="middle" fill="var(--down)">nhận 0đ</text>
+      <text class="t-lbl" x="0" y="204">Tiền chỉ đổi túi giữa hai nhà đầu tư. Giá trị doanh nghiệp không đổi vì bạn bấm lệnh mua.</text>
+      </svg>
+      <figcaption><b>Tiền của bạn không chảy vào công ty.</b> Trên sàn, nó chảy vào tài khoản của người đang muốn bán. Doanh nghiệp chỉ nhận tiền trực tiếp ở IPO và các đợt phát hành thêm.</figcaption>
+      </figure>
 
       <h3>Bạn kiếm tiền từ đúng hai nguồn</h3>
       <dl class="dl">
@@ -324,6 +383,39 @@ html{ scroll-behavior:smooth }
         </table>
       </div>
       <p class="aside"><b>Cách nhớ</b>Càng lên sàn cao thì “dây cương” càng chặt. HOSE là đường cao tốc có giới hạn tốc độ nghiêm; UPCoM là đường làng — đi nhanh được, nhưng lật xe cũng nhanh.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 212" role="img" aria-label="BIÊN ĐỘ MỘT PHIÊN — TÍNH TỪ GIÁ THAM CHIẾU">
+      <text class="t-eb" x="0" y="11">BIÊN ĐỘ MỘT PHIÊN — TÍNH TỪ GIÁ THAM CHIẾU</text>
+      <text class="t-num" x="320" y="30" text-anchor="middle" fill="var(--accent-ink)">GIÁ THAM CHIẾU  30.00</text>
+      <line x1="320" y1="38" x2="320" y2="182" stroke="var(--ref)" stroke-width="1.5" stroke-dasharray="4 5"/>
+      <g data-growc="" style="animation-delay:0.00s">
+      <rect x="194.0" y="54" width="252.0" height="26" rx="4" fill="var(--surface-2)" stroke="var(--line)"/>
+      <rect x="194.0" y="54" width="5" height="26" rx="2" fill="var(--floor)"/>
+      <rect x="441.0" y="54" width="5" height="26" rx="2" fill="var(--ceil)"/>
+      </g>
+      <text class="t-key t-mono" x="320" y="72" text-anchor="middle">HOSE  ±7%</text>
+      <text class="t-num" x="186.0" y="72" text-anchor="end" fill="var(--floor)">27.90</text>
+      <text class="t-num" x="454.0" y="72" fill="var(--ceil)">32.10</text>
+      <g data-growc="" style="animation-delay:0.12s">
+      <rect x="140.0" y="100" width="360.0" height="26" rx="4" fill="var(--surface-2)" stroke="var(--line)"/>
+      <rect x="140.0" y="100" width="5" height="26" rx="2" fill="var(--floor)"/>
+      <rect x="495.0" y="100" width="5" height="26" rx="2" fill="var(--ceil)"/>
+      </g>
+      <text class="t-key t-mono" x="320" y="118" text-anchor="middle">HNX  ±10%</text>
+      <text class="t-num" x="132.0" y="118" text-anchor="end" fill="var(--floor)">27.00</text>
+      <text class="t-num" x="508.0" y="118" fill="var(--ceil)">33.00</text>
+      <g data-growc="" style="animation-delay:0.24s">
+      <rect x="50.0" y="146" width="540.0" height="26" rx="4" fill="var(--surface-2)" stroke="var(--line)"/>
+      <rect x="50.0" y="146" width="5" height="26" rx="2" fill="var(--floor)"/>
+      <rect x="585.0" y="146" width="5" height="26" rx="2" fill="var(--ceil)"/>
+      </g>
+      <text class="t-key t-mono" x="320" y="164" text-anchor="middle">UPCoM  ±15%</text>
+      <text class="t-num" x="42.0" y="164" text-anchor="end" fill="var(--floor)">25.50</text>
+      <text class="t-num" x="598.0" y="164" fill="var(--ceil)">34.50</text>
+      <text class="t-lbl" x="320" y="200" text-anchor="middle">Chạm mép phải = tím kịch trần · chạm mép trái = xanh lam kịch sàn</text>
+      </svg>
+      <figcaption>Giá chỉ được chạy trong dải này suốt một phiên. Sàn càng &ldquo;tập sự&rdquo; thì dây cương càng lỏng — cơ hội và rủi ro nở ra cùng nhau. (Số minh hoạ chưa làm tròn theo bước giá.)</figcaption>
+      </figure>
 
       <h3>Đọc bảng điện: bảng màu chỉ Việt Nam mới có</h3>
       <p>Ở Mỹ xanh là tăng — nhưng ở Việt Nam bảng điện dùng <b>năm màu</b>, và màu mang nghĩa cố định. Đây là thứ đầu tiên phải thuộc, vì mọi thảo luận về cổ phiếu đều nói bằng ngôn ngữ này (“hôm nay tím trần”, “trắng bên mua”).</p>
@@ -364,6 +456,34 @@ html{ scroll-behavior:smooth }
         </table>
       </div>
 
+      <figure class="fig">
+      <svg viewBox="0 0 640 172" role="img" aria-label="MỘT PHIÊN GIAO DỊCH TRÊN HOSE">
+      <text class="t-eb" x="0" y="11">MỘT PHIÊN GIAO DỊCH TRÊN HOSE</text>
+      <defs><pattern id="fg-hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="7" stroke="var(--line)" stroke-width="3"/></pattern></defs>
+      <rect data-fade="" style="animation-delay:0.00s" x="30.0" y="56" width="24.6" height="32" fill="var(--accent-wash)" stroke="var(--accent)"/>
+      <rect data-fade="" style="animation-delay:0.08s" x="54.6" y="56" width="221.2" height="32" fill="var(--surface-2)" stroke="var(--line)"/>
+      <rect data-fade="" style="animation-delay:0.16s" x="275.8" y="56" width="147.5" height="32" fill="url(#fg-hatch)" stroke="var(--line)"/>
+      <rect data-fade="" style="animation-delay:0.24s" x="423.3" y="56" width="147.5" height="32" fill="var(--surface-2)" stroke="var(--line)"/>
+      <rect data-fade="" style="animation-delay:0.32s" x="570.8" y="56" width="24.6" height="32" fill="var(--accent-wash)" stroke="var(--accent)"/>
+      <rect data-fade="" style="animation-delay:0.40s" x="595.4" y="56" width="24.6" height="32" fill="var(--surface-2)" stroke="var(--line-soft)"/>
+      <text class="t-num" x="42.3" y="34" text-anchor="middle" fill="var(--accent-ink)">ATO</text>
+      <line x1="42.3" y1="40" x2="42.3" y2="54" stroke="var(--accent)" stroke-opacity=".6"/>
+      <text class="t-num" x="583.1" y="34" text-anchor="middle" fill="var(--accent-ink)">ATC</text>
+      <line x1="583.1" y1="40" x2="583.1" y2="54" stroke="var(--accent)" stroke-opacity=".6"/>
+      <text class="t-lbl" x="164.4" y="76" text-anchor="middle">Khớp liên tục</text>
+      <text class="t-lbl" x="349.6" y="76" text-anchor="middle">Nghỉ trưa</text>
+      <text class="t-lbl" x="497.1" y="76" text-anchor="middle">Khớp liên tục</text>
+      <line x1="606.9" y1="88" x2="606.9" y2="104" stroke="var(--line)"/>
+      <text class="t-lbl" x="632" y="116" text-anchor="end">Thỏa thuận (lô lớn)</text>
+      <text class="t-num" x="30.0" y="136" text-anchor="start">9:00</text>
+      <text class="t-num" x="275.8" y="136" text-anchor="middle">11:30</text>
+      <text class="t-num" x="423.3" y="136" text-anchor="middle">13:00</text>
+            <text class="t-num" x="620.0" y="136" text-anchor="end">15:00</text>
+      <g class="playhead"><line x1="30" y1="50" x2="30" y2="94" stroke="var(--accent)" stroke-width="1.5"/><circle cx="30" cy="50" r="3" fill="var(--accent)"/></g>
+      <text class="t-lbl" x="0" y="162" fill="var(--ink-2)">Phiên ATC quyết định giá đóng cửa — cũng chính là giá tham chiếu của ngày mai.</text>
+      </svg>
+      <figcaption>Hai đầu phiên là <b>khớp lệnh định kỳ</b> (ATO/ATC): mọi lệnh dồn lại, hệ thống chọn một mức giá duy nhất. Giữa phiên là khớp liên tục — gặp giá là khớp ngay.</figcaption>
+      </figure>
       <h3>Các loại lệnh — chỉ cần thuộc bốn cái</h3>
       <dl class="dl">
         <div><dt>LO<small>Limit Order</small></dt><dd>Bạn ra giá cụ thể: “mua HPG giá 27.00”. Khớp đúng giá đó hoặc tốt hơn, không khớp thì nằm chờ. <b>Người mới dùng LO là chính.</b></dd></div>
@@ -375,6 +495,35 @@ html{ scroll-behavior:smooth }
       <h3>T+2: tiền và cổ phiếu không về ngay</h3>
       <p>Mua cổ phiếu hôm nay (ngày T), cổ phiếu về tài khoản chiều T+1 và <b>bạn chỉ bán được từ ngày T+2</b>. Ngược lại, bán hôm nay thì tiền cũng về theo lịch tương tự.</p>
       <p class="warn"><b>Vì sao điều này quan trọng</b>Bạn bị “nhốt” hai phiên. Mua thứ Năm, gặp tin xấu thứ Sáu — bạn chỉ đứng nhìn. Đây là lý do quy mô mỗi lệnh (cấp 5) quan trọng hơn việc chọn đúng mã.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 160" role="img" aria-label="CHU TRÌNH T+2">
+      <text class="t-eb" x="0" y="11">CHU TRÌNH T+2</text>
+      <line x1="40" y1="86" x2="600" y2="86" stroke="var(--line)" stroke-width="1.5"/>
+      <path d="M600 86 L590 81 L590 91 Z" fill="var(--line)"/>
+      <g data-fade="" style="animation-delay:0.00s">
+      <circle cx="110" cy="86" r="17" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.8"/>
+      <text class="t-num" x="110" y="90" text-anchor="middle" fill="var(--accent)">T</text>
+      <text class="t-key" x="110" y="128" text-anchor="middle">Bạn mua</text>
+      <text class="t-lbl" x="110" y="145" text-anchor="middle">Tiền bị trừ ngay</text>
+      </g>
+      <g data-fade="" style="animation-delay:0.15s">
+      <circle cx="300" cy="86" r="17" fill="var(--surface)" stroke="var(--muted)" stroke-width="1.8"/>
+      <text class="t-num" x="300" y="90" text-anchor="middle" fill="var(--muted)">T+1</text>
+      <text class="t-key" x="300" y="128" text-anchor="middle">Chờ</text>
+      <text class="t-lbl" x="300" y="145" text-anchor="middle">Chiều: cổ phiếu về tài khoản</text>
+      </g>
+      <g data-fade="" style="animation-delay:0.30s">
+      <circle cx="490" cy="86" r="17" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="490" y="90" text-anchor="middle" fill="var(--up)">T+2</text>
+      <text class="t-key" x="490" y="128" text-anchor="middle">Được bán</text>
+      <text class="t-lbl" x="490" y="145" text-anchor="middle">Từ phiên này mới bán được</text>
+      </g>
+      <path d="M110 56 L110 44 L490 44 L490 56" fill="none" stroke="var(--down)" stroke-width="1.4" stroke-opacity=".8"/>
+      <rect x="212" y="30" width="176" height="18" rx="4" fill="var(--surface)"/>
+      <text class="t-num" x="300" y="43" text-anchor="middle" fill="var(--down)">Bị nhốt hai phiên</text>
+      </svg>
+      <figcaption>Mua hôm nay thì sớm nhất <b>T+2</b> mới bán được. Trong hai phiên đó, tin xấu ra thì bạn chỉ có thể đứng nhìn — đây là lý do quy mô lệnh quan trọng hơn việc chọn đúng mã.</figcaption>
+      </figure>
 
       <h3>Chi phí thật của một vòng mua–bán</h3>
       <div class="tbl-wrap">
@@ -389,6 +538,40 @@ html{ scroll-behavior:smooth }
         </table>
       </div>
       <p>Cộng lại, một vòng mua–bán tốn khoảng <b>0,4–0,6%</b>. Nghĩa là cổ phiếu phải tăng chừng đó bạn mới hòa vốn. Giao dịch 100 lần một năm là bạn tự trả đi 40–60% vốn cho phí — đây là lý do toán học vì sao “lướt sóng” liên tục gần như luôn thua.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 226" role="img" aria-label="PHÍ + THUẾ ĂN MẤT BAO NHIÊU VỐN MỘT NĂM">
+      <text class="t-eb" x="0" y="11">PHÍ + THUẾ ĂN MẤT BAO NHIÊU VỐN MỘT NĂM</text>
+      <line x1="60" y1="178.0" x2="600" y2="178.0" stroke="var(--line-soft)"/>
+      <text class="t-num" x="52" y="182.0" text-anchor="end" fill="var(--muted)">0%</text>
+      <line x1="60" y1="136.9" x2="600" y2="136.9" stroke="var(--line-soft)"/>
+      <text class="t-num" x="52" y="140.9" text-anchor="end" fill="var(--muted)">20%</text>
+      <line x1="60" y1="95.7" x2="600" y2="95.7" stroke="var(--line-soft)"/>
+      <text class="t-num" x="52" y="99.7" text-anchor="end" fill="var(--muted)">40%</text>
+      <line x1="60" y1="54.6" x2="600" y2="54.6" stroke="var(--line-soft)"/>
+      <text class="t-num" x="52" y="58.6" text-anchor="end" fill="var(--muted)">60%</text>
+      <rect data-rise="" style="animation-delay:0.00s" x="74" y="171.9" width="62" height="6.1" rx="3" fill="var(--down)" fill-opacity="0.30"/>
+      <text class="t-num" x="105" y="164.9" text-anchor="middle" fill="var(--ink)">3%</text>
+      <text class="t-num" x="105" y="196" text-anchor="middle" fill="var(--muted)">6</text>
+      <rect data-rise="" style="animation-delay:0.09s" x="164" y="166.0" width="62" height="12.0" rx="3" fill="var(--down)" fill-opacity="0.44"/>
+      <text class="t-num" x="195" y="159.0" text-anchor="middle" fill="var(--ink)">6%</text>
+      <text class="t-num" x="195" y="196" text-anchor="middle" fill="var(--muted)">12</text>
+      <rect data-rise="" style="animation-delay:0.18s" x="254" y="154.7" width="62" height="23.3" rx="3" fill="var(--down)" fill-opacity="0.58"/>
+      <text class="t-num" x="285" y="147.7" text-anchor="middle" fill="var(--ink)">11%</text>
+      <text class="t-num" x="285" y="196" text-anchor="middle" fill="var(--muted)">24</text>
+      <rect data-rise="" style="animation-delay:0.27s" x="344" y="132.4" width="62" height="45.6" rx="3" fill="var(--down)" fill-opacity="0.72"/>
+      <text class="t-num" x="375" y="125.4" text-anchor="middle" fill="var(--ink)">22%</text>
+      <text class="t-num" x="375" y="196" text-anchor="middle" fill="var(--muted)">50</text>
+      <rect data-rise="" style="animation-delay:0.36s" x="434" y="96.9" width="62" height="81.1" rx="3" fill="var(--down)" fill-opacity="0.86"/>
+      <text class="t-num" x="465" y="89.9" text-anchor="middle" fill="var(--ink)">39%</text>
+      <text class="t-num" x="465" y="196" text-anchor="middle" fill="var(--muted)">100</text>
+      <rect data-rise="" style="animation-delay:0.45s" x="524" y="47.8" width="62" height="130.2" rx="3" fill="var(--down)" fill-opacity="1.00"/>
+      <text class="t-num" x="555" y="40.8" text-anchor="middle" fill="var(--ink)">63%</text>
+      <text class="t-num" x="555" y="196" text-anchor="middle" fill="var(--muted)">200</text>
+      <line x1="60" y1="178" x2="600" y2="178" stroke="var(--line)"/>
+      <text class="t-lbl" x="330" y="216" text-anchor="middle">Số vòng mua–bán trong một năm</text>
+      </svg>
+      <figcaption>Tính với <b>0,5% mỗi vòng mua–bán</b> (phí môi giới hai chiều + thuế bán), giả định lãi lỗ hoà nhau. Giao dịch 100 lần/năm là bạn tự nộp gần <b>40% vốn</b> cho phí, trước khi nói tới chuyện đúng hay sai.</figcaption>
+      </figure>
 
       <h3>Có những thứ gì để mua?</h3>
       <dl class="dl">
@@ -439,6 +622,27 @@ html{ scroll-behavior:smooth }
 
       <h3>Bảng cân đối: một phương trình duy nhất</h3>
       <div class="formula">TÀI SẢN  =  NỢ PHẢI TRẢ  +  VỐN CHỦ SỞ HỮU</div>
+      <figure class="fig">
+      <svg viewBox="0 0 640 176" role="img" aria-label="PHƯƠNG TRÌNH KẾ TOÁN">
+      <text class="t-eb" x="0" y="11">PHƯƠNG TRÌNH KẾ TOÁN</text>
+      <rect data-fade="" x="30" y="48" width="180" height="110" rx="6" fill="var(--surface-2)" stroke="var(--line)"/>
+      <text class="t-key t-mono" x="120" y="98" text-anchor="middle">TÀI SẢN  100</text>
+      <text class="t-lbl" x="120" y="116" text-anchor="middle">Những gì công ty có</text>
+      <text x="243" y="110" font-family="var(--font-mono)" font-size="20" fill="var(--muted)">=</text>
+      <rect data-fade="" style="animation-delay:.15s" x="280" y="48" width="180" height="66" rx="6" fill="var(--down)" fill-opacity=".13" stroke="var(--down)" stroke-opacity=".5"/>
+      <text class="t-key t-mono" x="370" y="78" text-anchor="middle">NỢ PHẢI TRẢ  60</text>
+      <text class="t-lbl" x="370" y="95" text-anchor="middle">Tiền của người khác</text>
+      <rect data-fade="" style="animation-delay:.3s" x="280" y="114" width="180" height="44" rx="6" fill="var(--up)" fill-opacity=".13" stroke="var(--up)" stroke-opacity=".5"/>
+      <text class="t-key t-mono" x="370" y="134" text-anchor="middle">VỐN CHỦ SỞ HỮU  40</text>
+      <text class="t-lbl" x="370" y="150" text-anchor="middle">Phần thực sự của cổ đông</text>
+      <text class="t-num" x="486" y="86" fill="var(--ink)">D/E = 60 / 40 = 1,5</text>
+      <text class="t-lbl" x="486" y="108">&gt; 1 → cần giải thích</text>
+      <text class="t-lbl" x="486" y="124">&gt; 2 (sản xuất) → đáng lo</text>
+      <text class="t-lbl" x="486" y="146">Ngân hàng, bất động sản</text>
+      <text class="t-lbl" x="486" y="160">có chuẩn riêng, cao hơn</text>
+      </svg>
+      <figcaption>Mọi đồng tài sản đều có chủ: hoặc chủ nợ, hoặc cổ đông. <b>Nợ càng chiếm nhiều</b>, phần bạn thực sự sở hữu càng mỏng — và một cú sốc nhỏ cũng đủ thổi bay nó.</figcaption>
+      </figure>
       <p>Ba dòng đáng soi nhất với người mới:</p>
       <ul>
         <li><b>Hàng tồn kho</b> phình nhanh hơn doanh thu → hàng đang ế.</li>
@@ -492,6 +696,27 @@ html{ scroll-behavior:smooth }
       <p>Với thép, hóa chất, bất động sản, chứng khoán, vận tải biển — lợi nhuận lên xuống theo chu kỳ hàng hóa. Ở <b>đỉnh</b> chu kỳ, lợi nhuận cao ngất nên P/E trông cực rẻ. Ở <b>đáy</b> chu kỳ, lợi nhuận về gần 0 nên P/E trông đắt kinh khủng hoặc âm.</p>
       <p class="warn"><b>Hệ quả ngược trực giác</b>Với cổ phiếu chu kỳ, P/E thấp thường là tín hiệu <i>bán</i>, còn P/E cao (hoặc lỗ) lại thường gần vùng <i>mua</i>. Đây là chỗ nhiều người mới, mới học P/E xong, mất tiền nặng nhất.</p>
       <p>Nhóm phòng thủ thì ngược lại: điện, nước, dược, bán lẻ thiết yếu có lợi nhuận đều — P/E đọc theo nghĩa thông thường được.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 292" role="img" aria-label="CỔ PHIẾU NGÀNH CHU KỲ — THÉP, HOÁ CHẤT, VẬN TẢI BIỂN…">
+      <text class="t-eb" x="0" y="11">CỔ PHIẾU NGÀNH CHU KỲ — THÉP, HOÁ CHẤT, VẬN TẢI BIỂN…</text>
+      <text class="t-num" x="60" y="32" fill="var(--muted)">LỢI NHUẬN</text>
+      <line x1="60" y1="112" x2="600" y2="112" stroke="var(--line)"/>
+      <polyline data-draw="" points="60.0,103.4 66.0,101.1 72.0,98.9 78.0,96.7 84.0,94.5 90.0,92.4 96.0,90.2 102.0,88.0 108.0,85.9 114.0,83.8 120.0,81.7 126.0,79.6 132.0,77.6 138.0,75.6 144.0,73.6 150.0,71.7 156.0,69.8 162.0,67.9 168.0,66.1 174.0,64.4 180.0,62.6 186.0,61.0 192.0,59.3 198.0,57.8 204.0,56.3 210.0,54.8 216.0,53.4 222.0,52.1 228.0,50.8 234.0,49.6 240.0,48.5 246.0,47.4 252.0,46.4 258.0,45.5 264.0,44.6 270.0,43.8 276.0,43.1 282.0,42.5 288.0,41.9 294.0,41.4 300.0,41.0 306.0,40.6 312.0,40.3 318.0,40.2 324.0,40.0 330.0,40.0 336.0,40.0 342.0,40.2 348.0,40.3 354.0,40.6 360.0,41.0 366.0,41.4 372.0,41.9 378.0,42.5 384.0,43.1 390.0,43.8 396.0,44.6 402.0,45.5 408.0,46.4 414.0,47.4 420.0,48.5 426.0,49.6 432.0,50.8 438.0,52.1 444.0,53.4 450.0,54.8 456.0,56.3 462.0,57.8 468.0,59.3 474.0,61.0 480.0,62.6 486.0,64.4 492.0,66.1 498.0,67.9 504.0,69.8 510.0,71.7 516.0,73.6 522.0,75.6 528.0,77.6 534.0,79.6 540.0,81.7 546.0,83.8 552.0,85.9 558.0,88.0 564.0,90.2 570.0,92.4 576.0,94.5 582.0,96.7 588.0,98.9 594.0,101.1 600.0,103.4" fill="none" stroke="var(--up)" stroke-width="2.2" stroke-linejoin="round"/>
+      <text class="t-num" x="60" y="152" fill="var(--muted)">P/E</text>
+      <line x1="60" y1="236" x2="600" y2="236" stroke="var(--line)"/>
+      <polyline data-draw="" style="animation-delay:.2s" points="60.0,162.0 66.0,179.1 72.0,190.5 78.0,198.5 84.0,204.5 90.0,209.1 96.0,212.8 102.0,215.8 108.0,218.3 114.0,220.3 120.0,222.1 126.0,223.6 132.0,225.0 138.0,226.1 144.0,227.2 150.0,228.1 156.0,228.9 162.0,229.6 168.0,230.3 174.0,230.8 180.0,231.4 186.0,231.9 192.0,232.3 198.0,232.7 204.0,233.1 210.0,233.4 216.0,233.7 222.0,234.0 228.0,234.2 234.0,234.4 240.0,234.7 246.0,234.8 252.0,235.0 258.0,235.2 264.0,235.3 270.0,235.4 276.0,235.5 282.0,235.6 288.0,235.7 294.0,235.8 300.0,235.9 306.0,235.9 312.0,236.0 318.0,236.0 324.0,236.0 330.0,236.0 336.0,236.0 342.0,236.0 348.0,236.0 354.0,235.9 360.0,235.9 366.0,235.8 372.0,235.7 378.0,235.6 384.0,235.5 390.0,235.4 396.0,235.3 402.0,235.2 408.0,235.0 414.0,234.8 420.0,234.7 426.0,234.4 432.0,234.2 438.0,234.0 444.0,233.7 450.0,233.4 456.0,233.1 462.0,232.7 468.0,232.3 474.0,231.9 480.0,231.4 486.0,230.8 492.0,230.3 498.0,229.6 504.0,228.9 510.0,228.1 516.0,227.2 522.0,226.1 528.0,225.0 534.0,223.6 540.0,222.1 546.0,220.3 552.0,218.3 558.0,215.8 564.0,212.8 570.0,209.1 576.0,204.5 582.0,198.5 588.0,190.5 594.0,179.1 600.0,162.0" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round"/>
+      <line x1="330" y1="40" x2="330" y2="236" stroke="var(--down)" stroke-opacity=".45" stroke-width="1.2" stroke-dasharray="4 5"/>
+      <line x1="92" y1="40" x2="92" y2="236" stroke="var(--up)" stroke-opacity=".45" stroke-width="1.2" stroke-dasharray="4 5"/>
+      <line x1="568" y1="40" x2="568" y2="236" stroke="var(--up)" stroke-opacity=".45" stroke-width="1.2" stroke-dasharray="4 5"/>
+      <text class="t-num" x="338" y="52" fill="var(--down)">Đỉnh lợi nhuận</text>
+      <text class="t-num" x="100" y="180" fill="var(--up)">Đáy</text>
+      <rect x="0" y="252" width="10" height="10" rx="2" fill="var(--down)"/>
+      <text class="t-lbl" x="18" y="261" fill="var(--ink-2)">Lợi nhuận đỉnh → P/E trông rẻ nhất → thường là vùng BÁN</text>
+      <rect x="0" y="272" width="10" height="10" rx="2" fill="var(--up)"/>
+      <text class="t-lbl" x="18" y="281" fill="var(--ink-2)">Lợi nhuận đáy hoặc lỗ → P/E cao hoặc âm → thường gần vùng MUA</text>
+      </svg>
+      <figcaption>P/E = Giá ÷ Lợi nhuận. Khi lợi nhuận vọt lên đỉnh, mẫu số phình to nên P/E tụt xuống mức &ldquo;rẻ&rdquo; — đúng lúc chu kỳ sắp quay đầu. Đây là cái bẫy đắt tiền nhất với người vừa học xong P/E.</figcaption>
+      </figure>
 
       <h3>Lợi thế cạnh tranh: vì sao lợi nhuận này bền?</h3>
       <p>Lợi nhuận cao luôn thu hút đối thủ. Câu hỏi sống còn là: <b>cái gì ngăn đối thủ cướp mất miếng bánh này?</b> Thường là một trong: thương hiệu, chi phí sản xuất thấp nhất ngành, chi phí chuyển đổi cao với khách hàng, hiệu ứng mạng lưới, hoặc giấy phép/vị trí độc quyền.</p>
@@ -535,21 +760,164 @@ html{ scroll-behavior:smooth }
 
       <h3>Nến Nhật — đơn vị chữ cái</h3>
       <p>Một cây nến kể bốn con số của một phiên: giá mở, đóng, cao nhất, thấp nhất. <b>Thân</b> nến là khoảng cách mở–đóng, <b>bóng</b> (râu) là vùng giá đã chạm tới rồi bị đẩy về.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 200" role="img" aria-label="GIẢI PHẪU MỘT CÂY NẾN">
+      <text class="t-eb" x="0" y="11">GIẢI PHẪU MỘT CÂY NẾN</text>
+      <text class="t-num" x="210" y="30" text-anchor="middle" fill="var(--up)">NẾN TĂNG · đóng &gt; mở</text>
+      <g data-fade=""><line x1="210" y1="48" x2="210" y2="182" stroke="var(--up)" stroke-width="2"/>
+      <rect x="190" y="76" width="40" height="76" rx="2" fill="var(--up)"/></g>
+      <text class="t-num" x="238" y="66" fill="var(--muted)" font-size="9.5">bóng</text>
+      <text x="210" y="118" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" fill="var(--surface)" letter-spacing=".08em">THÂN</text>
+      <line x1="158" y1="48" x2="206" y2="48" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="152" y="52" text-anchor="end">Cao nhất</text>
+      <line x1="158" y1="76" x2="188" y2="76" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="152" y="80" text-anchor="end">Đóng cửa</text>
+      <line x1="158" y1="152" x2="188" y2="152" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="152" y="156" text-anchor="end">Mở cửa</text>
+      <line x1="158" y1="182" x2="206" y2="182" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="152" y="186" text-anchor="end">Thấp nhất</text>
+      <text class="t-num" x="430" y="30" text-anchor="middle" fill="var(--down)">NẾN GIẢM · đóng &lt; mở</text>
+      <g data-fade="" style="animation-delay:.15s"><line x1="430" y1="48" x2="430" y2="182" stroke="var(--down)" stroke-width="2"/>
+      <rect x="410" y="76" width="40" height="76" rx="2" fill="var(--down)"/></g>
+      <line x1="434" y1="48" x2="482" y2="48" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="488" y="52">Cao nhất</text>
+      <line x1="452" y1="76" x2="482" y2="76" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="488" y="80">Mở cửa</text>
+      <line x1="452" y1="152" x2="482" y2="152" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="488" y="156">Đóng cửa</text>
+      <line x1="434" y1="182" x2="482" y2="182" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="488" y="186">Thấp nhất</text>
+      </svg>
+      <figcaption>Một cây nến gói bốn con số của cả phiên. <b>Thân</b> cho biết ai thắng cuộc, <b>bóng</b> cho biết trận đánh đã đi xa tới đâu trước khi bị đẩy về.</figcaption>
+      </figure>
       <ul>
         <li>Thân dài, bóng ngắn → một phe áp đảo dứt khoát cả phiên.</li>
         <li>Thân ngắn, hai bóng dài → giằng co, không ai thắng. Sự lưỡng lự.</li>
         <li>Bóng dưới rất dài → giá bị dìm xuống nhưng có lực mua đẩy ngược lên. Dấu hiệu cầu vào.</li>
       </ul>
 
+      <figure class="fig">
+      <svg viewBox="0 0 640 206" role="img" aria-label="BA DẠNG NẾN CẦN NHẬN RA">
+      <text class="t-eb" x="0" y="11">BA DẠNG NẾN CẦN NHẬN RA</text>
+      <g data-fade="" style="animation-delay:0.00s">
+      <line x1="107" y1="40" x2="107" y2="150" stroke="var(--up)" stroke-width="2"/>
+      <rect x="88" y="50" width="38" height="92" rx="2" fill="var(--up)"/>
+      </g>
+      <text class="t-key" x="107" y="180" text-anchor="middle">Thân dài, bóng ngắn</text>
+      <text class="t-lbl" x="107" y="196" text-anchor="middle">Một phe áp đảo dứt khoát</text>
+      <g data-fade="" style="animation-delay:0.12s">
+      <line x1="320" y1="35" x2="320" y2="155" stroke="var(--muted)" stroke-width="2"/>
+      <rect x="301" y="92" width="38" height="7" rx="2" fill="var(--muted)"/>
+      </g>
+      <text class="t-key" x="320" y="180" text-anchor="middle">Doji — thân rất ngắn</text>
+      <text class="t-lbl" x="320" y="196" text-anchor="middle">Giằng co, không ai thắng</text>
+      <g data-fade="" style="animation-delay:0.24s">
+      <line x1="533" y1="58" x2="533" y2="160" stroke="var(--up)" stroke-width="2"/>
+      <rect x="514" y="58" width="38" height="24" rx="2" fill="var(--up)"/>
+      </g>
+      <text class="t-key" x="533" y="180" text-anchor="middle">Bóng dưới rất dài</text>
+      <text class="t-lbl" x="533" y="196" text-anchor="middle">Bị dìm xuống rồi bật lên</text>
+      </svg>
+      <figcaption>Đừng học thuộc tên mẫu nến. Hãy đọc <b>tương quan thân và bóng</b>: ai kiểm soát phiên, và đám đông đã do dự ở đâu.</figcaption>
+      </figure>
       <h3>Xu hướng: định nghĩa bằng cấu trúc, không bằng cảm giác</h3>
       <p><b>Tăng</b> = đỉnh sau cao hơn đỉnh trước <i>và</i> đáy sau cao hơn đáy trước. <b>Giảm</b> = ngược lại. <b>Đi ngang</b> = không thỏa cả hai. Đây là định nghĩa duy nhất bạn cần, và nó khách quan — hai người nhìn cùng biểu đồ phải ra cùng kết luận.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 212" role="img" aria-label="XU HƯỚNG ĐỊNH NGHĨA BẮNG CẤU TRÚC ĐỈNH–ĐÁY">
+      <text class="t-eb" x="0" y="11">XU HƯỚNG ĐỊNH NGHĨA BẮNG CẤU TRÚC ĐỈNH–ĐÁY</text>
+      <text class="t-num" x="150" y="34" text-anchor="middle" fill="var(--up)">XU HƯỚNG TĂNG</text>
+      <text class="t-lbl" x="150" y="50" text-anchor="middle">đỉnh sau cao hơn · đáy sau cao hơn</text>
+      <text class="t-num" x="490" y="34" text-anchor="middle" fill="var(--down)">XU HƯỚNG GIẢM</text>
+      <text class="t-lbl" x="490" y="50" text-anchor="middle">đỉnh sau thấp hơn · đáy sau thấp hơn</text>
+      <line x1="320" y1="60" x2="320" y2="200" stroke="var(--line)"/>
+      <polyline data-draw="" points="30,178 78,122 126,148 174,88 222,112 270,52" fill="none" stroke="var(--up)" stroke-width="2.2" stroke-linejoin="round"/>
+      <polyline data-draw="" style="animation-delay:.25s" points="370,52 418,108 466,82 514,140 562,116 610,176" fill="none" stroke="var(--down)" stroke-width="2.2" stroke-linejoin="round"/>
+      <circle cx="78" cy="122" r="3.4" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="78" y="112" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ1</text>
+      <circle cx="126" cy="148" r="3.4" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="126" y="166" text-anchor="middle" fill="var(--muted)" font-size="9.5">đ1</text>
+      <circle cx="174" cy="88" r="3.4" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="174" y="78" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ2</text>
+      <circle cx="222" cy="112" r="3.4" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="222" y="130" text-anchor="middle" fill="var(--muted)" font-size="9.5">đ2</text>
+      <circle cx="270" cy="52" r="3.4" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="270" y="42" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ3</text>
+      <circle cx="370" cy="52" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="370" y="42" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ1</text>
+      <circle cx="418" cy="108" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="418" y="126" text-anchor="middle" fill="var(--muted)" font-size="9.5">đ1</text>
+      <circle cx="466" cy="82" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="466" y="72" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ2</text>
+      <circle cx="514" cy="140" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="514" y="158" text-anchor="middle" fill="var(--muted)" font-size="9.5">đ2</text>
+      <circle cx="562" cy="116" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="562" y="106" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ3</text>
+      <circle cx="610" cy="176" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="610" y="194" text-anchor="middle" fill="var(--muted)" font-size="9.5">đ3</text>
+      </svg>
+      <figcaption>Định nghĩa này <b>khách quan</b>: hai người nhìn cùng một biểu đồ phải ra cùng kết luận. Khi một đáy mới thủng đáy cũ, xu hướng tăng đã kết thúc — dù cảm giác của bạn nói gì.</figcaption>
+      </figure>
 
       <h3>Hỗ trợ và kháng cự là <i>vùng</i>, không phải đường kẻ</h3>
       <p><b>Hỗ trợ</b>: vùng giá mà trước đây người mua đã từng nhảy vào chặn đà rơi. <b>Kháng cự</b>: vùng người bán đã từng ra hàng. Vùng bị phá vỡ rồi thì thường đảo vai — kháng cự cũ thành hỗ trợ mới.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 236" role="img" aria-label="HỖ TRỢ / KHÁNG CỰ LÀ MỘT VÙNG">
+      <text class="t-eb" x="0" y="11">HỖ TRỢ / KHÁNG CỰ LÀ MỘT VÙNG</text>
+      <rect data-grow="" x="40" y="86" width="560" height="22" rx="3" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".5" stroke-dasharray="5 4"/>
+      <text class="t-num" x="46" y="80" fill="var(--accent-ink)">VÙNG 30 – 31</text>
+      <polyline data-draw="" style="animation-delay:.2s" points="40,196 95,100 140,168 200,96 255,178 315,94 360,152 420,66 465,102 520,54 600,26" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="95" cy="100" r="3.6" fill="var(--down)"/>
+      <circle cx="200" cy="96" r="3.6" fill="var(--down)"/>
+      <circle cx="315" cy="94" r="3.6" fill="var(--down)"/>
+      <text class="t-num" x="205" y="66" text-anchor="middle" fill="var(--down)">bị chặn 3 lần</text>
+      <circle cx="420" cy="66" r="3.6" fill="var(--up)"/>
+      <text class="t-num" x="418" y="50" text-anchor="middle" fill="var(--up)">PHÁ VỠ</text>
+      <circle cx="465" cy="102" r="3.6" fill="var(--up)"/>
+      <line x1="465" y1="112" x2="465" y2="132" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-num" x="474" y="140" fill="var(--up)">kháng cự cũ → hỗ trợ mới</text>
+      <text class="t-lbl" x="0" y="216">Người từng kẹt hàng ở vùng này chờ “về bờ để bán” — đó là toàn bộ bí mật của kháng cự.</text>
+      </svg>
+      <figcaption>Kháng cự không phải phép màu, nó là <b>ký ức đám đông</b>. Và khi vùng đó bị phá vỡ dứt khoát, chính những người từng bán ở đó lại trở thành người mua — kháng cự đảo vai thành hỗ trợ.</figcaption>
+      </figure>
       <p class="aside"><b>Ví dụ đời thường</b>Bạn từng mua một mã ở giá 30 rồi nó rơi về 24. Khi giá bò về lại 30, cảm giác của bạn là gì? “Về bờ rồi, bán thôi.” Hàng nghìn người cùng nghĩ vậy — đó chính là lý do 30 trở thành kháng cự. Kháng cự không phải phép màu, nó là <i>ký ức đám đông</i>.</p>
 
       <h3>Khối lượng — máy đo độ tin cậy</h3>
       <p>Giá nói <i>chuyện gì</i>, khối lượng nói <i>có bao nhiêu người đồng ý</i>. Vượt kháng cự kèm khối lượng lớn gấp 2–3 lần trung bình → đáng tin. Vượt trong khối lượng èo uột → thường là bẫy, sau đó rơi ngược lại.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 222" role="img" aria-label="KHỐI LƯỢNG XÁC NHẬN CÚ PHÁ VỠ">
+      <text class="t-eb" x="0" y="11">KHỐI LƯỢNG XÁC NHẬN CÚ PHÁ VỠ</text>
+      <text class="t-num" x="152" y="30" text-anchor="middle" fill="var(--up)">PHÁ VỠ CÓ KHỐI LƯỢNG</text>
+      <text class="t-lbl" x="152" y="45" text-anchor="middle">đáng tin</text>
+      <text class="t-num" x="462" y="30" text-anchor="middle" fill="var(--down)">PHÁ VỠ KL ÈO UỖT</text>
+      <text class="t-lbl" x="462" y="45" text-anchor="middle">thường là bẫy</text>
+      <line x1="30" y1="72" x2="300" y2="72" stroke="var(--accent)" stroke-opacity=".55" stroke-dasharray="5 4"/>
+      <line x1="340" y1="72" x2="610" y2="72" stroke="var(--accent)" stroke-opacity=".55" stroke-dasharray="5 4"/>
+      <text class="t-num" x="30" y="66" fill="var(--accent-ink)" font-size="9.5">kháng cự</text>
+      <text class="t-num" x="340" y="66" fill="var(--accent-ink)" font-size="9.5">kháng cự</text>
+      <polyline data-draw="" points="30,118 65,104 100,109 135,90 170,78 205,58 240,46 275,38" fill="none" stroke="var(--up)" stroke-width="2.2" stroke-linejoin="round"/>
+      <polyline data-draw="" style="animation-delay:.2s" points="340,118 375,104 410,109 445,90 480,68 515,58 550,96 585,120" fill="none" stroke="var(--down)" stroke-width="2.2" stroke-linejoin="round"/>
+      <line x1="0" y1="140" x2="640" y2="140" stroke="var(--line-soft)"/>
+      <line x1="30" y1="206" x2="610" y2="206" stroke="var(--line)"/>
+      <rect data-rise="" style="animation-delay:0.30s" x="20" y="192" width="20" height="14" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.35s" x="55" y="196" width="20" height="10" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.40s" x="90" y="194" width="20" height="12" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.45s" x="125" y="190" width="20" height="16" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.50s" x="160" y="188" width="20" height="18" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.55s" x="195" y="154" width="20" height="52" fill="var(--up)" fill-opacity=".9"/>
+      <rect data-rise="" style="animation-delay:0.60s" x="230" y="162" width="20" height="44" fill="var(--up)" fill-opacity=".9"/>
+      <rect data-rise="" style="animation-delay:0.65s" x="265" y="176" width="20" height="30" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.30s" x="330" y="192" width="20" height="14" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.35s" x="365" y="196" width="20" height="10" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.40s" x="400" y="194" width="20" height="12" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.45s" x="435" y="191" width="20" height="15" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.50s" x="470" y="189" width="20" height="17" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.55s" x="505" y="190" width="20" height="16" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.60s" x="540" y="186" width="20" height="20" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.65s" x="575" y="193" width="20" height="13" fill="var(--muted)" fill-opacity=".35"/>
+      <text class="t-num" x="0" y="162" fill="var(--muted)" font-size="9.5">KHỐI LƯỢNG</text>
+      </svg>
+      <figcaption>Giá cho biết <b>chuyện gì</b> đang xảy ra, khối lượng cho biết <b>bao nhiêu người đồng ý</b>. Vượt kháng cự mà khối lượng không nhích lên thì cú vượt đó thường bị trả lại.</figcaption>
+      </figure>
 
       <h3>Chỉ báo: học đúng ba cái, hiểu chúng làm gì</h3>
       <dl class="dl">
@@ -582,6 +950,37 @@ Lỗ  −20%   →  cần  +25%
 Lỗ  −33%   →  cần  +50%
 Lỗ  −50%   →  cần +100%
 Lỗ  −75%   →  cần +300%</div>
+<figure class="fig">
+<svg viewBox="0 0 640 240" role="img" aria-label="MUỐN VỀ BỜ CẦN LÃI BAO NHIÊU">
+<text class="t-eb" x="0" y="11">MUỐN VỀ BỜ CẦN LÃI BAO NHIÊU</text>
+<line x1="90.0" y1="34" x2="90.0" y2="212" stroke="var(--line-soft)"/>
+<text class="t-num" x="90.0" y="28" text-anchor="middle" fill="var(--muted)">+0%</text>
+<line x1="256.7" y1="34" x2="256.7" y2="212" stroke="var(--line-soft)"/>
+<text class="t-num" x="256.7" y="28" text-anchor="middle" fill="var(--muted)">+100%</text>
+<line x1="423.3" y1="34" x2="423.3" y2="212" stroke="var(--line-soft)"/>
+<text class="t-num" x="423.3" y="28" text-anchor="middle" fill="var(--muted)">+200%</text>
+<line x1="590.0" y1="34" x2="590.0" y2="212" stroke="var(--line-soft)"/>
+<text class="t-num" x="590.0" y="28" text-anchor="middle" fill="var(--muted)">+300%</text>
+<text class="t-num" x="78" y="60" text-anchor="end" fill="var(--down)">−10%</text>
+<rect data-grow="" style="animation-delay:0.00s" x="90" y="44" width="18.3" height="24" rx="3" fill="var(--up)" fill-opacity="0.35"/>
+<text class="t-num" x="116.3" y="60" fill="var(--ink)">+11%</text>
+<text class="t-num" x="78" y="94" text-anchor="end" fill="var(--down)">−20%</text>
+<rect data-grow="" style="animation-delay:0.10s" x="90" y="78" width="41.7" height="24" rx="3" fill="var(--up)" fill-opacity="0.49"/>
+<text class="t-num" x="139.7" y="94" fill="var(--ink)">+25%</text>
+<text class="t-num" x="78" y="128" text-anchor="end" fill="var(--down)">−33%</text>
+<rect data-grow="" style="animation-delay:0.20s" x="90" y="112" width="83.3" height="24" rx="3" fill="var(--up)" fill-opacity="0.63"/>
+<text class="t-num" x="181.3" y="128" fill="var(--ink)">+50%</text>
+<text class="t-num" x="78" y="162" text-anchor="end" fill="var(--down)">−50%</text>
+<rect data-grow="" style="animation-delay:0.30s" x="90" y="146" width="166.7" height="24" rx="3" fill="var(--up)" fill-opacity="0.77"/>
+<text class="t-num" x="246.7" y="162" text-anchor="end" fill="var(--surface)">+100%</text>
+<text class="t-num" x="78" y="196" text-anchor="end" fill="var(--down)">−75%</text>
+<rect data-grow="" style="animation-delay:0.40s" x="90" y="180" width="500.0" height="24" rx="3" fill="var(--up)" fill-opacity="0.91"/>
+<text class="t-num" x="580.0" y="196" text-anchor="end" fill="var(--surface)">+300%</text>
+<line x1="90" y1="34" x2="90" y2="212" stroke="var(--line)"/>
+<text class="t-lbl" x="0" y="234">Lỗ bao nhiêu → cần lãi bao nhiêu để về đúng vốn cũ</text>
+</svg>
+<figcaption>Lỗ và lãi <b>không đối xứng</b>. Mất một nửa tài khoản thì phải nhân đôi phần còn lại mới hoà — mất 75% thì cần gấp bốn. Đây là toàn bộ lý do vì sao giữ khoản lỗ nhỏ quan trọng hơn việc tìm cổ phiếu tăng mạnh.</figcaption>
+</figure>
       <p>Lỗ và lãi <b>không đối xứng</b>. Đây là toàn bộ lý do vì sao “giữ cho khoản lỗ nhỏ” quan trọng hơn “tìm cho được cổ phiếu tăng mạnh”.</p>
 
       <h3>Quy mô lệnh: quyết định trước khi bấm mua</h3>
@@ -602,6 +1001,52 @@ Ví dụ:  NAV 200.000.000đ,  rủi ro 1%  → chấp nhận mất 2.000.000đ
       <div class="formula">Kỳ vọng = (Tỷ lệ thắng × Lãi trung bình) − (Tỷ lệ thua × Lỗ trung bình)
         = (0,40 × 2R) − (0,60 × 1R)
         = 0,80R − 0,60R  =  +0,20R mỗi lệnh</div>
+        <figure class="fig">
+        <svg viewBox="0 0 640 206" role="img" aria-label="MÔ PHỎNG 10 LỆNH VỚI R:R 1:2, TỶ LỆ THẮNG 40%">
+        <text class="t-eb" x="0" y="11">MÔ PHỎNG 10 LỆNH VỚI R:R 1:2, TỶ LỆ THẮNG 40%</text>
+        <line x1="40" y1="120" x2="620" y2="120" stroke="var(--line)" stroke-dasharray="4 4"/>
+        <text class="t-num" x="34" y="124" text-anchor="end" fill="var(--muted)">0</text>
+        <line x1="40" y1="76" x2="620" y2="76" stroke="var(--line-soft)"/>
+        <text class="t-num" x="34" y="80" text-anchor="end" fill="var(--muted)">+2R</text>
+        <polyline data-draw="" points="60,120 114,142 168,98 222,120 276,142 330,98 384,54 438,76 492,98 546,54 600,76" fill="none" stroke="var(--ink-2)" stroke-width="2.2" stroke-linejoin="round"/>
+        <circle cx="114" cy="142" r="3.6" fill="var(--down)"/>
+        <rect x="105" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="114" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <circle cx="168" cy="98" r="3.6" fill="var(--up)"/>
+        <rect x="159" y="176" width="18" height="18" rx="4" fill="var(--up)" fill-opacity=".16"/>
+        <text class="t-num" x="168" y="189" text-anchor="middle" fill="var(--up)" font-size="10">T</text>
+        <circle cx="222" cy="120" r="3.6" fill="var(--down)"/>
+        <rect x="213" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="222" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <circle cx="276" cy="142" r="3.6" fill="var(--down)"/>
+        <rect x="267" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="276" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <circle cx="330" cy="98" r="3.6" fill="var(--up)"/>
+        <rect x="321" y="176" width="18" height="18" rx="4" fill="var(--up)" fill-opacity=".16"/>
+        <text class="t-num" x="330" y="189" text-anchor="middle" fill="var(--up)" font-size="10">T</text>
+        <circle cx="384" cy="54" r="3.6" fill="var(--up)"/>
+        <rect x="375" y="176" width="18" height="18" rx="4" fill="var(--up)" fill-opacity=".16"/>
+        <text class="t-num" x="384" y="189" text-anchor="middle" fill="var(--up)" font-size="10">T</text>
+        <circle cx="438" cy="76" r="3.6" fill="var(--down)"/>
+        <rect x="429" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="438" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <circle cx="492" cy="98" r="3.6" fill="var(--down)"/>
+        <rect x="483" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="492" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <circle cx="546" cy="54" r="3.6" fill="var(--up)"/>
+        <rect x="537" y="176" width="18" height="18" rx="4" fill="var(--up)" fill-opacity=".16"/>
+        <text class="t-num" x="546" y="189" text-anchor="middle" fill="var(--up)" font-size="10">T</text>
+        <circle cx="600" cy="76" r="3.6" fill="var(--down)"/>
+        <rect x="591" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="600" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <text class="t-lbl" x="40" y="189">Lệnh</text>
+        <circle cx="600" cy="76" r="6.5" fill="none" stroke="var(--up)" stroke-width="1.6"/>
+        <text class="t-num" x="592" y="64" text-anchor="end" fill="var(--up)">+2R</text>
+        <text class="t-num" x="40" y="34" fill="var(--ink)">Thắng 4/10 lệnh · R:R = 1:2</text>
+        <text class="t-lbl" x="40" y="50">T = thắng (+2R) · B = thua (−1R)</text>
+        </svg>
+        <figcaption>Sai 6 lần trên 10 mà tài khoản vẫn đi lên. <b>Bạn không cần đúng nhiều — bạn cần đúng to và sai nhỏ.</b> R là số tiền bạn chấp nhận mất ở mỗi lệnh.</figcaption>
+        </figure>
       <p>Đây là bài học giải phóng nhất trong đầu tư: <b>bạn không cần đúng nhiều. Bạn cần đúng to và sai nhỏ.</b></p>
 
       <h3>Đa dạng hóa vừa đủ</h3>
@@ -670,6 +1115,32 @@ Ví dụ:  NAV 200.000.000đ,  rủi ro 1%  → chấp nhận mất 2.000.000đ
           </tbody>
         </table>
       </div>
+      <figure class="fig">
+      <svg viewBox="0 0 640 240" role="img" aria-label="DÒNG TIỀN LUÂN CHUYỂN QUA CHU KỲ KINH TẾ">
+      <text class="t-eb" x="0" y="11">DÒNG TIỀN LUÂN CHUYỂN QUA CHU KỲ KINH TẾ</text>
+      <rect x="190" y="56" width="140" height="122" fill="var(--surface-2)" fill-opacity=".55"/>
+      <rect x="470" y="56" width="140" height="122" fill="var(--surface-2)" fill-opacity=".55"/>
+      <line x1="190" y1="56" x2="190" y2="178" stroke="var(--line)" stroke-dasharray="4 5"/>
+      <line x1="330" y1="56" x2="330" y2="178" stroke="var(--line)" stroke-dasharray="4 5"/>
+      <line x1="470" y1="56" x2="470" y2="178" stroke="var(--line)" stroke-dasharray="4 5"/>
+      <polyline data-draw="" points="50.0,164.0 54.7,163.9 59.3,163.7 64.0,163.4 68.7,163.0 73.3,162.4 78.0,161.7 82.7,160.9 87.3,160.0 92.0,159.0 96.7,157.8 101.3,156.6 106.0,155.2 110.7,153.7 115.3,152.2 120.0,150.5 124.7,148.8 129.3,146.9 134.0,145.0 138.7,143.1 143.3,141.0 148.0,138.9 152.7,136.7 157.3,134.5 162.0,132.2 166.7,129.9 171.3,127.6 176.0,125.2 180.7,122.8 185.3,120.4 190.0,118.0 194.7,115.6 199.3,113.2 204.0,110.8 208.7,108.4 213.3,106.1 218.0,103.8 222.7,101.5 227.3,99.3 232.0,97.1 236.7,95.0 241.3,92.9 246.0,91.0 250.7,89.1 255.3,87.2 260.0,85.5 264.7,83.8 269.3,82.3 274.0,80.8 278.7,79.4 283.3,78.2 288.0,77.0 292.7,76.0 297.3,75.1 302.0,74.3 306.7,73.6 311.3,73.0 316.0,72.6 320.7,72.3 325.3,72.1 330.0,72.0 334.7,72.1 339.3,72.3 344.0,72.6 348.7,73.0 353.3,73.6 358.0,74.3 362.7,75.1 367.3,76.0 372.0,77.0 376.7,78.2 381.3,79.4 386.0,80.8 390.7,82.3 395.3,83.8 400.0,85.5 404.7,87.2 409.3,89.1 414.0,91.0 418.7,92.9 423.3,95.0 428.0,97.1 432.7,99.3 437.3,101.5 442.0,103.8 446.7,106.1 451.3,108.4 456.0,110.8 460.7,113.2 465.3,115.6 470.0,118.0 474.7,120.4 479.3,122.8 484.0,125.2 488.7,127.6 493.3,129.9 498.0,132.2 502.7,134.5 507.3,136.7 512.0,138.9 516.7,141.0 521.3,143.1 526.0,145.0 530.7,146.9 535.3,148.8 540.0,150.5 544.7,152.2 549.3,153.7 554.0,155.2 558.7,156.6 563.3,157.8 568.0,159.0 572.7,160.0 577.3,160.9 582.0,161.7 586.7,162.4 591.3,163.0 596.0,163.4 600.7,163.7 605.3,163.9 610.0,164.0" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round"/>
+      <circle cx="50" cy="164" r="4" fill="var(--accent)"/><circle cx="330" cy="72" r="4" fill="var(--accent)"/><circle cx="610" cy="164" r="4" fill="var(--accent)"/>
+      <text class="t-num" x="330" y="60" text-anchor="middle" fill="var(--muted)" font-size="9.5">ĐỈNH</text>
+      <text class="t-num" x="120" y="198" text-anchor="middle" fill="var(--accent-ink)" font-size="10">PHỤC HỒI SỚM</text>
+      <text class="t-lbl" x="120" y="214" text-anchor="middle" font-size="9.5">Chứng khoán · Ngân hàng</text>
+      <text class="t-lbl" x="120" y="227" text-anchor="middle" font-size="9.5">Bất động sản</text>
+      <text class="t-num" x="260" y="198" text-anchor="middle" fill="var(--accent-ink)" font-size="10">TĂNG TRƯỞNG</text>
+      <text class="t-lbl" x="260" y="214" text-anchor="middle" font-size="9.5">Thép · Xây dựng</text>
+      <text class="t-lbl" x="260" y="227" text-anchor="middle" font-size="9.5">Khu công nghiệp · Bán lẻ</text>
+      <text class="t-num" x="400" y="198" text-anchor="middle" fill="var(--accent-ink)" font-size="10">CUỐI CHU KỲ</text>
+      <text class="t-lbl" x="400" y="214" text-anchor="middle" font-size="9.5">Dầu khí</text>
+      <text class="t-lbl" x="400" y="227" text-anchor="middle" font-size="9.5">Hàng hóa cơ bản</text>
+      <text class="t-num" x="540" y="198" text-anchor="middle" fill="var(--accent-ink)" font-size="10">SUY GIẢM</text>
+      <text class="t-lbl" x="540" y="214" text-anchor="middle" font-size="9.5">Điện · Nước · Dược</text>
+      <text class="t-lbl" x="540" y="227" text-anchor="middle" font-size="9.5">(nhóm phòng thủ)</text>
+      </svg>
+      <figcaption>Tiền không nằm yên một chỗ: mỗi giai đoạn nó chảy sang một nhóm ngành khác. Đây là <b>khung để đặt câu hỏi</b>, không phải lịch trình — nhịp của Việt Nam thường lệch so với sách giáo khoa Mỹ.</figcaption>
+      </figure>
       <p class="warn"><b>Đừng máy móc</b>Đây là khung tham chiếu để đặt câu hỏi, không phải lịch trình. Thị trường Việt Nam chịu tác động rất mạnh từ chính sách và từ dòng tiền cá nhân trong nước, nên nhịp có thể lệch hẳn so với sách giáo khoa Mỹ.</p>
 
       <h3>Lịch sự kiện nên nằm trong đầu</h3>
@@ -807,6 +1278,18 @@ Ví dụ:  NAV 200.000.000đ,  rủi ro 1%  → chấp nhận mất 2.000.000đ
     });
   });
   paint(state);
+
+  var figs = Array.prototype.slice.call(document.querySelectorAll('.fig'));
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (figs.length && !reduce && 'IntersectionObserver' in window) {
+    figs.forEach(function(f){ f.classList.add('anim'); });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.18 });
+    figs.forEach(function(f){ io.observe(f); });
+  }
 
   var sections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
   function spy(){
