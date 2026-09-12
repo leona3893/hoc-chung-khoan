@@ -307,9 +307,9 @@ p + .fig, ul + .fig, ol + .fig, .dl + .fig, .formula + .fig, .tbl-wrap + .fig,
    bóng mềm nhiều lớp · bo 8–12px · chuyển động 200–300ms · focus 3px
    ========================================================== */
 :root{
-  --ground:#EEF1F6;
+  --ground:#F7FAFF;
   --surface:#FFFFFF;
-  --surface-2:#F3F5F9;
+  --surface-2:#F1F5FB;
   --line:#D9DEE6;
   --line-soft:#E5E9F0;
   --up:#0F7A42;            /* 4.6:1 trên nền phụ */
@@ -325,7 +325,7 @@ p + .fig, ul + .fig, ol + .fig, .dl + .fig, .formula + .fig, .tbl-wrap + .fig,
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --ground:#0C0F14;
+    --ground:#11161F;
     --surface:#171B23;
     --surface-2:#1E232D;
     --line:#2B323D;
@@ -337,7 +337,7 @@ p + .fig, ul + .fig, ol + .fig, .dl + .fig, .formula + .fig, .tbl-wrap + .fig,
   }
 }
 :root[data-theme="dark"]{
-  --ground:#0C0F14;
+  --ground:#11161F;
   --surface:#171B23;
   --surface-2:#1E232D;
   --line:#2B323D;
@@ -347,6 +347,30 @@ p + .fig, ul + .fig, ol + .fig, .dl + .fig, .formula + .fig, .tbl-wrap + .fig,
   --shadow-btn:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 6px rgba(0,0,0,.4);
   --shadow-inset:inset 0 2px 4px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.25);
 }
+
+/* nền tươi sáng: vài vệt pastel nhạt trên nền trắng-xanh */
+body{
+  background:
+    radial-gradient(900px 560px at -8% -6%, rgba(135,206,235,.28), transparent 62%),
+    radial-gradient(760px 520px at 104% 4%, rgba(255,214,150,.30), transparent 60%),
+    radial-gradient(700px 420px at 50% 100%, rgba(144,238,144,.16), transparent 62%),
+    var(--ground);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) body{
+    background:
+      radial-gradient(900px 560px at -8% -6%, rgba(92,156,255,.10), transparent 62%),
+      radial-gradient(760px 520px at 104% 4%, rgba(239,181,68,.08), transparent 60%),
+      var(--ground);
+  }
+}
+:root[data-theme="dark"] body{
+  background:
+    radial-gradient(900px 560px at -8% -6%, rgba(92,156,255,.10), transparent 62%),
+    radial-gradient(760px 520px at 104% 4%, rgba(239,181,68,.08), transparent 60%),
+    var(--ground);
+}
+.masthead{ background:radial-gradient(110% 140% at 92% -20%, var(--accent-wash) 0%, transparent 55%), color-mix(in srgb, var(--surface) 78%, transparent) }
 
 /* chuyển động 200–300ms cho mọi thứ tương tác */
 a, button, .rail a, .mark, .lab-jump, .lab-tf button, .mark input, table.tbl tr, table.board tr{
