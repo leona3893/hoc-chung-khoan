@@ -302,6 +302,138 @@ p + .fig, ul + .fig, ol + .fig, .dl + .fig, .formula + .fig, .tbl-wrap + .fig,
 .lab-why b{ color:var(--ink); font-weight:600 }
 .lab-empty{ font-size:var(--fs-xs); color:var(--muted); font-style:italic }
 
+/* ==========================================================
+   Soft UI Evolution — neumorphism tiến hoá, tương phản đo được
+   bóng mềm nhiều lớp · bo 8–12px · chuyển động 200–300ms · focus 3px
+   ========================================================== */
+:root{
+  --ground:#EEF1F6;
+  --surface:#FFFFFF;
+  --surface-2:#F3F5F9;
+  --line:#D9DEE6;
+  --line-soft:#E5E9F0;
+  --up:#0F7A42;            /* 4.6:1 trên nền phụ */
+  --ref:#8F5F07;           /* 5.4:1 — trước đây 3.9:1 */
+  --radius:12px;
+  --radius-sm:8px;
+  --dur:240ms;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --shadow-soft:0 1px 2px rgba(20,28,40,.05), 0 4px 12px -2px rgba(20,28,40,.07), 0 14px 32px -14px rgba(20,28,40,.12);
+  --shadow-lift:0 2px 4px rgba(20,28,40,.06), 0 10px 24px -6px rgba(20,28,40,.14), 0 24px 48px -20px rgba(20,28,40,.16);
+  --shadow-btn:0 1px 2px rgba(20,28,40,.07), 0 3px 8px -2px rgba(20,28,40,.11);
+  --shadow-inset:inset 0 1px 3px rgba(20,28,40,.09), inset 0 0 0 1px rgba(20,28,40,.035);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0C0F14;
+    --surface:#171B23;
+    --surface-2:#1E232D;
+    --line:#2B323D;
+    --line-soft:#232932;
+    --shadow-soft:inset 0 1px 0 rgba(255,255,255,.045), 0 2px 6px rgba(0,0,0,.35), 0 14px 32px -14px rgba(0,0,0,.6);
+    --shadow-lift:inset 0 1px 0 rgba(255,255,255,.06), 0 6px 14px rgba(0,0,0,.4), 0 26px 48px -18px rgba(0,0,0,.7);
+    --shadow-btn:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 6px rgba(0,0,0,.4);
+    --shadow-inset:inset 0 2px 4px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0C0F14;
+  --surface:#171B23;
+  --surface-2:#1E232D;
+  --line:#2B323D;
+  --line-soft:#232932;
+  --shadow-soft:inset 0 1px 0 rgba(255,255,255,.045), 0 2px 6px rgba(0,0,0,.35), 0 14px 32px -14px rgba(0,0,0,.6);
+  --shadow-lift:inset 0 1px 0 rgba(255,255,255,.06), 0 6px 14px rgba(0,0,0,.4), 0 26px 48px -18px rgba(0,0,0,.7);
+  --shadow-btn:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 6px rgba(0,0,0,.4);
+  --shadow-inset:inset 0 2px 4px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.25);
+}
+
+/* chuyển động 200–300ms cho mọi thứ tương tác */
+a, button, .rail a, .mark, .lab-jump, .lab-tf button, .mark input, table.tbl tr, table.board tr{
+  transition:background-color var(--dur) var(--ease), color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+:focus-visible{ outline:3px solid var(--accent); outline-offset:3px; border-radius:6px }
+
+/* bề mặt nổi mềm thay cho viền cứng */
+.facts, .goal, .board-wrap, .tbl-wrap, .fig{
+  border-color:var(--line-soft); border-radius:var(--radius); box-shadow:var(--shadow-soft);
+}
+.goal{ border-radius:var(--radius-sm) var(--radius) var(--radius) var(--radius-sm) }
+.fig{ padding:18px 18px 14px }
+.formula, code{
+  background:var(--surface-2); border-color:transparent; box-shadow:var(--shadow-inset);
+}
+.formula{ border-radius:var(--radius-sm); padding:15px 18px }
+.aside, .warn{
+  padding:14px 18px 14px 20px; border-radius:var(--radius-sm); background:var(--surface);
+  box-shadow:var(--shadow-soft); border-left-width:3px;
+}
+.dl > div{ border-bottom-color:var(--line-soft) }
+.level + .level{ border-top-color:var(--line-soft) }
+
+/* masthead: nền mềm, bóng đổ nhẹ xuống nội dung */
+.masthead{
+  border-bottom:0;
+  box-shadow:0 1px 0 var(--line-soft), 0 18px 40px -28px rgba(20,28,40,.25);
+  background:radial-gradient(110% 140% at 92% -20%, var(--accent-wash) 0%, transparent 55%), var(--surface);
+}
+.fact{ border-right-color:var(--line-soft) }
+
+/* thanh mục lục: mục đang đọc là một viên nổi mềm */
+.rail a{ border-left:0; border-radius:9px; position:relative; padding:8px 12px 8px 14px; min-height:36px }
+.rail a:hover{ background:var(--surface); box-shadow:var(--shadow-btn); color:var(--ink) }
+.rail a.on{ background:var(--surface); box-shadow:var(--shadow-btn); border-left:0 }
+.rail a.on::before{
+  content:""; position:absolute; left:4px; top:9px; bottom:9px; width:3px; border-radius:3px; background:var(--accent);
+}
+.rail-note{ border-left-color:var(--line-soft) }
+
+/* bảng: đầu bảng có nền phụ, dòng đổi màu khi rê chuột */
+table.board th, table.tbl th{ background:var(--surface-2); border-bottom-color:var(--line-soft) }
+table.board td, table.tbl td{ border-bottom-color:var(--line-soft) }
+table.board tbody tr:hover td, table.tbl tbody tr:hover td{ background:color-mix(in srgb, var(--surface-2) 60%, transparent) }
+
+/* nút "đã học xong": chip nổi mềm, đủ 44px để chạm; bật lên thì lõm xuống nền vàng */
+.mark{
+  margin-top:30px; padding:0 16px 0 12px; min-height:44px; border-radius:999px;
+  background:var(--surface); border:1px solid var(--line-soft); box-shadow:var(--shadow-btn); user-select:none;
+}
+.mark input{ width:16px; height:16px }
+.mark:hover{ transform:translateY(-1px); box-shadow:var(--shadow-soft); color:var(--ink) }
+.mark:active{ transform:translateY(0); box-shadow:var(--shadow-inset) }
+.mark:has(input:checked){
+  background:var(--accent-wash); color:var(--accent-ink); box-shadow:var(--shadow-inset);
+  border-color:color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.mark:has(input:focus-visible){ outline:3px solid var(--accent); outline-offset:3px }
+.mark input:focus-visible{ outline:none }
+
+/* phòng thực hành: bộ chọn khung là rãnh lõm, nút chọn là viên nổi */
+.lab-tf{ border:0; background:var(--surface-2); padding:3px; border-radius:10px; box-shadow:var(--shadow-inset); gap:2px }
+.lab-tf button{ border-radius:8px; min-height:38px; padding:8px 14px; font-size:var(--fs-xs) }
+.lab-tf button + button{ border-left:0 }
+.lab-tf button:hover{ background:color-mix(in srgb, var(--surface) 55%, transparent) }
+.lab-tf button.on{ background:var(--surface); box-shadow:var(--shadow-btn); color:var(--ink) }
+.lab-jump{
+  background:var(--surface); border:1px solid var(--line-soft); box-shadow:var(--shadow-btn);
+  min-height:38px; padding:9px 14px; color:var(--accent-ink);
+}
+.lab-jump:hover{ transform:translateY(-1px); box-shadow:var(--shadow-soft); background:var(--surface); color:var(--ink) }
+.lab-jump:active, .lab-tf button:active{ transform:translateY(0); box-shadow:var(--shadow-inset) }
+.lab-read{ background:var(--surface-2); border-color:transparent; box-shadow:var(--shadow-inset); border-radius:var(--radius-sm) }
+.lab-tag{ border-radius:999px; padding:3px 9px }
+.lab-plot{ border-radius:var(--radius-sm) }
+@media (pointer:coarse){ .lab-tf button, .lab-jump{ min-height:44px } }
+
+/* danh sách lộ trình cuối trang */
+.aside b:not(:first-child), .warn b:not(:first-child){
+  display:inline; margin:0; font:inherit; font-weight:600; font-style:normal;
+  letter-spacing:0; text-transform:none; color:var(--ink);
+}
+.plan li{ border-bottom-color:var(--line-soft) }
+.disclaimer{ border-top-color:var(--line-soft) }
+
 html{ scroll-behavior:smooth }
 @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto } *{ animation:none !important; transition:none !important } }
 </style>
@@ -1636,6 +1768,7 @@ Ví dụ:  NAV 200.000.000đ,  rủi ro 1%  → chấp nhận mất 2.000.000đ
       var top = s.offsetTop;
       if (top <= mark && top > bestTop) { bestTop = top; best = s.id; }
     });
+    if (best === null && sections.length) best = sections[0].id;
     links.forEach(function(a){
       a.classList.toggle('on', a.getAttribute('href') === '#' + best);
     });
