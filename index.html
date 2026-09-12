@@ -1,0 +1,1786 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}
+:root[data-theme="dark"]{color-scheme:dark}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Chứng khoán từ số 0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,800;1,400&family=Newsreader:ital,opsz,wght@1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+:root{
+  --ground:#F3F5F7;
+  --surface:#FFFFFF;
+  --surface-2:#EAEDF1;
+  --ink:#151A21;
+  --ink-2:#39424F;
+  --muted:#5B6675;
+  --line:#DCE1E7;
+  --line-soft:#E7EBF0;
+  --accent:#B0740E;
+  --accent-ink:#8A5A08;
+  --accent-wash:#FBF0DC;
+  --up:#12864A;
+  --down:#C92A2A;
+  --ceil:#8B2FC9;
+  --floor:#1F5FD0;
+  --ref:#B0740E;
+  --shadow:0 1px 2px rgba(20,28,40,.05), 0 8px 24px -12px rgba(20,28,40,.16);
+  --radius:10px;
+  --font-body:"Be Vietnam Pro","Segoe UI",system-ui,sans-serif;
+  --font-serif:"Newsreader",Georgia,serif;
+  --font-mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",monospace;
+  --fs-xs:.75rem; --fs-sm:.875rem; --fs-base:1.0625rem; --fs-lg:1.1875rem;
+  --fs-xl:1.4rem; --fs-2xl:1.85rem;
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1116;
+    --surface:#161A21;
+    --surface-2:#1D222B;
+    --ink:#E9ECF1;
+    --ink-2:#C4CBD5;
+    --muted:#94A0B0;
+    --line:#272E39;
+    --line-soft:#20262F;
+    --accent:#EFB544;
+    --accent-ink:#F2C067;
+    --accent-wash:#241D0F;
+    --up:#2FBF6B;
+    --down:#F2605B;
+    --ceil:#BE72F0;
+    --floor:#5C9CFF;
+    --ref:#EFB544;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1116;
+  --surface:#161A21;
+  --surface-2:#1D222B;
+  --ink:#E9ECF1;
+  --ink-2:#C4CBD5;
+  --muted:#94A0B0;
+  --line:#272E39;
+  --line-soft:#20262F;
+  --accent:#EFB544;
+  --accent-ink:#F2C067;
+  --accent-wash:#241D0F;
+  --up:#2FBF6B;
+  --down:#F2605B;
+  --ceil:#BE72F0;
+  --floor:#5C9CFF;
+  --ref:#EFB544;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--font-body); font-size:var(--fs-base); line-height:1.68;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3{ text-wrap:balance; margin:0; line-height:1.22; letter-spacing:-.02em; font-weight:800 }
+p{margin:0}
+a{color:var(--accent-ink)}
+:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px }
+
+.wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(16px,4vw,40px) }
+.masthead{
+  border-bottom:1px solid var(--line);
+  background:radial-gradient(120% 150% at 92% -20%, var(--accent-wash) 0%, transparent 58%), var(--surface);
+}
+.masthead .wrap{ padding-top:clamp(34px,6vw,60px); padding-bottom:clamp(26px,4vw,38px) }
+.eyebrow{
+  font-family:var(--font-mono); font-size:var(--fs-xs); font-weight:500;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--accent-ink);
+}
+h1{ font-size:clamp(2.1rem,6vw,3.3rem); letter-spacing:-.035em; margin:14px 0 0 }
+.h1-sub{ display:block; font-weight:400; font-size:clamp(1rem,2.3vw,1.2rem); color:var(--muted);
+  letter-spacing:-.01em; margin-top:14px; max-width:58ch; line-height:1.58 }
+.facts{ display:flex; flex-wrap:wrap; margin:28px 0 0; border:1px solid var(--line);
+  border-radius:var(--radius); overflow:hidden; background:var(--surface) }
+.fact{ flex:1 1 155px; padding:13px 18px; border-right:1px solid var(--line-soft) }
+.fact:last-child{border-right:0}
+.fact dt{ font-family:var(--font-mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted) }
+.fact dd{ margin:4px 0 0; font-weight:600; font-size:var(--fs-sm) }
+
+.shell{ display:grid; grid-template-columns:1fr }
+@media (min-width:1000px){
+  .shell{ grid-template-columns:238px minmax(0,1fr); gap:0 56px; align-items:start }
+}
+.rail{ display:none }
+@media (min-width:1000px){
+  .rail{ display:block; position:sticky; top:0; max-height:100vh; overflow-y:auto; padding:44px 0 40px }
+}
+.rail-title{ font-family:var(--font-mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); padding-left:12px }
+.rail ol{ list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:1px }
+.rail li{ margin:0 }
+.rail a{
+  display:grid; grid-template-columns:30px minmax(0,1fr); gap:6px; align-items:baseline;
+  padding:7px 10px; border-radius:0 6px 6px 0; text-decoration:none; color:var(--muted);
+  font-size:var(--fs-sm); line-height:1.35; border-left:2px solid transparent;
+}
+.rail a .n{ font-family:var(--font-mono); font-size:11px; font-weight:500; opacity:.8 }
+.rail a:hover{ color:var(--ink); background:var(--surface-2) }
+.rail a.on{ color:var(--ink); font-weight:600; border-left-color:var(--accent); background:var(--surface-2) }
+.rail a.done .n{ color:var(--up); opacity:1 }
+.rail-note{ margin:20px 0 0 12px; padding-left:12px; border-left:2px solid var(--line);
+  font-size:var(--fs-xs); color:var(--muted); line-height:1.55 }
+
+main{ padding:clamp(30px,5vw,52px) 0 0; min-width:0; max-width:70ch }
+
+.level{ padding-bottom:clamp(38px,6vw,60px); scroll-margin-top:20px }
+.level + .level{ border-top:1px solid var(--line); padding-top:clamp(38px,6vw,58px) }
+.level-head{ display:flex; align-items:flex-start; gap:16px }
+.level-num{
+  font-family:var(--font-mono); font-weight:700; font-size:var(--fs-2xl); line-height:1;
+  color:transparent; -webkit-text-stroke:1.4px var(--accent); flex:0 0 auto; padding-top:5px; letter-spacing:-.04em;
+}
+.level h2{ font-size:clamp(1.45rem,3.6vw,1.95rem) }
+.level-meta{ margin-top:7px; font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--muted) }
+.goal{
+  margin:22px 0 0; padding:14px 18px; background:var(--surface); border:1px solid var(--line);
+  border-left:3px solid var(--accent); border-radius:0 var(--radius) var(--radius) 0; font-size:var(--fs-sm);
+}
+.goal b{ font-weight:600 }
+
+h3{ font-size:var(--fs-lg); margin:34px 0 0; letter-spacing:-.015em; font-weight:600 }
+h3 + p, h3 + .dl, h3 + ul, h3 + ol, h3 + .board-wrap, h3 + .tbl-wrap, h3 + .aside, h3 + .formula{ margin-top:10px }
+p + p, p + ul, p + ol, p + .dl, ul + p, ol + p, .dl + p, p + .aside, .dl + .aside, ul + .aside,
+p + .warn, ul + .warn, ol + .warn, .dl + .warn, .aside + p, .warn + p, p + .board-wrap, p + .tbl-wrap,
+p + .formula, .formula + p, .board-wrap + p, .tbl-wrap + p, ul + ul, .aside + .warn{ margin-top:15px }
+
+ul, ol.steps{ margin:0; padding-left:1.2em }
+li + li{ margin-top:7px }
+li::marker{ color:var(--muted) }
+b, strong{ font-weight:600 }
+code{ font-family:var(--font-mono); font-size:.86em; background:var(--surface-2); padding:1px 5px; border-radius:4px }
+
+.dl{ margin:0; border-top:1px solid var(--line-soft) }
+.dl > div{ display:grid; grid-template-columns:1fr; gap:3px; padding:12px 0; border-bottom:1px solid var(--line-soft) }
+@media(min-width:640px){ .dl > div{ grid-template-columns:172px minmax(0,1fr); gap:0 22px; align-items:baseline } }
+.dl dt{ font-weight:600; font-size:var(--fs-sm) }
+.dl dt small{ display:block; font-family:var(--font-mono); font-weight:400; font-size:10px; color:var(--muted);
+  letter-spacing:.06em; text-transform:uppercase; margin-top:2px }
+.dl dd{ margin:0; font-size:var(--fs-sm); color:var(--ink-2) }
+
+.aside{
+  font-family:var(--font-serif); font-style:italic; font-size:1.07rem; line-height:1.62;
+  color:var(--ink-2); padding:2px 0 2px 18px; border-left:2px solid var(--accent);
+}
+.aside b{ font-style:normal; font-family:var(--font-mono); font-size:10px; font-weight:500;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--accent-ink); display:block; margin-bottom:5px }
+.warn{ padding:2px 0 2px 18px; border-left:2px solid var(--down); font-size:var(--fs-sm); color:var(--ink-2) }
+.warn b{ font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--down); display:block; margin-bottom:5px }
+
+.formula{ font-family:var(--font-mono); font-size:var(--fs-sm); background:var(--surface-2);
+  border:1px solid var(--line-soft); border-radius:var(--radius); padding:14px 16px;
+  overflow-x:auto; white-space:pre; line-height:1.7; color:var(--ink) }
+
+.board-wrap,.tbl-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface) }
+table.board{ border-collapse:collapse; width:100%; min-width:530px; font-family:var(--font-mono);
+  font-size:var(--fs-sm); font-variant-numeric:tabular-nums }
+table.board th{ text-align:right; font-weight:500; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); padding:10px 14px; border-bottom:1px solid var(--line); white-space:nowrap }
+table.board th:first-child, table.board td:first-child{ text-align:left }
+table.board td{ text-align:right; padding:9px 14px; border-bottom:1px solid var(--line-soft); white-space:nowrap }
+table.board tr:last-child td{ border-bottom:0 }
+.c-ceil{color:var(--ceil)} .c-floor{color:var(--floor)} .c-ref{color:var(--ref)}
+.c-up{color:var(--up)} .c-down{color:var(--down)}
+.legend{ display:flex; flex-wrap:wrap; gap:7px 16px; margin-top:12px; font-family:var(--font-mono); font-size:var(--fs-xs) }
+.legend span{ display:inline-flex; align-items:center; gap:6px; color:var(--muted) }
+.legend i{ width:9px; height:9px; border-radius:2px; display:inline-block }
+
+table.tbl{ border-collapse:collapse; width:100%; min-width:470px; font-size:var(--fs-sm) }
+table.tbl th{ text-align:left; font-weight:600; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); padding:10px 14px; border-bottom:1px solid var(--line) }
+table.tbl td{ padding:10px 14px; border-bottom:1px solid var(--line-soft); vertical-align:top; color:var(--ink-2) }
+table.tbl td:first-child{ color:var(--ink); font-weight:600; white-space:nowrap }
+table.tbl tr:last-child td{ border-bottom:0 }
+
+.mark{ display:inline-flex; align-items:center; gap:9px; margin-top:28px; cursor:pointer;
+  font-family:var(--font-mono); font-size:var(--fs-xs); letter-spacing:.08em; text-transform:uppercase; color:var(--muted) }
+.mark input{ width:15px; height:15px; accent-color:var(--up); cursor:pointer; margin:0 }
+.mark:hover{ color:var(--ink) }
+
+.outro{ border-top:1px solid var(--line); padding:clamp(34px,5vw,50px) 0 clamp(48px,7vw,76px) }
+.outro h2{ font-size:var(--fs-xl) }
+.plan{ list-style:none; padding:0; margin:16px 0 0; border-top:1px solid var(--line-soft) }
+.plan li{ display:grid; grid-template-columns:86px minmax(0,1fr); gap:16px; padding:12px 0;
+  border-bottom:1px solid var(--line-soft); margin:0; font-size:var(--fs-sm); color:var(--ink-2) }
+.plan .when{ font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--accent-ink); letter-spacing:.03em; padding-top:2px }
+.disclaimer{ margin-top:32px; padding-top:20px; border-top:1px solid var(--line); font-size:var(--fs-xs);
+  color:var(--muted); line-height:1.65; max-width:64ch }
+
+/* ---------- Hình minh hoạ ---------- */
+.fig{ margin:18px 0 0; padding:15px 16px 12px; background:var(--surface);
+  border:1px solid var(--line); border-radius:var(--radius) }
+.fig svg{ display:block; width:100%; height:auto }
+.fig figcaption{ margin-top:12px; padding-top:11px; border-top:1px solid var(--line-soft);
+  font-size:var(--fs-xs); color:var(--muted); line-height:1.62 }
+.fig figcaption b{ color:var(--ink-2); font-weight:600 }
+.fig text{ font-family:var(--font-body); fill:var(--ink-2) }
+.fig .t-eb{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.11em; fill:var(--muted) }
+.fig .t-lbl{ font-size:11px; fill:var(--muted) }
+.fig .t-key{ font-size:11.5px; font-weight:600; fill:var(--ink) }
+.fig .t-num{ font-family:var(--font-mono); font-size:11px; fill:var(--ink-2) }
+.fig .t-mono{ font-family:var(--font-mono) }
+h3 + .fig{ margin-top:12px }
+p + .fig, ul + .fig, ol + .fig, .dl + .fig, .formula + .fig, .tbl-wrap + .fig,
+.board-wrap + .fig, .aside + .fig, .warn + .fig{ margin-top:15px }
+.fig + p, .fig + .aside, .fig + .warn, .fig + ul, .fig + ol, .fig + .dl,
+.fig + .formula, .fig + .tbl-wrap, .fig + h3{ margin-top:15px }
+
+.fig.anim [data-draw]{ stroke-dasharray:2600; stroke-dashoffset:2600 }
+.fig.anim.in [data-draw]{ animation:fg-draw 1.1s ease forwards }
+@keyframes fg-draw{ to{ stroke-dashoffset:0 } }
+.fig.anim [data-rise]{ transform-box:fill-box; transform-origin:50% 100%; transform:scaleY(.02) }
+.fig.anim.in [data-rise]{ animation:fg-rise .62s cubic-bezier(.2,.75,.3,1) forwards }
+@keyframes fg-rise{ to{ transform:scaleY(1) } }
+.fig.anim [data-grow]{ transform-box:fill-box; transform-origin:0% 50%; transform:scaleX(.02) }
+.fig.anim [data-growc]{ transform-box:fill-box; transform-origin:50% 50%; transform:scaleX(.02) }
+.fig.anim.in [data-grow], .fig.anim.in [data-growc]{ animation:fg-grow .68s cubic-bezier(.2,.75,.3,1) forwards }
+@keyframes fg-grow{ to{ transform:scaleX(1) } }
+.fig.anim [data-fade]{ opacity:0 }
+.fig.anim.in [data-fade]{ animation:fg-fade .55s ease forwards }
+@keyframes fg-fade{ to{ opacity:1 } }
+.fig .playhead{ animation:fg-play 9s linear infinite }
+@keyframes fg-play{ from{ transform:translateX(0) } to{ transform:translateX(590px) } }
+@media (prefers-reduced-motion: reduce){
+  .fig .playhead{ display:none }
+  .fig.anim [data-draw], .fig.anim [data-rise], .fig.anim [data-grow],
+  .fig.anim [data-growc], .fig.anim [data-fade]{
+    stroke-dashoffset:0 !important; transform:none !important; opacity:1 !important }
+}
+
+/* ---------- Phòng thực hành đọc nến ---------- */
+.lab{ padding-bottom:14px }
+.lab-head{ display:flex; flex-wrap:wrap; gap:12px; align-items:flex-start;
+  justify-content:space-between; margin-bottom:12px }
+.lab-t{ font-weight:700; font-size:var(--fs-sm); letter-spacing:-.01em }
+.lab-s{ font-family:var(--font-mono); font-size:10px; color:var(--muted); margin-top:3px }
+.lab-tf{ display:flex; gap:0; border:1px solid var(--line); border-radius:7px; overflow:hidden }
+.lab-tf button{ font:500 var(--fs-xs)/1 var(--font-mono); color:var(--muted); background:transparent;
+  border:0; padding:7px 12px; cursor:pointer; letter-spacing:.04em }
+.lab-tf button + button{ border-left:1px solid var(--line) }
+.lab-tf button:hover{ color:var(--ink); background:var(--surface-2) }
+.lab-tf button.on{ color:var(--ink); background:var(--surface-2); font-weight:700 }
+.lab-plot svg{ display:block; width:100%; height:auto; touch-action:manipulation }
+.lab-plot svg:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:6px }
+.lab-bar{ display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center;
+  justify-content:space-between; margin-top:10px }
+.lab-hint{ font-family:var(--font-mono); font-size:10px; color:var(--muted) }
+.lab-jumps{ display:flex; flex-wrap:wrap; gap:6px }
+.lab-jump{ font:500 10px/1 var(--font-mono); color:var(--accent-ink); background:var(--accent-wash);
+  border:1px solid var(--accent); border-color:color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius:20px; padding:6px 11px; cursor:pointer; letter-spacing:.03em }
+.lab-jump:hover{ background:var(--surface-2); color:var(--ink) }
+.lab-read{ margin-top:12px; border:1px solid var(--line); border-radius:var(--radius);
+  background:var(--surface-2); padding:12px 14px }
+.lab-r1{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px }
+.lab-date{ font-family:var(--font-mono); font-size:var(--fs-sm); font-weight:700; color:var(--ink) }
+.lab-chg{ font-family:var(--font-mono); font-size:var(--fs-xs); font-weight:700 }
+.lab-tag{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
+  border:1px solid; border-radius:4px; padding:2px 7px }
+.lab-ohlc{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px 16px; margin-top:10px }
+@media(min-width:520px){ .lab-ohlc{ grid-template-columns:repeat(5,minmax(0,1fr)) } }
+.lab-ohlc div{ font-family:var(--font-mono); font-size:var(--fs-xs) }
+.lab-ohlc dt{ font-size:9.5px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase }
+.lab-ohlc dd{ margin:2px 0 0; color:var(--ink); font-weight:600 }
+.lab-why{ margin-top:11px; padding-top:10px; border-top:1px solid var(--line);
+  font-size:var(--fs-xs); color:var(--ink-2); line-height:1.6 }
+.lab-why b{ color:var(--ink); font-weight:600 }
+.lab-empty{ font-size:var(--fs-xs); color:var(--muted); font-style:italic }
+
+/* ==========================================================
+   Soft UI Evolution — neumorphism tiến hoá, tương phản đo được
+   bóng mềm nhiều lớp · bo 8–12px · chuyển động 200–300ms · focus 3px
+   ========================================================== */
+:root{
+  --ground:#EEF1F6;
+  --surface:#FFFFFF;
+  --surface-2:#F3F5F9;
+  --line:#D9DEE6;
+  --line-soft:#E5E9F0;
+  --up:#0F7A42;            /* 4.6:1 trên nền phụ */
+  --ref:#8F5F07;           /* 5.4:1 — trước đây 3.9:1 */
+  --radius:12px;
+  --radius-sm:8px;
+  --dur:240ms;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --shadow-soft:0 1px 2px rgba(20,28,40,.05), 0 4px 12px -2px rgba(20,28,40,.07), 0 14px 32px -14px rgba(20,28,40,.12);
+  --shadow-lift:0 2px 4px rgba(20,28,40,.06), 0 10px 24px -6px rgba(20,28,40,.14), 0 24px 48px -20px rgba(20,28,40,.16);
+  --shadow-btn:0 1px 2px rgba(20,28,40,.07), 0 3px 8px -2px rgba(20,28,40,.11);
+  --shadow-inset:inset 0 1px 3px rgba(20,28,40,.09), inset 0 0 0 1px rgba(20,28,40,.035);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0C0F14;
+    --surface:#171B23;
+    --surface-2:#1E232D;
+    --line:#2B323D;
+    --line-soft:#232932;
+    --shadow-soft:inset 0 1px 0 rgba(255,255,255,.045), 0 2px 6px rgba(0,0,0,.35), 0 14px 32px -14px rgba(0,0,0,.6);
+    --shadow-lift:inset 0 1px 0 rgba(255,255,255,.06), 0 6px 14px rgba(0,0,0,.4), 0 26px 48px -18px rgba(0,0,0,.7);
+    --shadow-btn:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 6px rgba(0,0,0,.4);
+    --shadow-inset:inset 0 2px 4px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0C0F14;
+  --surface:#171B23;
+  --surface-2:#1E232D;
+  --line:#2B323D;
+  --line-soft:#232932;
+  --shadow-soft:inset 0 1px 0 rgba(255,255,255,.045), 0 2px 6px rgba(0,0,0,.35), 0 14px 32px -14px rgba(0,0,0,.6);
+  --shadow-lift:inset 0 1px 0 rgba(255,255,255,.06), 0 6px 14px rgba(0,0,0,.4), 0 26px 48px -18px rgba(0,0,0,.7);
+  --shadow-btn:inset 0 1px 0 rgba(255,255,255,.05), 0 2px 6px rgba(0,0,0,.4);
+  --shadow-inset:inset 0 2px 4px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.25);
+}
+
+/* chuyển động 200–300ms cho mọi thứ tương tác */
+a, button, .rail a, .mark, .lab-jump, .lab-tf button, .mark input, table.tbl tr, table.board tr{
+  transition:background-color var(--dur) var(--ease), color var(--dur) var(--ease),
+    box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+:focus-visible{ outline:3px solid var(--accent); outline-offset:3px; border-radius:6px }
+
+/* bề mặt nổi mềm thay cho viền cứng */
+.facts, .goal, .board-wrap, .tbl-wrap, .fig{
+  border-color:var(--line-soft); border-radius:var(--radius); box-shadow:var(--shadow-soft);
+}
+.goal{ border-radius:var(--radius-sm) var(--radius) var(--radius) var(--radius-sm) }
+.fig{ padding:18px 18px 14px }
+.formula, code{
+  background:var(--surface-2); border-color:transparent; box-shadow:var(--shadow-inset);
+}
+.formula{ border-radius:var(--radius-sm); padding:15px 18px }
+.aside, .warn{
+  padding:14px 18px 14px 20px; border-radius:var(--radius-sm); background:var(--surface);
+  box-shadow:var(--shadow-soft); border-left-width:3px;
+}
+.dl > div{ border-bottom-color:var(--line-soft) }
+.level + .level{ border-top-color:var(--line-soft) }
+
+/* masthead: nền mềm, bóng đổ nhẹ xuống nội dung */
+.masthead{
+  border-bottom:0;
+  box-shadow:0 1px 0 var(--line-soft), 0 18px 40px -28px rgba(20,28,40,.25);
+  background:radial-gradient(110% 140% at 92% -20%, var(--accent-wash) 0%, transparent 55%), var(--surface);
+}
+.fact{ border-right-color:var(--line-soft) }
+
+/* thanh mục lục: mục đang đọc là một viên nổi mềm */
+.rail a{ border-left:0; border-radius:9px; position:relative; padding:8px 12px 8px 14px; min-height:36px }
+.rail a:hover{ background:var(--surface); box-shadow:var(--shadow-btn); color:var(--ink) }
+.rail a.on{ background:var(--surface); box-shadow:var(--shadow-btn); border-left:0 }
+.rail a.on::before{
+  content:""; position:absolute; left:4px; top:9px; bottom:9px; width:3px; border-radius:3px; background:var(--accent);
+}
+.rail-note{ border-left-color:var(--line-soft) }
+
+/* bảng: đầu bảng có nền phụ, dòng đổi màu khi rê chuột */
+table.board th, table.tbl th{ background:var(--surface-2); border-bottom-color:var(--line-soft) }
+table.board td, table.tbl td{ border-bottom-color:var(--line-soft) }
+table.board tbody tr:hover td, table.tbl tbody tr:hover td{ background:color-mix(in srgb, var(--surface-2) 60%, transparent) }
+
+/* nút "đã học xong": chip nổi mềm, đủ 44px để chạm; bật lên thì lõm xuống nền vàng */
+.mark{
+  margin-top:30px; padding:0 16px 0 12px; min-height:44px; border-radius:999px;
+  background:var(--surface); border:1px solid var(--line-soft); box-shadow:var(--shadow-btn); user-select:none;
+}
+.mark input{ width:16px; height:16px }
+.mark:hover{ transform:translateY(-1px); box-shadow:var(--shadow-soft); color:var(--ink) }
+.mark:active{ transform:translateY(0); box-shadow:var(--shadow-inset) }
+.mark:has(input:checked){
+  background:var(--accent-wash); color:var(--accent-ink); box-shadow:var(--shadow-inset);
+  border-color:color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.mark:has(input:focus-visible){ outline:3px solid var(--accent); outline-offset:3px }
+.mark input:focus-visible{ outline:none }
+
+/* phòng thực hành: bộ chọn khung là rãnh lõm, nút chọn là viên nổi */
+.lab-tf{ border:0; background:var(--surface-2); padding:3px; border-radius:10px; box-shadow:var(--shadow-inset); gap:2px }
+.lab-tf button{ border-radius:8px; min-height:38px; padding:8px 14px; font-size:var(--fs-xs) }
+.lab-tf button + button{ border-left:0 }
+.lab-tf button:hover{ background:color-mix(in srgb, var(--surface) 55%, transparent) }
+.lab-tf button.on{ background:var(--surface); box-shadow:var(--shadow-btn); color:var(--ink) }
+.lab-jump{
+  background:var(--surface); border:1px solid var(--line-soft); box-shadow:var(--shadow-btn);
+  min-height:38px; padding:9px 14px; color:var(--accent-ink);
+}
+.lab-jump:hover{ transform:translateY(-1px); box-shadow:var(--shadow-soft); background:var(--surface); color:var(--ink) }
+.lab-jump:active, .lab-tf button:active{ transform:translateY(0); box-shadow:var(--shadow-inset) }
+.lab-read{ background:var(--surface-2); border-color:transparent; box-shadow:var(--shadow-inset); border-radius:var(--radius-sm) }
+.lab-tag{ border-radius:999px; padding:3px 9px }
+.lab-plot{ border-radius:var(--radius-sm) }
+@media (pointer:coarse){ .lab-tf button, .lab-jump{ min-height:44px } }
+
+/* danh sách lộ trình cuối trang */
+.aside b:not(:first-child), .warn b:not(:first-child){
+  display:inline; margin:0; font:inherit; font-weight:600; font-style:normal;
+  letter-spacing:0; text-transform:none; color:var(--ink);
+}
+.plan li{ border-bottom-color:var(--line-soft) }
+.disclaimer{ border-top-color:var(--line-soft) }
+
+html{ scroll-behavior:smooth }
+@media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto } *{ animation:none !important; transition:none !important } }
+</style>
+
+</head>
+<body>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Lộ trình tự học · Thị trường Việt Nam</p>
+    <h1>Chứng khoán từ số 0
+      <span class="h1-sub">Tám cấp độ, đi từ “cổ phiếu rốt cuộc là cái gì” đến “tôi có hệ thống mua bán của riêng mình”. Mỗi khái niệm đều kèm một ví dụ đời thường, và mọi con số đều theo luật chơi của HOSE, HNX, UPCoM.</span>
+    </h1>
+    <dl class="facts">
+      <div class="fact"><dt>Cấp độ</dt><dd>8 cấp, học tuần tự</dd></div>
+      <div class="fact"><dt>Thời lượng gợi ý</dt><dd>~6 tháng</dd></div>
+      <div class="fact"><dt>Vốn để bắt đầu</dt><dd>Tiền nhàn rỗi ≥ 12 tháng</dd></div>
+      <div class="fact"><dt>Cấp quan trọng nhất</dt><dd>Cấp 5 — quản trị vốn</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="wrap shell">
+  <nav class="rail" aria-label="Mục lục các cấp độ">
+    <p class="rail-title">Các cấp độ</p>
+    <ol id="toc">
+      <li><a href="#c0"><span class="n">00</span><span>Hiểu bản chất cuộc chơi</span></a></li>
+      <li><a href="#c1"><span class="n">01</span><span>Luật chơi của thị trường VN</span></a></li>
+      <li><a href="#c2"><span class="n">02</span><span>Đọc một doanh nghiệp</span></a></li>
+      <li><a href="#c3"><span class="n">03</span><span>Định giá &amp; chọn cổ phiếu</span></a></li>
+      <li><a href="#c4"><span class="n">04</span><span>Phân tích kỹ thuật</span></a></li>
+      <li><a href="#c5"><span class="n">05</span><span>Quản trị vốn &amp; tâm lý</span></a></li>
+      <li><a href="#c6"><span class="n">06</span><span>Vĩ mô, dòng tiền, chu kỳ</span></a></li>
+      <li><a href="#c7"><span class="n">07</span><span>Hệ thống của riêng bạn</span></a></li>
+      <li><a href="#ketthuc"><span class="n">→</span><span>Lộ trình 6 tháng</span></a></li>
+    </ol>
+    <p class="rail-note">Tick vào ô “Đã học xong” ở cuối mỗi cấp để đánh dấu tiến độ. Trình duyệt này sẽ nhớ giúp bạn.</p>
+  </nav>
+
+  <main>
+
+    <!-- ================= CẤP 0 ================= -->
+    <section class="level" id="c0">
+      <div class="level-head">
+        <span class="level-num">00</span>
+        <div>
+          <h2>Hiểu bản chất cuộc chơi</h2>
+          <p class="level-meta">Trước khi nạp đồng nào · 1 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> trả lời được ba câu — tiền của tôi đi đâu, tôi lãi từ đâu, và tôi có thể mất bao nhiêu. Chưa cần biết bất kỳ chỉ số nào.</p>
+
+      <h3>Cổ phiếu là gì, nói cho thật</h3>
+      <p>Cổ phiếu là <b>giấy chứng nhận bạn sở hữu một phần rất nhỏ của một doanh nghiệp</b>. Không hơn, không kém. Nó không phải con số nhấp nháy trên bảng điện — con số đó chỉ là mức giá mà người khác đang sẵn sàng trả cho phần sở hữu của bạn ngay lúc này.</p>
+      <p class="aside"><b>Ví dụ đời thường</b>Quán phở của chị Hoa trị giá 1 tỷ, chia thành 100.000 “suất”, mỗi suất 10.000đ. Bạn mua 1.000 suất — bạn sở hữu 1% quán phở. Quán bán đắt hàng, lãi 200 triệu/năm, chị Hoa chia 100 triệu cho các chủ suất: bạn nhận 1 triệu. Đó là <b>cổ tức</b>. Năm sau quán mở thêm chi nhánh, có người trả 15.000đ để mua lại suất của bạn: đó là <b>lãi vốn</b>.</p>
+
+      <h3>Tiền bạn bỏ ra đi về đâu?</h3>
+      <p>Đây là chỗ 90% người mới hiểu sai. Khi bạn mua cổ phiếu HPG trên sàn, <b>tiền của bạn không chảy vào Hòa Phát</b> — nó chảy vào túi một nhà đầu tư khác đang muốn bán. Doanh nghiệp chỉ nhận tiền trực tiếp trong hai trường hợp: lần đầu bán ra công chúng (IPO) và các đợt phát hành thêm cổ phiếu.</p>
+      <p>Hệ quả rất quan trọng: thị trường thứ cấp là nơi <b>bạn và người bán trao đổi kỳ vọng với nhau</b>. Trong ngắn hạn, lãi của bạn gần như là lỗ của người khác. Chỉ trong dài hạn, khi doanh nghiệp thực sự làm ra nhiều lợi nhuận hơn, thì tổng chiếc bánh mới to lên và tất cả cùng thắng.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 220" role="img" aria-label="Tien chay di dau khi ban mua co phieu">
+      <text class="t-eb" x="0" y="11">1 · THỊ TRƯỜNG SƠ CẤP — IPO / PHÁT HÀNH THÊM</text>
+      <rect data-fade="" x="0" y="26" width="168" height="46" rx="8" fill="var(--surface-2)" stroke="var(--line)"/><text class="t-key" x="84" y="54" text-anchor="middle">Nhà đầu tư</text>
+      <g data-fade="" style="animation-delay:.15s"><line x1="176" y1="49" x2="292" y2="49" stroke="var(--up)" stroke-width="2"/><path d="M292 49 L282 44 L282 54 Z" fill="var(--up)"/><text class="t-num" x="234" y="40" text-anchor="middle" fill="var(--up)">tiền vốn</text></g>
+      <rect data-fade="" style="animation-delay:.3s" x="300" y="26" width="180" height="46" rx="8" fill="var(--up)" fill-opacity=".12" stroke="var(--up)" stroke-opacity=".55"/><text class="t-key" x="390" y="54" text-anchor="middle">Doanh nghiệp</text>
+      <text class="t-lbl" x="494" y="45">Công ty nhận</text><text class="t-lbl" x="494" y="60">tiền thật</text>
+      <line x1="0" y1="92" x2="640" y2="92" stroke="var(--line-soft)"/>
+      <text class="t-eb" x="0" y="116">2 · THỊ TRƯỜNG THỨ CẤP — SÀN HOSE/HNX/UPCOM (99% GIAO DỊCH)</text>
+      <rect data-fade="" x="0" y="132" width="152" height="46" rx="8" fill="var(--surface-2)" stroke="var(--line)"/><text class="t-key" x="76" y="160" text-anchor="middle">Bạn — mua</text>
+      <g data-fade="" style="animation-delay:.15s"><line x1="160" y1="155" x2="212" y2="155" stroke="var(--accent)" stroke-width="2"/><path d="M212 155 L202 150 L202 160 Z" fill="var(--accent)"/></g>
+      <rect data-fade="" style="animation-delay:.3s" x="220" y="132" width="168" height="46" rx="8" fill="var(--surface-2)" stroke="var(--line)"/><text class="t-key" x="304" y="160" text-anchor="middle">NĐT khác — bán</text>
+      <g data-fade="" style="animation-delay:.45s"><line x1="396" y1="155" x2="452" y2="155" stroke="var(--muted)" stroke-width="1.5" stroke-dasharray="4 4"/><line x1="416" y1="146" x2="432" y2="164" stroke="var(--down)" stroke-width="2.2"/><line x1="432" y1="146" x2="416" y2="164" stroke="var(--down)" stroke-width="2.2"/></g>
+      <rect data-fade="" style="animation-delay:.45s" x="460" y="132" width="172" height="46" rx="8" fill="none" stroke="var(--line)" stroke-dasharray="5 4"/><text class="t-lbl" x="546" y="153" text-anchor="middle">Doanh nghiệp</text><text class="t-num" x="546" y="168" text-anchor="middle" fill="var(--down)">nhận 0đ</text>
+      <text class="t-lbl" x="0" y="204">Tiền chỉ đổi túi giữa hai nhà đầu tư. Giá trị doanh nghiệp không đổi vì bạn bấm lệnh mua.</text>
+      </svg>
+      <figcaption><b>Tiền của bạn không chảy vào công ty.</b> Trên sàn, nó chảy vào tài khoản của người đang muốn bán. Doanh nghiệp chỉ nhận tiền trực tiếp ở IPO và các đợt phát hành thêm.</figcaption>
+      </figure>
+
+      <h3>Bạn kiếm tiền từ đúng hai nguồn</h3>
+      <dl class="dl">
+        <div><dt>Cổ tức<small>Dividend</small></dt><dd>Phần lợi nhuận doanh nghiệp chia lại. Ở Việt Nam thường 0–10% mệnh giá/năm bằng tiền mặt. Chậm, chắc, dễ hiểu.</dd></div>
+        <div><dt>Chênh lệch giá<small>Capital gain</small></dt><dd>Mua thấp, bán cao. Nhanh, hấp dẫn, và là nơi mọi người mất tiền.</dd></div>
+      </dl>
+      <p>Về dài hạn, giá cổ phiếu bám theo <b>lợi nhuận doanh nghiệp</b>. Ngắn hạn nó bám theo <b>cảm xúc đám đông</b>. Bạn phải chọn mình chơi ván nào — và đừng dùng lý lẽ của ván này để biện minh cho quyết định ở ván kia (mua để lướt sóng, thua thì tự nhủ “đầu tư dài hạn”).</p>
+
+      <h3>Ba câu hỏi tự trả lời trước khi mở tài khoản</h3>
+      <ol class="steps">
+        <li><b>Số tiền này tôi không cần dùng trong bao lâu?</b> Nếu dưới 12 tháng, đừng mang vào thị trường. Chứng khoán không có nút “tạm dừng lỗ khi tôi cần tiền”.</li>
+        <li><b>Nếu mất 30% số này, cuộc sống tôi có sao không?</b> Nếu có — số tiền đang quá lớn. Giảm xuống.</li>
+        <li><b>Tôi muốn gì?</b> Tăng trưởng tài sản 10 năm, hay kiếm thêm thu nhập hàng tháng? Hai mục tiêu này dẫn tới hai cách chơi hoàn toàn khác nhau.</li>
+      </ol>
+
+      <p class="warn"><b>Ba điều tuyệt đối không làm khi mới bắt đầu</b>Vay tiền để đầu tư (kể cả vay người thân). Dùng margin — đòn bẩy từ công ty chứng khoán. Và mua theo “phím hàng” trong nhóm chat mà không hiểu mình đang mua cái gì.</p>
+
+      <label class="mark"><input type="checkbox" data-level="c0"> Đã học xong cấp 0</label>
+    </section>
+
+    <!-- ================= CẤP 1 ================= -->
+    <section class="level" id="c1">
+      <div class="level-head">
+        <span class="level-num">01</span>
+        <div>
+          <h2>Luật chơi của thị trường Việt Nam</h2>
+          <p class="level-meta">Cơ chế vận hành · 2 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> mở được tài khoản, đọc được bảng điện, đặt được lệnh, và biết chính xác một giao dịch tốn của bạn bao nhiêu tiền phí.</p>
+
+      <h3>Ba sàn, ba mức “dây cương”</h3>
+      <p>Việt Nam có ba nơi cổ phiếu được giao dịch, khác nhau ở độ chặt của tiêu chuẩn niêm yết và ở <b>biên độ dao động</b> — mức trần/sàn mà giá không được vượt qua trong một phiên.</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Sàn</th><th>Là gì</th><th>Biên độ/phiên</th><th>Phiên chào sàn</th></tr></thead>
+          <tbody>
+            <tr><td>HOSE</td><td>Sở GDCK TP.HCM — các doanh nghiệp lớn nhất, chuẩn cao nhất</td><td class="num">±7%</td><td class="num">±20%</td></tr>
+            <tr><td>HNX</td><td>Sở GDCK Hà Nội — quy mô vừa</td><td class="num">±10%</td><td class="num">±30%</td></tr>
+            <tr><td>UPCoM</td><td>Sàn “tập sự”, chuẩn công bố thông tin lỏng nhất</td><td class="num">±15%</td><td class="num">±40%</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="aside"><b>Cách nhớ</b>Càng lên sàn cao thì “dây cương” càng chặt. HOSE là đường cao tốc có giới hạn tốc độ nghiêm; UPCoM là đường làng — đi nhanh được, nhưng lật xe cũng nhanh.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 212" role="img" aria-label="BIÊN ĐỘ MỘT PHIÊN — TÍNH TỪ GIÁ THAM CHIẾU">
+      <text class="t-eb" x="0" y="11">BIÊN ĐỘ MỘT PHIÊN — TÍNH TỪ GIÁ THAM CHIẾU</text>
+      <text class="t-num" x="320" y="30" text-anchor="middle" fill="var(--accent-ink)">GIÁ THAM CHIẾU  30.00</text>
+      <line x1="320" y1="38" x2="320" y2="182" stroke="var(--ref)" stroke-width="1.5" stroke-dasharray="4 5"/>
+      <g data-growc="" style="animation-delay:0.00s">
+      <rect x="194.0" y="54" width="252.0" height="26" rx="4" fill="var(--surface-2)" stroke="var(--line)"/>
+      <rect x="194.0" y="54" width="5" height="26" rx="2" fill="var(--floor)"/>
+      <rect x="441.0" y="54" width="5" height="26" rx="2" fill="var(--ceil)"/>
+      </g>
+      <text class="t-key t-mono" x="320" y="72" text-anchor="middle">HOSE  ±7%</text>
+      <text class="t-num" x="186.0" y="72" text-anchor="end" fill="var(--floor)">27.90</text>
+      <text class="t-num" x="454.0" y="72" fill="var(--ceil)">32.10</text>
+      <g data-growc="" style="animation-delay:0.12s">
+      <rect x="140.0" y="100" width="360.0" height="26" rx="4" fill="var(--surface-2)" stroke="var(--line)"/>
+      <rect x="140.0" y="100" width="5" height="26" rx="2" fill="var(--floor)"/>
+      <rect x="495.0" y="100" width="5" height="26" rx="2" fill="var(--ceil)"/>
+      </g>
+      <text class="t-key t-mono" x="320" y="118" text-anchor="middle">HNX  ±10%</text>
+      <text class="t-num" x="132.0" y="118" text-anchor="end" fill="var(--floor)">27.00</text>
+      <text class="t-num" x="508.0" y="118" fill="var(--ceil)">33.00</text>
+      <g data-growc="" style="animation-delay:0.24s">
+      <rect x="50.0" y="146" width="540.0" height="26" rx="4" fill="var(--surface-2)" stroke="var(--line)"/>
+      <rect x="50.0" y="146" width="5" height="26" rx="2" fill="var(--floor)"/>
+      <rect x="585.0" y="146" width="5" height="26" rx="2" fill="var(--ceil)"/>
+      </g>
+      <text class="t-key t-mono" x="320" y="164" text-anchor="middle">UPCoM  ±15%</text>
+      <text class="t-num" x="42.0" y="164" text-anchor="end" fill="var(--floor)">25.50</text>
+      <text class="t-num" x="598.0" y="164" fill="var(--ceil)">34.50</text>
+      <text class="t-lbl" x="320" y="200" text-anchor="middle">Chạm mép phải = tím kịch trần · chạm mép trái = xanh lam kịch sàn</text>
+      </svg>
+      <figcaption>Giá chỉ được chạy trong dải này suốt một phiên. Sàn càng &ldquo;tập sự&rdquo; thì dây cương càng lỏng — cơ hội và rủi ro nở ra cùng nhau. (Số minh hoạ chưa làm tròn theo bước giá.)</figcaption>
+      </figure>
+
+      <h3>Đọc bảng điện: bảng màu chỉ Việt Nam mới có</h3>
+      <p>Ở Mỹ xanh là tăng — nhưng ở Việt Nam bảng điện dùng <b>năm màu</b>, và màu mang nghĩa cố định. Đây là thứ đầu tiên phải thuộc, vì mọi thảo luận về cổ phiếu đều nói bằng ngôn ngữ này (“hôm nay tím trần”, “trắng bên mua”).</p>
+      <div class="board-wrap">
+        <table class="board">
+          <thead><tr><th>Mã</th><th>Tham chiếu</th><th>Trần</th><th>Sàn</th><th>Giá khớp</th><th>+/−</th></tr></thead>
+          <tbody>
+            <tr><td>SSI</td><td class="c-ref">32.00</td><td class="c-ceil">34.20</td><td class="c-floor">29.80</td><td class="c-ceil">34.20</td><td class="c-ceil">+2.20</td></tr>
+            <tr><td>HPG</td><td class="c-ref">27.00</td><td class="c-ceil">28.85</td><td class="c-floor">25.15</td><td class="c-up">27.90</td><td class="c-up">+0.90</td></tr>
+            <tr><td>FPT</td><td class="c-ref">118.0</td><td class="c-ceil">126.2</td><td class="c-floor">109.7</td><td class="c-ref">118.0</td><td class="c-ref">0.00</td></tr>
+            <tr><td>VNM</td><td class="c-ref">62.0</td><td class="c-ceil">66.3</td><td class="c-floor">57.7</td><td class="c-down">60.8</td><td class="c-down">−1.20</td></tr>
+            <tr><td>DIG</td><td class="c-ref">18.50</td><td class="c-ceil">19.75</td><td class="c-floor">17.25</td><td class="c-floor">17.25</td><td class="c-floor">−1.25</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="legend">
+        <span><i style="background:var(--ceil)"></i>Tím — kịch trần</span>
+        <span><i style="background:var(--up)"></i>Xanh — tăng</span>
+        <span><i style="background:var(--ref)"></i>Vàng — đứng giá tham chiếu</span>
+        <span><i style="background:var(--down)"></i>Đỏ — giảm</span>
+        <span><i style="background:var(--floor)"></i>Xanh lam — kịch sàn</span>
+      </p>
+      <p><b>Giá tham chiếu</b> là giá đóng cửa phiên trước, dùng làm gốc tính trần/sàn. Đơn vị trên bảng là <b>nghìn đồng</b>: “27.00” nghĩa là 27.000đ/cổ phiếu.</p>
+      <p>Trần/sàn còn phải làm tròn về <b>bước giá</b> hợp lệ của HOSE (dưới 10.000đ: bước 10đ; từ 10.000–49.950đ: bước 50đ; từ 50.000đ trở lên: bước 100đ) — và luôn làm tròn theo hướng <i>thu hẹp</i> biên độ. Xem DIG ở trên: 18.50 × 0,93 = 17,205 → giá sàn là 17.25 chứ không phải 17.20.</p>
+
+      <h3>Một ngày giao dịch diễn ra thế nào</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Khung giờ</th><th>Phiên</th><th>Chuyện gì xảy ra</th></tr></thead>
+          <tbody>
+            <tr><td>9:00–9:15</td><td>ATO</td><td>Khớp lệnh định kỳ mở cửa. Mọi lệnh dồn lại, hệ thống chọn <i>một</i> mức giá khớp được nhiều nhất. Chỉ HOSE có.</td></tr>
+            <tr><td>9:15–11:30</td><td>Khớp liên tục</td><td>Lệnh gặp nhau là khớp ngay, theo ưu tiên giá rồi đến thời gian.</td></tr>
+            <tr><td>11:30–13:00</td><td>Nghỉ trưa</td><td>Thị trường đóng. Đây là lúc tin tức hay được công bố.</td></tr>
+            <tr><td>13:00–14:30</td><td>Khớp liên tục</td><td>Phiên chiều.</td></tr>
+            <tr><td>14:30–14:45</td><td>ATC</td><td>Khớp lệnh định kỳ đóng cửa — quyết định giá đóng cửa, tức giá tham chiếu ngày mai. Nơi “cá mập” hay ra tay.</td></tr>
+            <tr><td>14:45–15:00</td><td>Thỏa thuận</td><td>Mua bán lô lớn, thương lượng riêng ngoài bảng khớp lệnh.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <figure class="fig">
+      <svg viewBox="0 0 640 172" role="img" aria-label="MỘT PHIÊN GIAO DỊCH TRÊN HOSE">
+      <text class="t-eb" x="0" y="11">MỘT PHIÊN GIAO DỊCH TRÊN HOSE</text>
+      <defs><pattern id="fg-hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse"><line x1="0" y1="0" x2="0" y2="7" stroke="var(--line)" stroke-width="3"/></pattern></defs>
+      <rect data-fade="" style="animation-delay:0.00s" x="30.0" y="56" width="24.6" height="32" fill="var(--accent-wash)" stroke="var(--accent)"/>
+      <rect data-fade="" style="animation-delay:0.08s" x="54.6" y="56" width="221.2" height="32" fill="var(--surface-2)" stroke="var(--line)"/>
+      <rect data-fade="" style="animation-delay:0.16s" x="275.8" y="56" width="147.5" height="32" fill="url(#fg-hatch)" stroke="var(--line)"/>
+      <rect data-fade="" style="animation-delay:0.24s" x="423.3" y="56" width="147.5" height="32" fill="var(--surface-2)" stroke="var(--line)"/>
+      <rect data-fade="" style="animation-delay:0.32s" x="570.8" y="56" width="24.6" height="32" fill="var(--accent-wash)" stroke="var(--accent)"/>
+      <rect data-fade="" style="animation-delay:0.40s" x="595.4" y="56" width="24.6" height="32" fill="var(--surface-2)" stroke="var(--line-soft)"/>
+      <text class="t-num" x="42.3" y="34" text-anchor="middle" fill="var(--accent-ink)">ATO</text>
+      <line x1="42.3" y1="40" x2="42.3" y2="54" stroke="var(--accent)" stroke-opacity=".6"/>
+      <text class="t-num" x="583.1" y="34" text-anchor="middle" fill="var(--accent-ink)">ATC</text>
+      <line x1="583.1" y1="40" x2="583.1" y2="54" stroke="var(--accent)" stroke-opacity=".6"/>
+      <text class="t-lbl" x="164.4" y="76" text-anchor="middle">Khớp liên tục</text>
+      <text class="t-lbl" x="349.6" y="76" text-anchor="middle">Nghỉ trưa</text>
+      <text class="t-lbl" x="497.1" y="76" text-anchor="middle">Khớp liên tục</text>
+      <line x1="606.9" y1="88" x2="606.9" y2="104" stroke="var(--line)"/>
+      <text class="t-lbl" x="632" y="116" text-anchor="end">Thỏa thuận (lô lớn)</text>
+      <text class="t-num" x="30.0" y="136" text-anchor="start">9:00</text>
+      <text class="t-num" x="275.8" y="136" text-anchor="middle">11:30</text>
+      <text class="t-num" x="423.3" y="136" text-anchor="middle">13:00</text>
+            <text class="t-num" x="620.0" y="136" text-anchor="end">15:00</text>
+      <g class="playhead"><line x1="30" y1="50" x2="30" y2="94" stroke="var(--accent)" stroke-width="1.5"/><circle cx="30" cy="50" r="3" fill="var(--accent)"/></g>
+      <text class="t-lbl" x="0" y="162" fill="var(--ink-2)">Phiên ATC quyết định giá đóng cửa — cũng chính là giá tham chiếu của ngày mai.</text>
+      </svg>
+      <figcaption>Hai đầu phiên là <b>khớp lệnh định kỳ</b> (ATO/ATC): mọi lệnh dồn lại, hệ thống chọn một mức giá duy nhất. Giữa phiên là khớp liên tục — gặp giá là khớp ngay.</figcaption>
+      </figure>
+      <h3>Các loại lệnh — chỉ cần thuộc bốn cái</h3>
+      <dl class="dl">
+        <div><dt>LO<small>Limit Order</small></dt><dd>Bạn ra giá cụ thể: “mua HPG giá 27.00”. Khớp đúng giá đó hoặc tốt hơn, không khớp thì nằm chờ. <b>Người mới dùng LO là chính.</b></dd></div>
+        <div><dt>MP<small>Market Price</small></dt><dd>“Mua bằng mọi giá đang có”. Khớp ngay nhưng bạn không kiểm soát được giá — nguy hiểm với cổ phiếu thanh khoản thấp.</dd></div>
+        <div><dt>ATO / ATC</dt><dd>“Mua/bán tại giá mở cửa (hoặc đóng cửa), giá nào cũng chịu”. Được ưu tiên khớp trước lệnh LO. Đặt ATC rồi giá đột ngột lên trần thì bạn vẫn phải mua ở trần.</dd></div>
+        <div><dt>Lô chẵn</dt><dd>Trên HOSE, một lô là <b>100 cổ phiếu</b>. Muốn mua HPG giá 27.000đ thì tối thiểu 2,7 triệu đồng. Lô lẻ (1–99 cp, thường phát sinh do cổ tức cổ phiếu) phải bán qua kênh riêng, giá thường thiệt.</dd></div>
+      </dl>
+
+      <h3>T+2: tiền và cổ phiếu không về ngay</h3>
+      <p>Mua cổ phiếu hôm nay (ngày T), cổ phiếu về tài khoản chiều T+1 và <b>bạn chỉ bán được từ ngày T+2</b>. Ngược lại, bán hôm nay thì tiền cũng về theo lịch tương tự.</p>
+      <p class="warn"><b>Vì sao điều này quan trọng</b>Bạn bị “nhốt” hai phiên. Mua thứ Năm, gặp tin xấu thứ Sáu — bạn chỉ đứng nhìn. Đây là lý do quy mô mỗi lệnh (cấp 5) quan trọng hơn việc chọn đúng mã.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 160" role="img" aria-label="CHU TRÌNH T+2">
+      <text class="t-eb" x="0" y="11">CHU TRÌNH T+2</text>
+      <line x1="40" y1="86" x2="600" y2="86" stroke="var(--line)" stroke-width="1.5"/>
+      <path d="M600 86 L590 81 L590 91 Z" fill="var(--line)"/>
+      <g data-fade="" style="animation-delay:0.00s">
+      <circle cx="110" cy="86" r="17" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.8"/>
+      <text class="t-num" x="110" y="90" text-anchor="middle" fill="var(--accent)">T</text>
+      <text class="t-key" x="110" y="128" text-anchor="middle">Bạn mua</text>
+      <text class="t-lbl" x="110" y="145" text-anchor="middle">Tiền bị trừ ngay</text>
+      </g>
+      <g data-fade="" style="animation-delay:0.15s">
+      <circle cx="300" cy="86" r="17" fill="var(--surface)" stroke="var(--muted)" stroke-width="1.8"/>
+      <text class="t-num" x="300" y="90" text-anchor="middle" fill="var(--muted)">T+1</text>
+      <text class="t-key" x="300" y="128" text-anchor="middle">Chờ</text>
+      <text class="t-lbl" x="300" y="145" text-anchor="middle">Chiều: cổ phiếu về tài khoản</text>
+      </g>
+      <g data-fade="" style="animation-delay:0.30s">
+      <circle cx="490" cy="86" r="17" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="490" y="90" text-anchor="middle" fill="var(--up)">T+2</text>
+      <text class="t-key" x="490" y="128" text-anchor="middle">Được bán</text>
+      <text class="t-lbl" x="490" y="145" text-anchor="middle">Từ phiên này mới bán được</text>
+      </g>
+      <path d="M110 56 L110 44 L490 44 L490 56" fill="none" stroke="var(--down)" stroke-width="1.4" stroke-opacity=".8"/>
+      <rect x="212" y="30" width="176" height="18" rx="4" fill="var(--surface)"/>
+      <text class="t-num" x="300" y="43" text-anchor="middle" fill="var(--down)">Bị nhốt hai phiên</text>
+      </svg>
+      <figcaption>Mua hôm nay thì sớm nhất <b>T+2</b> mới bán được. Trong hai phiên đó, tin xấu ra thì bạn chỉ có thể đứng nhìn — đây là lý do quy mô lệnh quan trọng hơn việc chọn đúng mã.</figcaption>
+      </figure>
+
+      <h3>Chi phí thật của một vòng mua–bán</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Khoản</th><th>Mức phổ biến</th><th>Thu khi nào</th></tr></thead>
+          <tbody>
+            <tr><td>Phí môi giới</td><td class="num">0,10% – 0,25% giá trị</td><td>Cả lượt mua và lượt bán</td></tr>
+            <tr><td>Thuế TNCN</td><td class="num">0,10% giá trị bán</td><td>Chỉ khi bán — lãi hay lỗ đều nộp</td></tr>
+            <tr><td>Thuế cổ tức tiền mặt</td><td class="num">5%</td><td>Khấu trừ khi chia cổ tức</td></tr>
+            <tr><td>Phí lưu ký</td><td class="num">≈0,27đ/cp/tháng</td><td>Hàng tháng, nhỏ nhưng có</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Cộng lại, một vòng mua–bán tốn khoảng <b>0,4–0,6%</b>. Nghĩa là cổ phiếu phải tăng chừng đó bạn mới hòa vốn. Giao dịch 100 lần một năm là bạn tự trả đi 40–60% vốn cho phí — đây là lý do toán học vì sao “lướt sóng” liên tục gần như luôn thua.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 226" role="img" aria-label="PHÍ + THUẾ ĂN MẤT BAO NHIÊU VỐN MỘT NĂM">
+      <text class="t-eb" x="0" y="11">PHÍ + THUẾ ĂN MẤT BAO NHIÊU VỐN MỘT NĂM</text>
+      <line x1="60" y1="178.0" x2="600" y2="178.0" stroke="var(--line-soft)"/>
+      <text class="t-num" x="52" y="182.0" text-anchor="end" fill="var(--muted)">0%</text>
+      <line x1="60" y1="136.9" x2="600" y2="136.9" stroke="var(--line-soft)"/>
+      <text class="t-num" x="52" y="140.9" text-anchor="end" fill="var(--muted)">20%</text>
+      <line x1="60" y1="95.7" x2="600" y2="95.7" stroke="var(--line-soft)"/>
+      <text class="t-num" x="52" y="99.7" text-anchor="end" fill="var(--muted)">40%</text>
+      <line x1="60" y1="54.6" x2="600" y2="54.6" stroke="var(--line-soft)"/>
+      <text class="t-num" x="52" y="58.6" text-anchor="end" fill="var(--muted)">60%</text>
+      <rect data-rise="" style="animation-delay:0.00s" x="74" y="171.9" width="62" height="6.1" rx="3" fill="var(--down)" fill-opacity="0.30"/>
+      <text class="t-num" x="105" y="164.9" text-anchor="middle" fill="var(--ink)">3%</text>
+      <text class="t-num" x="105" y="196" text-anchor="middle" fill="var(--muted)">6</text>
+      <rect data-rise="" style="animation-delay:0.09s" x="164" y="166.0" width="62" height="12.0" rx="3" fill="var(--down)" fill-opacity="0.44"/>
+      <text class="t-num" x="195" y="159.0" text-anchor="middle" fill="var(--ink)">6%</text>
+      <text class="t-num" x="195" y="196" text-anchor="middle" fill="var(--muted)">12</text>
+      <rect data-rise="" style="animation-delay:0.18s" x="254" y="154.7" width="62" height="23.3" rx="3" fill="var(--down)" fill-opacity="0.58"/>
+      <text class="t-num" x="285" y="147.7" text-anchor="middle" fill="var(--ink)">11%</text>
+      <text class="t-num" x="285" y="196" text-anchor="middle" fill="var(--muted)">24</text>
+      <rect data-rise="" style="animation-delay:0.27s" x="344" y="132.4" width="62" height="45.6" rx="3" fill="var(--down)" fill-opacity="0.72"/>
+      <text class="t-num" x="375" y="125.4" text-anchor="middle" fill="var(--ink)">22%</text>
+      <text class="t-num" x="375" y="196" text-anchor="middle" fill="var(--muted)">50</text>
+      <rect data-rise="" style="animation-delay:0.36s" x="434" y="96.9" width="62" height="81.1" rx="3" fill="var(--down)" fill-opacity="0.86"/>
+      <text class="t-num" x="465" y="89.9" text-anchor="middle" fill="var(--ink)">39%</text>
+      <text class="t-num" x="465" y="196" text-anchor="middle" fill="var(--muted)">100</text>
+      <rect data-rise="" style="animation-delay:0.45s" x="524" y="47.8" width="62" height="130.2" rx="3" fill="var(--down)" fill-opacity="1.00"/>
+      <text class="t-num" x="555" y="40.8" text-anchor="middle" fill="var(--ink)">63%</text>
+      <text class="t-num" x="555" y="196" text-anchor="middle" fill="var(--muted)">200</text>
+      <line x1="60" y1="178" x2="600" y2="178" stroke="var(--line)"/>
+      <text class="t-lbl" x="330" y="216" text-anchor="middle">Số vòng mua–bán trong một năm</text>
+      </svg>
+      <figcaption>Tính với <b>0,5% mỗi vòng mua–bán</b> (phí môi giới hai chiều + thuế bán), giả định lãi lỗ hoà nhau. Giao dịch 100 lần/năm là bạn tự nộp gần <b>40% vốn</b> cho phí, trước khi nói tới chuyện đúng hay sai.</figcaption>
+      </figure>
+
+      <h3>Có những thứ gì để mua?</h3>
+      <dl class="dl">
+        <div><dt>Cổ phiếu</dt><dd>Sở hữu một phần doanh nghiệp. Điểm khởi đầu chuẩn.</dd></div>
+        <div><dt>Chứng chỉ quỹ ETF<small>E1VFVN30, FUEVFVND…</small></dt><dd>Một “rổ” gồm nhiều cổ phiếu, mua 1 mã là sở hữu cả rổ. <b>Lựa chọn hợp lý nhất cho người mới.</b></dd></div>
+        <div><dt>Trái phiếu</dt><dd>Bạn cho vay, nhận lãi cố định. An toàn hơn — nhưng trái phiếu doanh nghiệp riêng lẻ thì không hề an toàn như tên gọi.</dd></div>
+        <div><dt>Chứng quyền (CW) &amp; phái sinh (VN30F1M)</dt><dd>Đòn bẩy cao, có thể mất toàn bộ. <b>Chưa xong cấp 5 thì đừng đụng vào.</b></dd></div>
+      </dl>
+
+      <h3>Mở tài khoản: ba bước</h3>
+      <ol class="steps">
+        <li>Chọn công ty chứng khoán (VPS, SSI, TCBS, VNDirect, MBS… — so phí và chất lượng app, đừng chọn theo quà tặng).</li>
+        <li>eKYC bằng CCCD gắn chip, ký hợp đồng điện tử. Thường xong trong 15 phút.</li>
+        <li>Chuyển tiền vào tài khoản chứng khoán. <b>Tuyệt đối không đăng ký margin</b> ở bước này.</li>
+      </ol>
+
+      <label class="mark"><input type="checkbox" data-level="c1"> Đã học xong cấp 1</label>
+    </section>
+
+    <!-- ================= CẤP 2 ================= -->
+    <section class="level" id="c2">
+      <div class="level-head">
+        <span class="level-num">02</span>
+        <div>
+          <h2>Đọc một doanh nghiệp</h2>
+          <p class="level-meta">Phân tích cơ bản — phần nền · 4–6 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> mở báo cáo tài chính của một công ty bất kỳ và trả lời được: công ty này kiếm tiền bằng cách nào, có thật sự kiếm được tiền không, và có đang mắc nợ nguy hiểm không.</p>
+
+      <h3>Ba bản báo cáo, ba câu hỏi khác nhau</h3>
+      <dl class="dl">
+        <div><dt>Kết quả kinh doanh<small>Đoạn phim</small></dt><dd>Trong 3 tháng (hoặc 1 năm) qua công ty bán được bao nhiêu, tốn bao nhiêu, còn lại bao nhiêu.</dd></div>
+        <div><dt>Cân đối kế toán<small>Bức ảnh chụp</small></dt><dd>Tại đúng ngày cuối kỳ, công ty <i>có</i> những gì và <i>nợ</i> những gì.</dd></div>
+        <div><dt>Lưu chuyển tiền tệ<small>Sự thật</small></dt><dd>Tiền mặt thực sự đã ra vào bao nhiêu. Đây là bản khó “làm đẹp” nhất.</dd></div>
+      </dl>
+      <p class="aside"><b>Ví dụ đời thường</b>Quán phở báo lãi 200 triệu — nhưng 150 triệu trong đó là tiền các công ty ghi sổ ăn chịu chưa trả. Báo cáo kết quả kinh doanh nói “lãi 200 triệu”. Báo cáo lưu chuyển tiền tệ nói “thực nhận 50 triệu”. Bản nào trả được lương nhân viên tháng này?</p>
+      <p><b>Lợi nhuận là ý kiến, dòng tiền là sự thật.</b> Một công ty báo lãi ba năm liền nhưng dòng tiền kinh doanh (CFO) âm ba năm liền là một dấu hiệu đỏ rất lớn.</p>
+
+      <h3>Đọc báo cáo kết quả kinh doanh theo đúng thứ tự</h3>
+      <div class="formula">Doanh thu thuần
+  − Giá vốn hàng bán        →  Lợi nhuận gộp
+  − Chi phí bán hàng &amp; QLDN
+  − Chi phí tài chính (lãi vay)
+  + Thu nhập khác           →  Lợi nhuận trước thuế
+  − Thuế TNDN               →  LỢI NHUẬN SAU THUẾ</div>
+      <p>Điều cần nhìn không phải con số cuối cùng, mà <b>lợi nhuận đến từ đâu</b>. Lãi tăng vọt nhờ bán một mảnh đất thì năm sau không lặp lại được. Lãi tăng đều nhờ doanh thu tăng và biên lợi nhuận giữ vững — đó mới là chất lượng.</p>
+
+      <h3>Bảng cân đối: một phương trình duy nhất</h3>
+      <div class="formula">TÀI SẢN  =  NỢ PHẢI TRẢ  +  VỐN CHỦ SỞ HỮU</div>
+      <figure class="fig">
+      <svg viewBox="0 0 640 176" role="img" aria-label="PHƯƠNG TRÌNH KẾ TOÁN">
+      <text class="t-eb" x="0" y="11">PHƯƠNG TRÌNH KẾ TOÁN</text>
+      <rect data-fade="" x="30" y="48" width="180" height="110" rx="6" fill="var(--surface-2)" stroke="var(--line)"/>
+      <text class="t-key t-mono" x="120" y="98" text-anchor="middle">TÀI SẢN  100</text>
+      <text class="t-lbl" x="120" y="116" text-anchor="middle">Những gì công ty có</text>
+      <text x="243" y="110" font-family="var(--font-mono)" font-size="20" fill="var(--muted)">=</text>
+      <rect data-fade="" style="animation-delay:.15s" x="280" y="48" width="180" height="66" rx="6" fill="var(--down)" fill-opacity=".13" stroke="var(--down)" stroke-opacity=".5"/>
+      <text class="t-key t-mono" x="370" y="78" text-anchor="middle">NỢ PHẢI TRẢ  60</text>
+      <text class="t-lbl" x="370" y="95" text-anchor="middle">Tiền của người khác</text>
+      <rect data-fade="" style="animation-delay:.3s" x="280" y="114" width="180" height="44" rx="6" fill="var(--up)" fill-opacity=".13" stroke="var(--up)" stroke-opacity=".5"/>
+      <text class="t-key t-mono" x="370" y="134" text-anchor="middle">VỐN CHỦ SỞ HỮU  40</text>
+      <text class="t-lbl" x="370" y="150" text-anchor="middle">Phần thực sự của cổ đông</text>
+      <text class="t-num" x="486" y="86" fill="var(--ink)">D/E = 60 / 40 = 1,5</text>
+      <text class="t-lbl" x="486" y="108">&gt; 1 → cần giải thích</text>
+      <text class="t-lbl" x="486" y="124">&gt; 2 (sản xuất) → đáng lo</text>
+      <text class="t-lbl" x="486" y="146">Ngân hàng, bất động sản</text>
+      <text class="t-lbl" x="486" y="160">có chuẩn riêng, cao hơn</text>
+      </svg>
+      <figcaption>Mọi đồng tài sản đều có chủ: hoặc chủ nợ, hoặc cổ đông. <b>Nợ càng chiếm nhiều</b>, phần bạn thực sự sở hữu càng mỏng — và một cú sốc nhỏ cũng đủ thổi bay nó.</figcaption>
+      </figure>
+      <p>Ba dòng đáng soi nhất với người mới:</p>
+      <ul>
+        <li><b>Hàng tồn kho</b> phình nhanh hơn doanh thu → hàng đang ế.</li>
+        <li><b>Phải thu khách hàng</b> phình nhanh hơn doanh thu → bán được nhưng chưa đòi được tiền.</li>
+        <li><b>Nợ vay / Vốn chủ sở hữu (D/E)</b> → mức độ mạo hiểm. Trên 1 là cần giải thích; trên 2 với doanh nghiệp sản xuất là đáng lo (ngân hàng và bất động sản có chuẩn riêng, cao hơn nhiều).</li>
+      </ul>
+
+      <h3>Bảy chỉ số đủ dùng cho năm đầu tiên</h3>
+      <dl class="dl">
+        <div><dt>EPS<small>Lợi nhuận / cổ phiếu</small></dt><dd>Mỗi cổ phiếu tạo ra bao nhiêu đồng lãi trong năm. Nền tảng của mọi thứ phía sau.</dd></div>
+        <div><dt>P/E<small>Giá / EPS</small></dt><dd>Bạn trả bao nhiêu đồng để mua 1 đồng lợi nhuận. P/E = 12 nghĩa là <i>nếu lợi nhuận đứng yên mãi</i>, mất 12 năm để hoàn vốn. Chỉ có nghĩa khi so với chính công ty trong quá khứ và với các công ty cùng ngành.</dd></div>
+        <div><dt>P/B<small>Giá / Giá trị sổ sách</small></dt><dd>Trả bao nhiêu cho 1 đồng tài sản ròng. Hữu ích nhất với ngân hàng, bảo hiểm, chứng khoán.</dd></div>
+        <div><dt>ROE<small>Lãi / Vốn chủ</small></dt><dd>Ban lãnh đạo dùng tiền của cổ đông hiệu quả đến đâu. ROE &gt; 15% duy trì nhiều năm là dấu hiệu doanh nghiệp tốt. Nhưng hãy kiểm tra ROE cao có phải nhờ vay nợ nhiều không.</dd></div>
+        <div><dt>Biên lợi nhuận gộp</dt><dd>Cho biết quyền lực định giá. Biên cao và ổn định → sản phẩm khó thay thế.</dd></div>
+        <div><dt>D/E</dt><dd>Đòn bẩy tài chính. Đòn bẩy khuếch đại cả lãi lẫn lỗ.</dd></div>
+        <div><dt>Tỷ suất cổ tức</dt><dd>Cổ tức tiền mặt / thị giá. So với lãi suất tiết kiệm để biết mình đang được trả bao nhiêu cho việc chấp nhận rủi ro.</dd></div>
+      </dl>
+      <p class="aside"><b>Cách nhớ P/E</b>Bạn định mua lại quán phở. Quán lãi 200 triệu/năm, chủ đòi 2,4 tỷ. P/E = 12. Câu hỏi thật sự không phải “12 là cao hay thấp”, mà là “tôi có tin năm sau quán vẫn lãi 200 triệu không?”.</p>
+
+      <p class="warn"><b>Ba cái bẫy kinh điển</b>① Lợi nhuận đột biến từ thanh lý tài sản khiến P/E trông rẻ giả tạo. ② Công ty phát hành thêm cổ phiếu → EPS bị pha loãng dù lợi nhuận không đổi. ③ Số liệu bạn xem trên app là <i>trước kiểm toán</i>; báo cáo kiểm toán đôi khi “bốc hơi” hàng trăm tỷ lợi nhuận.</p>
+
+      <h3>Lấy dữ liệu ở đâu</h3>
+      <p>Báo cáo tài chính quý và năm trên website quan hệ cổ đông của chính doanh nghiệp (nguồn gốc, đáng tin nhất), nghị quyết đại hội cổ đông, và các trang tổng hợp như CafeF, Vietstock, Fireant, SimplizeVN cho số liệu đã dựng sẵn. <b>Nguyên tắc:</b> số liệu tổng hợp để sàng lọc nhanh, nhưng trước khi xuống tiền thì mở báo cáo gốc.</p>
+
+      <label class="mark"><input type="checkbox" data-level="c2"> Đã học xong cấp 2</label>
+    </section>
+
+    <!-- ================= CẤP 3 ================= -->
+    <section class="level" id="c3">
+      <div class="level-head">
+        <span class="level-num">03</span>
+        <div>
+          <h2>Định giá &amp; chọn cổ phiếu</h2>
+          <p class="level-meta">Phân tích cơ bản — phần nâng cao · 6–8 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> phân biệt được “giá” và “giá trị”, và tự viết ra được luận điểm đầu tư ba câu cho một cổ phiếu.</p>
+
+      <h3>Giá là thứ bạn trả, giá trị là thứ bạn nhận</h3>
+      <p>Định giá không nhằm tìm ra một con số chính xác — không ai làm được. Nó nhằm trả lời: <b>ở mức giá hiện tại, thị trường đang giả định điều gì về tương lai công ty này, và giả định đó có hợp lý không?</b></p>
+
+      <h3>Bốn cách định giá, dùng cho bốn hoàn cảnh</h3>
+      <dl class="dl">
+        <div><dt>P/E so sánh</dt><dd>So P/E hiện tại với trung bình 5 năm của chính nó và với các công ty cùng ngành. Đơn giản, dùng được cho hầu hết doanh nghiệp có lợi nhuận ổn định.</dd></div>
+        <div><dt>P/B</dt><dd>Cho ngân hàng và doanh nghiệp mà tài sản là bản chất kinh doanh. Ngân hàng lỗ một quý thì P/E vô nghĩa, P/B vẫn dùng được.</dd></div>
+        <div><dt>Chiết khấu cổ tức</dt><dd>Cho doanh nghiệp trả cổ tức đều đặn (điện, nước, hạ tầng): giá trị = tổng dòng cổ tức tương lai, quy về hôm nay.</dd></div>
+        <div><dt>DCF<small>Chiết khấu dòng tiền</small></dt><dd>Chuẩn mực học thuật, nhưng cực nhạy với giả định. Với người mới, hãy hiểu <i>ý tưởng</i> — 1 đồng năm sau đáng giá ít hơn 1 đồng hôm nay — hơn là cố dựng mô hình.</dd></div>
+      </dl>
+
+      <h3>Ngành chu kỳ: cái bẫy P/E ngược đời</h3>
+      <p>Với thép, hóa chất, bất động sản, chứng khoán, vận tải biển — lợi nhuận lên xuống theo chu kỳ hàng hóa. Ở <b>đỉnh</b> chu kỳ, lợi nhuận cao ngất nên P/E trông cực rẻ. Ở <b>đáy</b> chu kỳ, lợi nhuận về gần 0 nên P/E trông đắt kinh khủng hoặc âm.</p>
+      <p class="warn"><b>Hệ quả ngược trực giác</b>Với cổ phiếu chu kỳ, P/E thấp thường là tín hiệu <i>bán</i>, còn P/E cao (hoặc lỗ) lại thường gần vùng <i>mua</i>. Đây là chỗ nhiều người mới, mới học P/E xong, mất tiền nặng nhất.</p>
+      <p>Nhóm phòng thủ thì ngược lại: điện, nước, dược, bán lẻ thiết yếu có lợi nhuận đều — P/E đọc theo nghĩa thông thường được.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 292" role="img" aria-label="CỔ PHIẾU NGÀNH CHU KỲ — THÉP, HOÁ CHẤT, VẬN TẢI BIỂN…">
+      <text class="t-eb" x="0" y="11">CỔ PHIẾU NGÀNH CHU KỲ — THÉP, HOÁ CHẤT, VẬN TẢI BIỂN…</text>
+      <text class="t-num" x="60" y="32" fill="var(--muted)">LỢI NHUẬN</text>
+      <line x1="60" y1="112" x2="600" y2="112" stroke="var(--line)"/>
+      <polyline data-draw="" points="60.0,103.4 66.0,101.1 72.0,98.9 78.0,96.7 84.0,94.5 90.0,92.4 96.0,90.2 102.0,88.0 108.0,85.9 114.0,83.8 120.0,81.7 126.0,79.6 132.0,77.6 138.0,75.6 144.0,73.6 150.0,71.7 156.0,69.8 162.0,67.9 168.0,66.1 174.0,64.4 180.0,62.6 186.0,61.0 192.0,59.3 198.0,57.8 204.0,56.3 210.0,54.8 216.0,53.4 222.0,52.1 228.0,50.8 234.0,49.6 240.0,48.5 246.0,47.4 252.0,46.4 258.0,45.5 264.0,44.6 270.0,43.8 276.0,43.1 282.0,42.5 288.0,41.9 294.0,41.4 300.0,41.0 306.0,40.6 312.0,40.3 318.0,40.2 324.0,40.0 330.0,40.0 336.0,40.0 342.0,40.2 348.0,40.3 354.0,40.6 360.0,41.0 366.0,41.4 372.0,41.9 378.0,42.5 384.0,43.1 390.0,43.8 396.0,44.6 402.0,45.5 408.0,46.4 414.0,47.4 420.0,48.5 426.0,49.6 432.0,50.8 438.0,52.1 444.0,53.4 450.0,54.8 456.0,56.3 462.0,57.8 468.0,59.3 474.0,61.0 480.0,62.6 486.0,64.4 492.0,66.1 498.0,67.9 504.0,69.8 510.0,71.7 516.0,73.6 522.0,75.6 528.0,77.6 534.0,79.6 540.0,81.7 546.0,83.8 552.0,85.9 558.0,88.0 564.0,90.2 570.0,92.4 576.0,94.5 582.0,96.7 588.0,98.9 594.0,101.1 600.0,103.4" fill="none" stroke="var(--up)" stroke-width="2.2" stroke-linejoin="round"/>
+      <text class="t-num" x="60" y="152" fill="var(--muted)">P/E</text>
+      <line x1="60" y1="236" x2="600" y2="236" stroke="var(--line)"/>
+      <polyline data-draw="" style="animation-delay:.2s" points="60.0,162.0 66.0,179.1 72.0,190.5 78.0,198.5 84.0,204.5 90.0,209.1 96.0,212.8 102.0,215.8 108.0,218.3 114.0,220.3 120.0,222.1 126.0,223.6 132.0,225.0 138.0,226.1 144.0,227.2 150.0,228.1 156.0,228.9 162.0,229.6 168.0,230.3 174.0,230.8 180.0,231.4 186.0,231.9 192.0,232.3 198.0,232.7 204.0,233.1 210.0,233.4 216.0,233.7 222.0,234.0 228.0,234.2 234.0,234.4 240.0,234.7 246.0,234.8 252.0,235.0 258.0,235.2 264.0,235.3 270.0,235.4 276.0,235.5 282.0,235.6 288.0,235.7 294.0,235.8 300.0,235.9 306.0,235.9 312.0,236.0 318.0,236.0 324.0,236.0 330.0,236.0 336.0,236.0 342.0,236.0 348.0,236.0 354.0,235.9 360.0,235.9 366.0,235.8 372.0,235.7 378.0,235.6 384.0,235.5 390.0,235.4 396.0,235.3 402.0,235.2 408.0,235.0 414.0,234.8 420.0,234.7 426.0,234.4 432.0,234.2 438.0,234.0 444.0,233.7 450.0,233.4 456.0,233.1 462.0,232.7 468.0,232.3 474.0,231.9 480.0,231.4 486.0,230.8 492.0,230.3 498.0,229.6 504.0,228.9 510.0,228.1 516.0,227.2 522.0,226.1 528.0,225.0 534.0,223.6 540.0,222.1 546.0,220.3 552.0,218.3 558.0,215.8 564.0,212.8 570.0,209.1 576.0,204.5 582.0,198.5 588.0,190.5 594.0,179.1 600.0,162.0" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linejoin="round"/>
+      <line x1="330" y1="40" x2="330" y2="236" stroke="var(--down)" stroke-opacity=".45" stroke-width="1.2" stroke-dasharray="4 5"/>
+      <line x1="92" y1="40" x2="92" y2="236" stroke="var(--up)" stroke-opacity=".45" stroke-width="1.2" stroke-dasharray="4 5"/>
+      <line x1="568" y1="40" x2="568" y2="236" stroke="var(--up)" stroke-opacity=".45" stroke-width="1.2" stroke-dasharray="4 5"/>
+      <text class="t-num" x="338" y="52" fill="var(--down)">Đỉnh lợi nhuận</text>
+      <text class="t-num" x="100" y="180" fill="var(--up)">Đáy</text>
+      <rect x="0" y="252" width="10" height="10" rx="2" fill="var(--down)"/>
+      <text class="t-lbl" x="18" y="261" fill="var(--ink-2)">Lợi nhuận đỉnh → P/E trông rẻ nhất → thường là vùng BÁN</text>
+      <rect x="0" y="272" width="10" height="10" rx="2" fill="var(--up)"/>
+      <text class="t-lbl" x="18" y="281" fill="var(--ink-2)">Lợi nhuận đáy hoặc lỗ → P/E cao hoặc âm → thường gần vùng MUA</text>
+      </svg>
+      <figcaption>P/E = Giá ÷ Lợi nhuận. Khi lợi nhuận vọt lên đỉnh, mẫu số phình to nên P/E tụt xuống mức &ldquo;rẻ&rdquo; — đúng lúc chu kỳ sắp quay đầu. Đây là cái bẫy đắt tiền nhất với người vừa học xong P/E.</figcaption>
+      </figure>
+
+      <h3>Lợi thế cạnh tranh: vì sao lợi nhuận này bền?</h3>
+      <p>Lợi nhuận cao luôn thu hút đối thủ. Câu hỏi sống còn là: <b>cái gì ngăn đối thủ cướp mất miếng bánh này?</b> Thường là một trong: thương hiệu, chi phí sản xuất thấp nhất ngành, chi phí chuyển đổi cao với khách hàng, hiệu ứng mạng lưới, hoặc giấy phép/vị trí độc quyền.</p>
+      <p class="aside"><b>Ví dụ đời thường</b>Quán phở lãi tốt. Sáu tháng sau, ba quán phở mở cạnh bên. Nếu quán chị Hoa vẫn đông vì nước dùng không ai bắt chước được — đó là lợi thế cạnh tranh. Nếu nó đông chỉ vì mở trước — đó không phải.</p>
+
+      <h3>Cổ tức tiền mặt và “cổ phiếu thưởng” không giống nhau</h3>
+      <p>Cổ tức <b>tiền mặt</b> là tiền thật vào tài khoản. Cổ tức bằng <b>cổ phiếu</b> hay cổ phiếu thưởng thì bạn có nhiều cổ phiếu hơn, nhưng giá bị điều chỉnh giảm tương ứng trong ngày giao dịch không hưởng quyền — <b>tổng tài sản của bạn không đổi</b>.</p>
+      <p class="aside"><b>Ví dụ đời thường</b>Cắt cái bánh pizza từ 8 miếng thành 16 miếng. Bạn có gấp đôi số miếng. Bạn vẫn có đúng chừng ấy pizza.</p>
+
+      <h3>Checklist trước khi mua một cổ phiếu</h3>
+      <ol class="steps">
+        <li>Công ty kiếm tiền bằng cách nào? Nói được trong hai câu không?</li>
+        <li>Doanh thu và lợi nhuận 5 năm qua đi theo hướng nào?</li>
+        <li>Dòng tiền kinh doanh có dương và bám sát lợi nhuận không?</li>
+        <li>Nợ vay có kiểm soát được không? Lãi vay ăn bao nhiêu phần lợi nhuận?</li>
+        <li>ROE bao nhiêu, và cao nhờ hiệu quả hay nhờ vay nợ?</li>
+        <li>Lợi thế cạnh tranh là gì? Ai có thể phá nó?</li>
+        <li>Ban lãnh đạo có sạch không? Có liên tục phát hành thêm để pha loãng cổ đông không?</li>
+        <li>Cổ đông nội bộ đang mua vào hay bán ra?</li>
+        <li>Định giá hiện tại đang giả định điều gì? Tôi có tin không?</li>
+        <li><b>Điều gì sẽ chứng minh tôi sai?</b> Không trả lời được câu này thì chưa nên mua.</li>
+      </ol>
+
+      <label class="mark"><input type="checkbox" data-level="c3"> Đã học xong cấp 3</label>
+    </section>
+
+    <!-- ================= CẤP 4 ================= -->
+    <section class="level" id="c4">
+      <div class="level-head">
+        <span class="level-num">04</span>
+        <div>
+          <h2>Phân tích kỹ thuật</h2>
+          <p class="level-meta">Đọc hành vi đám đông · 4 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> dùng đồ thị để chọn <i>thời điểm</i> và đặt <i>ngưỡng cắt lỗ</i> — không phải để tiên tri giá.</p>
+
+      <h3>Phân tích kỹ thuật thực chất là gì</h3>
+      <p>Nó dựa trên ba giả định: mọi thông tin đã phản ánh vào giá; giá di chuyển theo xu hướng; và lịch sử lặp lại vì <b>tâm lý con người lặp lại</b>. Nói cách khác, đồ thị là bản ghi cảm xúc của đám đông — chứ không phải cỗ máy dự đoán.</p>
+      <p class="warn"><b>Đặt kỳ vọng cho đúng</b>Phân tích kỹ thuật không cho bạn biết ngày mai giá bao nhiêu. Nó cho bạn một kịch bản kèm điểm mà nếu giá chạm tới thì kịch bản đó sai. Giá trị lớn nhất của nó nằm ở vế thứ hai.</p>
+
+      <h3>Nến Nhật — đơn vị chữ cái</h3>
+      <p>Một cây nến kể bốn con số của một phiên: giá mở, đóng, cao nhất, thấp nhất. <b>Thân</b> nến là khoảng cách mở–đóng, <b>bóng</b> (râu) là vùng giá đã chạm tới rồi bị đẩy về.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 200" role="img" aria-label="GIẢI PHẪU MỘT CÂY NẾN">
+      <text class="t-eb" x="0" y="11">GIẢI PHẪU MỘT CÂY NẾN</text>
+      <text class="t-num" x="210" y="30" text-anchor="middle" fill="var(--up)">NẾN TĂNG · đóng &gt; mở</text>
+      <g data-fade=""><line x1="210" y1="48" x2="210" y2="182" stroke="var(--up)" stroke-width="2"/>
+      <rect x="190" y="76" width="40" height="76" rx="2" fill="var(--up)"/></g>
+      <text class="t-num" x="238" y="66" fill="var(--muted)" font-size="9.5">bóng</text>
+      <text x="210" y="118" text-anchor="middle" font-family="var(--font-mono)" font-size="9.5" fill="var(--surface)" letter-spacing=".08em">THÂN</text>
+      <line x1="158" y1="48" x2="206" y2="48" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="152" y="52" text-anchor="end">Cao nhất</text>
+      <line x1="158" y1="76" x2="188" y2="76" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="152" y="80" text-anchor="end">Đóng cửa</text>
+      <line x1="158" y1="152" x2="188" y2="152" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="152" y="156" text-anchor="end">Mở cửa</text>
+      <line x1="158" y1="182" x2="206" y2="182" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="152" y="186" text-anchor="end">Thấp nhất</text>
+      <text class="t-num" x="430" y="30" text-anchor="middle" fill="var(--down)">NẾN GIẢM · đóng &lt; mở</text>
+      <g data-fade="" style="animation-delay:.15s"><line x1="430" y1="48" x2="430" y2="182" stroke="var(--down)" stroke-width="2"/>
+      <rect x="410" y="76" width="40" height="76" rx="2" fill="var(--down)"/></g>
+      <line x1="434" y1="48" x2="482" y2="48" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="488" y="52">Cao nhất</text>
+      <line x1="452" y1="76" x2="482" y2="76" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="488" y="80">Mở cửa</text>
+      <line x1="452" y1="152" x2="482" y2="152" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="488" y="156">Đóng cửa</text>
+      <line x1="434" y1="182" x2="482" y2="182" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="488" y="186">Thấp nhất</text>
+      </svg>
+      <figcaption>Một cây nến gói bốn con số của cả phiên. <b>Thân</b> cho biết ai thắng cuộc, <b>bóng</b> cho biết trận đánh đã đi xa tới đâu trước khi bị đẩy về.</figcaption>
+      </figure>
+      <ul>
+        <li>Thân dài, bóng ngắn → một phe áp đảo dứt khoát cả phiên.</li>
+        <li>Thân ngắn, hai bóng dài → giằng co, không ai thắng. Sự lưỡng lự.</li>
+        <li>Bóng dưới rất dài → giá bị dìm xuống nhưng có lực mua đẩy ngược lên. Dấu hiệu cầu vào.</li>
+      </ul>
+
+      <figure class="fig">
+      <svg viewBox="0 0 640 206" role="img" aria-label="BA DẠNG NẾN CẦN NHẬN RA">
+      <text class="t-eb" x="0" y="11">BA DẠNG NẾN CẦN NHẬN RA</text>
+      <g data-fade="" style="animation-delay:0.00s">
+      <line x1="107" y1="40" x2="107" y2="150" stroke="var(--up)" stroke-width="2"/>
+      <rect x="88" y="50" width="38" height="92" rx="2" fill="var(--up)"/>
+      </g>
+      <text class="t-key" x="107" y="180" text-anchor="middle">Thân dài, bóng ngắn</text>
+      <text class="t-lbl" x="107" y="196" text-anchor="middle">Một phe áp đảo dứt khoát</text>
+      <g data-fade="" style="animation-delay:0.12s">
+      <line x1="320" y1="35" x2="320" y2="155" stroke="var(--muted)" stroke-width="2"/>
+      <rect x="301" y="92" width="38" height="7" rx="2" fill="var(--muted)"/>
+      </g>
+      <text class="t-key" x="320" y="180" text-anchor="middle">Doji — thân rất ngắn</text>
+      <text class="t-lbl" x="320" y="196" text-anchor="middle">Giằng co, không ai thắng</text>
+      <g data-fade="" style="animation-delay:0.24s">
+      <line x1="533" y1="58" x2="533" y2="160" stroke="var(--up)" stroke-width="2"/>
+      <rect x="514" y="58" width="38" height="24" rx="2" fill="var(--up)"/>
+      </g>
+      <text class="t-key" x="533" y="180" text-anchor="middle">Bóng dưới rất dài</text>
+      <text class="t-lbl" x="533" y="196" text-anchor="middle">Bị dìm xuống rồi bật lên</text>
+      </svg>
+      <figcaption>Đừng học thuộc tên mẫu nến. Hãy đọc <b>tương quan thân và bóng</b>: ai kiểm soát phiên, và đám đông đã do dự ở đâu.</figcaption>
+      </figure>
+      <h3>Một cây nến là một lát thời gian</h3>
+      <p>Trước khi đọc được đồ thị, phải hiểu một điều: <b>cây nến không phải đơn vị tự nhiên của thị trường — nó là đơn vị bạn chọn</b>. Chọn khung ngày (D), mỗi nến gói cả phiên. Chọn khung 1 giờ, chính phiên đó tách thành năm nến. Giá không đổi — chỉ độ phóng thay đổi.</p>
+      <p>Dưới đây là phiên 23/07/2026 của HPG. Ở khung ngày nó chỉ là <i>một</i> cây nến bóng dưới dài; mở khung nhỏ ra, bạn thấy chính xác chuyện gì đã tạo ra cái bóng đó.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 700 296" role="img" aria-label="Cùng phiên 23/07/2026 của HPG nhìn ở ba khung thời gian">
+      <text class="t-eb" x="0" y="11">HPG · PHIÊN 23/07/2026 — CÙNG MỘT ĐOẠN GIÁ, BA KHUNG THỜI GIAN</text>
+      <line x1="44" y1="212.9" x2="596" y2="212.9" stroke="var(--line-soft)"/>
+      <text class="t-num" x="36" y="216.9" text-anchor="end" fill="var(--muted)">20.2</text>
+      <line x1="44" y1="179.3" x2="596" y2="179.3" stroke="var(--line-soft)"/>
+      <text class="t-num" x="36" y="183.3" text-anchor="end" fill="var(--muted)">20.4</text>
+      <line x1="44" y1="145.8" x2="596" y2="145.8" stroke="var(--line-soft)"/>
+      <text class="t-num" x="36" y="149.8" text-anchor="end" fill="var(--muted)">20.6</text>
+      <line x1="44" y1="112.3" x2="596" y2="112.3" stroke="var(--line-soft)"/>
+      <text class="t-num" x="36" y="116.3" text-anchor="end" fill="var(--muted)">20.8</text>
+      <line x1="44" y1="78.8" x2="596" y2="78.8" stroke="var(--line-soft)"/>
+      <text class="t-num" x="36" y="82.8" text-anchor="end" fill="var(--muted)">21.0</text>
+      <line x1="44" y1="78.8" x2="596" y2="78.8" stroke="var(--accent)" stroke-opacity=".55" stroke-dasharray="4 4"/>
+      <text class="t-num" x="698" y="82.8" text-anchor="end" fill="var(--accent-ink)" font-size="9.5">cao nhất 21.000</text>
+      <line x1="44" y1="221.2" x2="596" y2="221.2" stroke="var(--accent)" stroke-opacity=".55" stroke-dasharray="4 4"/>
+      <text class="t-num" x="698" y="225.2" text-anchor="end" fill="var(--accent-ink)" font-size="9.5">thấp nhất 20.150</text>
+      <line x1="124" y1="26" x2="124" y2="246" stroke="var(--line)"/>
+      <line x1="344" y1="26" x2="344" y2="246" stroke="var(--line)"/>
+      <text class="t-num" x="84" y="34" text-anchor="middle" fill="var(--ink)">1 NGÀY</text>
+      <text class="t-lbl" x="84" y="48" text-anchor="middle" font-size="9.5">1 nến</text>
+      <text class="t-num" x="234" y="34" text-anchor="middle" fill="var(--ink)">1 GIỜ</text>
+      <text class="t-lbl" x="234" y="48" text-anchor="middle" font-size="9.5">5 nến</text>
+      <text class="t-num" x="470" y="34" text-anchor="middle" fill="var(--ink)">15 PHÚT</text>
+      <text class="t-lbl" x="470" y="48" text-anchor="middle" font-size="9.5">16 nến</text>
+      <g data-fade=""><line x1="84.0" y1="78.8" x2="84.0" y2="221.2" stroke="var(--up)" stroke-width="1.8"/><rect x="67.0" y="112.3" width="34.0" height="16.8" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.15s"><line x1="160.0" y1="103.9" x2="160.0" y2="145.8" stroke="var(--down)" stroke-width="1.4"/><rect x="150.0" y="129.0" width="20.0" height="16.8" fill="var(--down)" rx="1"/></g>
+      <text class="t-lbl" x="160.0" y="256" text-anchor="middle" font-size="9">09h</text>
+      <g data-fade="" style="animation-delay:0.20s"><line x1="197.0" y1="120.7" x2="197.0" y2="179.3" stroke="var(--down)" stroke-width="1.4"/><rect x="187.0" y="145.8" width="20.0" height="16.8" fill="var(--down)" rx="1"/></g>
+      <text class="t-lbl" x="197.0" y="256" text-anchor="middle" font-size="9">10h</text>
+      <g data-fade="" style="animation-delay:0.25s"><line x1="234.0" y1="162.6" x2="234.0" y2="221.2" stroke="var(--down)" stroke-width="1.4"/><rect x="224.0" y="162.6" width="20.0" height="50.3" fill="var(--down)" rx="1"/></g>
+      <text class="t-lbl" x="234.0" y="256" text-anchor="middle" font-size="9">11h</text>
+      <g data-fade="" style="animation-delay:0.30s"><line x1="271.0" y1="78.8" x2="271.0" y2="212.9" stroke="var(--up)" stroke-width="1.4"/><rect x="261.0" y="120.7" width="20.0" height="92.2" fill="var(--up)" rx="1"/></g>
+      <text class="t-lbl" x="271.0" y="256" text-anchor="middle" font-size="9">13h</text>
+      <g data-fade="" style="animation-delay:0.35s"><line x1="308.0" y1="95.5" x2="308.0" y2="129.0" stroke="var(--up)" stroke-width="1.4"/><rect x="298.0" y="112.3" width="20.0" height="16.8" fill="var(--up)" rx="1"/></g>
+      <text class="t-lbl" x="308.0" y="256" text-anchor="middle" font-size="9">14h</text>
+      <g data-fade="" style="animation-delay:0.40s"><line x1="366.0" y1="103.9" x2="366.0" y2="137.4" stroke="var(--up)" stroke-width="1.1"/><rect x="361.0" y="120.7" width="10.0" height="8.4" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.42s"><line x1="380.8" y1="120.7" x2="380.8" y2="137.4" stroke="var(--down)" stroke-width="1.1"/><rect x="375.8" y="120.7" width="10.0" height="16.8" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.44s"><line x1="395.6" y1="129.0" x2="395.6" y2="145.8" stroke="var(--down)" stroke-width="1.1"/><rect x="390.6" y="129.0" width="10.0" height="16.8" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.46s"><line x1="410.4" y1="120.7" x2="410.4" y2="145.8" stroke="var(--up)" stroke-width="1.1"/><rect x="405.4" y="129.0" width="10.0" height="16.8" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.48s"><line x1="425.2" y1="129.0" x2="425.2" y2="145.8" stroke="var(--up)" stroke-width="1.1"/><rect x="420.2" y="137.4" width="10.0" height="1.6" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.50s"><line x1="440.0" y1="137.4" x2="440.0" y2="154.2" stroke="var(--down)" stroke-width="1.1"/><rect x="435.0" y="137.4" width="10.0" height="8.4" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.52s"><line x1="454.8" y1="145.8" x2="454.8" y2="179.3" stroke="var(--down)" stroke-width="1.1"/><rect x="449.8" y="145.8" width="10.0" height="16.8" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.54s"><line x1="469.6" y1="162.6" x2="469.6" y2="212.9" stroke="var(--down)" stroke-width="1.1"/><rect x="464.6" y="162.6" width="10.0" height="41.9" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.56s"><line x1="484.4" y1="187.7" x2="484.4" y2="221.2" stroke="var(--down)" stroke-width="1.1"/><rect x="479.4" y="204.5" width="10.0" height="8.4" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.58s"><line x1="499.2" y1="87.1" x2="499.2" y2="212.9" stroke="var(--up)" stroke-width="1.1"/><rect x="494.2" y="87.1" width="10.0" height="125.7" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.60s"><line x1="514.0" y1="87.1" x2="514.0" y2="129.0" stroke="var(--down)" stroke-width="1.1"/><rect x="509.0" y="95.5" width="10.0" height="33.5" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.62s"><line x1="528.8" y1="78.8" x2="528.8" y2="137.4" stroke="var(--up)" stroke-width="1.1"/><rect x="523.8" y="120.7" width="10.0" height="1.6" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.64s"><line x1="543.6" y1="103.9" x2="543.6" y2="129.0" stroke="var(--down)" stroke-width="1.1"/><rect x="538.6" y="112.3" width="10.0" height="8.4" fill="var(--down)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.66s"><line x1="558.4" y1="95.5" x2="558.4" y2="129.0" stroke="var(--up)" stroke-width="1.1"/><rect x="553.4" y="120.7" width="10.0" height="8.4" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.68s"><line x1="573.2" y1="112.3" x2="573.2" y2="129.0" stroke="var(--up)" stroke-width="1.1"/><rect x="568.2" y="120.7" width="10.0" height="1.6" fill="var(--up)" rx="1"/></g>
+      <g data-fade="" style="animation-delay:0.70s"><line x1="588.0" y1="112.3" x2="588.0" y2="112.3" stroke="var(--up)" stroke-width="1.1"/><rect x="583.0" y="112.3" width="10.0" height="1.6" fill="var(--up)" rx="1"/></g>
+      <text class="t-lbl" x="366" y="256" text-anchor="middle" font-size="9">9:15</text>
+      <text class="t-lbl" x="588" y="256" text-anchor="middle" font-size="9">14:45</text>
+      <line x1="484.4" y1="227.2" x2="484.4" y2="246" stroke="var(--down)" stroke-opacity=".55" stroke-dasharray="3 3"/>
+      <text class="t-lbl" x="350" y="282" text-anchor="middle" font-size="9.5"><tspan fill="var(--down)">Sáng bị bán xuống 20.150</tspan><tspan fill="var(--muted)">  →  </tspan><tspan fill="var(--up)">chiều kéo lên, đóng cửa 20.800</tspan></text>
+      </svg>
+      <figcaption>Một cây nến ngày không giấu thông tin — nó <b>nén</b> thông tin. Cả ba khung đều chạy từ 20.150 đến 21.000; khác nhau ở chỗ khung nhỏ cho bạn thấy <b>trình tự</b> đã xảy ra. Cái bóng dưới dài của nến ngày chính là cú dìm buổi sáng bị mua ngược lại buổi chiều.</figcaption>
+      </figure>
+      <p class="aside"><b>Chọn khung nào</b>Khung càng nhỏ, tín hiệu càng nhiều và càng nhiễu — phí giao dịch cũng nhân lên theo. Với người mới: đọc <b>khung tuần</b> để biết xu hướng lớn, <b>khung ngày</b> để ra quyết định, và bỏ qua mọi khung nhỏ hơn.</p>
+      <p class="warn"><b>Một cây nến không bao giờ đủ</b>Một cây nến riêng lẻ gần như vô nghĩa. Nó chỉ có nghĩa khi đặt vào ba thứ xung quanh: nó nằm ở <i>vị trí nào</i> của xu hướng, ở <i>vùng giá nào</i>, và đi kèm <i>khối lượng bao nhiêu</i>. Bóng dưới dài ở đáy một nhịp giảm dài là một chuyện; cũng cây nến đó giữa vùng đi ngang là chuyện khác.</p>
+      <h3>Thực hành: đọc nến trên chart thật</h3>
+      <p>Lý thuyết nến chỉ vào đầu khi bạn đặt tay lên dữ liệu thật. Đây là <b>71 phiên có thật của HPG</b>: một nhịp giảm từ vùng 23.5 xuống đáy 20.1 cuối tháng 7, rồi hồi lại. Bấm vào bất kỳ cây nến nào để xem bốn giá của phiên đó, tỷ lệ thân–bóng, khối lượng so với trung bình 20 phiên — và cách đọc nó.</p>
+      <figure class="fig lab" id="lab">
+      <div class="lab-head">
+        <div><p class="lab-t">HPG · Hòa Phát</p><p class="lab-s">HOSE · giá đóng cửa thực tế, 01/06/2026 – 07/09/2026</p></div>
+        <div class="lab-tf" role="group" aria-label="Khung thời gian"><button type="button" data-tf="D" class="on" aria-pressed="true">1 ngày</button><button type="button" data-tf="W" aria-pressed="false">1 tuần</button></div>
+      </div>
+      <div class="lab-plot"><svg id="lab-svg" viewBox="0 0 720 400" tabindex="0" role="application" aria-label="Đồ thị nến HPG, bấm vào một cây nến để đọc"></svg></div>
+      <noscript><p class="lab-s">Bật JavaScript để xem đồ thị tương tác này.</p></noscript>
+      <div class="lab-bar"><span class="lab-hint">Bấm vào một cây nến · hoặc dùng phím ← →</span><span class="lab-jumps"><button type="button" class="lab-jump" data-date="2026-07-28">Thân dài</button><button type="button" class="lab-jump" data-date="2026-07-23">Bóng dưới dài</button><button type="button" class="lab-jump" data-date="2026-07-09">Doji</button><button type="button" class="lab-jump" data-date="2026-07-20">Gãy kèm KL lớn</button></span></div>
+      <div id="lab-read" class="lab-read"></div>
+      <figcaption>Dữ liệu giá và khối lượng thật của HPG (nguồn Yahoo Finance, kỳ 01/06/2026 – 07/09/2026). Mọi con số trong bảng đọc nến đều được tính trực tiếp từ bốn giá của phiên đó (ba phiên đầu tháng 9 thiếu dữ liệu khối lượng ở nguồn nên cột để trống). Đây là ví dụ học tập về cách đọc đồ thị — không phải khuyến nghị mua bán.</figcaption>
+      </figure>
+      <script type="application/json" id="lab-data">{"bars":[["2026-06-01",24000,24150,23950,24050,9668300],["2026-06-02",24000,24050,23700,23700,25529600],["2026-06-03",23700,24150,23600,24150,20573500],["2026-06-04",24150,24150,23900,23950,10065300],["2026-06-05",23950,24050,23750,23750,13891200],["2026-06-08",23650,23750,23300,23300,22769900],["2026-06-09",23350,23550,23300,23550,12441700],["2026-06-10",23550,23700,23450,23600,7505500],["2026-06-11",23500,23550,23300,23300,10177700],["2026-06-12",23550,23550,23200,23200,13271400],["2026-06-15",23550,24350,23550,24350,30695200],["2026-06-16",24250,24350,24100,24200,14145800],["2026-06-17",24200,24300,24000,24000,19039000],["2026-06-18",24050,24150,23650,23650,18040500],["2026-06-19",23800,23900,23600,23600,20055700],["2026-06-22",23700,23850,23600,23600,10684400],["2026-06-23",23650,23700,23300,23300,29071800],["2026-06-24",23400,23600,23300,23500,12927300],["2026-06-25",23500,23600,23400,23400,7659100],["2026-06-26",23400,23500,23350,23500,15468600],["2026-06-29",23550,23650,23450,23650,14158200],["2026-06-30",23700,23700,23250,23300,30593200],["2026-07-01",23700,23700,23250,23300,30593200],["2026-07-02",23500,23650,23350,23400,13367500],["2026-07-03",23400,23500,23250,23250,15935100],["2026-07-06",23400,23600,23000,23100,21299300],["2026-07-07",23200,23250,23000,23100,13839600],["2026-07-08",23150,23400,23050,23200,12499500],["2026-07-09",23200,23250,23100,23200,11643400],["2026-07-10",23200,23250,22950,22950,11906800],["2026-07-13",22950,22950,22350,22400,32309000],["2026-07-14",22300,22500,22000,22500,22481900],["2026-07-15",22500,22600,22150,22400,21464500],["2026-07-16",22300,22400,21800,22200,22880600],["2026-07-17",22200,22350,21850,21850,17006300],["2026-07-20",21750,21750,20500,20600,53245200],["2026-07-21",20500,21150,20500,20800,27198700],["2026-07-22",20900,21050,20500,20700,43471900],["2026-07-23",20700,21000,20150,20800,36967600],["2026-07-24",20700,21000,20600,20800,17632000],["2026-07-27",20900,21000,20300,20350,18166800],["2026-07-28",20150,21000,20100,21000,29151700],["2026-07-29",21050,21650,20900,21650,36250000],["2026-07-30",21650,22050,21500,21800,29968000],["2026-07-31",21800,21850,21400,21700,24111500],["2026-08-03",21700,22650,21650,22550,44448000],["2026-08-04",22550,22600,22100,22150,22694000],["2026-08-05",22350,22600,21950,22000,27963700],["2026-08-06",22250,22300,21850,21850,14369400],["2026-08-07",21900,22300,21750,22000,13018100],["2026-08-10",22250,22300,21950,22100,16732700],["2026-08-11",22200,22250,22050,22050,13694600],["2026-08-12",22000,22350,21950,22100,15925100],["2026-08-13",22200,22250,21700,21700,25702700],["2026-08-14",21700,21800,21200,21250,27443600],["2026-08-17",21250,21450,21050,21200,18455500],["2026-08-18",21150,21400,21000,21000,16367500],["2026-08-19",21100,21200,20900,21200,15312500],["2026-08-20",21250,21450,21150,21150,15156400],["2026-08-21",21150,21750,21050,21700,25138400],["2026-08-24",22000,22300,21850,22250,28790200],["2026-08-25",22250,22300,21800,21800,25844100],["2026-08-26",21800,22100,21750,22050,19394800],["2026-08-27",22050,22400,22050,22200,19201900],["2026-08-28",22250,22350,22050,22100,17126700],["2026-08-31",22100,22100,22100,22100,0],["2026-09-01",22100,22100,22100,22100,0],["2026-09-02",22100,22100,22100,22100,0],["2026-09-03",22000,22000,21550,21600,26985600],["2026-09-04",21750,21800,21600,21700,13920900],["2026-09-07",21800,22150,21550,21550,20396876]],"zone":[20100,20500],"touch":6}</script>
+      <p>Hãy thử bốn nút ví dụ ở trên theo thứ tự thời gian: <b>doji 09/07</b> (đám đông lưỡng lự), <b>cú gãy 20/07</b> (thân dài đi xuống kèm khối lượng gấp hơn hai lần — người bán thật sự quyết đoạn), <b>bóng dưới dài 23/07</b> (bị dìm xuống rồi có lực đỡ), rồi <b>thân dài 28/07</b> (đóng cửa đúng đỉnh phiên). Đó là một câu chuyện hoàn chỉnh: do dự → bán tháo → có người đỡ → người mua giành lại quyền kiểm soát.</p>
+      <p class="warn"><b>Đọc xuôi thì dễ</b>Nhìn lại quá khứ, mọi tín hiệu đều rõ ràng. Ngay cạnh cây nến 23/07 còn có những cây bóng dưới dài khác <i>không</i> dẫn tới đảo chiều nào cả. Đó là lý do bạn cần điểm cắt lỗ (cấp 5), chứ không cần thêm mẫu nến.</p>
+      <h3>Xu hướng: định nghĩa bằng cấu trúc, không bằng cảm giác</h3>
+      <p><b>Tăng</b> = đỉnh sau cao hơn đỉnh trước <i>và</i> đáy sau cao hơn đáy trước. <b>Giảm</b> = ngược lại. <b>Đi ngang</b> = không thỏa cả hai. Đây là định nghĩa duy nhất bạn cần, và nó khách quan — hai người nhìn cùng biểu đồ phải ra cùng kết luận.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 212" role="img" aria-label="XU HƯỚNG ĐỊNH NGHĨA BẮNG CẤU TRÚC ĐỈNH–ĐÁY">
+      <text class="t-eb" x="0" y="11">XU HƯỚNG ĐỊNH NGHĨA BẮNG CẤU TRÚC ĐỈNH–ĐÁY</text>
+      <text class="t-num" x="150" y="34" text-anchor="middle" fill="var(--up)">XU HƯỚNG TĂNG</text>
+      <text class="t-lbl" x="150" y="50" text-anchor="middle">đỉnh sau cao hơn · đáy sau cao hơn</text>
+      <text class="t-num" x="490" y="34" text-anchor="middle" fill="var(--down)">XU HƯỚNG GIẢM</text>
+      <text class="t-lbl" x="490" y="50" text-anchor="middle">đỉnh sau thấp hơn · đáy sau thấp hơn</text>
+      <line x1="320" y1="60" x2="320" y2="200" stroke="var(--line)"/>
+      <polyline data-draw="" points="30,178 78,122 126,148 174,88 222,112 270,52" fill="none" stroke="var(--up)" stroke-width="2.2" stroke-linejoin="round"/>
+      <polyline data-draw="" style="animation-delay:.25s" points="370,52 418,108 466,82 514,140 562,116 610,176" fill="none" stroke="var(--down)" stroke-width="2.2" stroke-linejoin="round"/>
+      <circle cx="78" cy="122" r="3.4" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="78" y="112" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ1</text>
+      <circle cx="126" cy="148" r="3.4" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="126" y="166" text-anchor="middle" fill="var(--muted)" font-size="9.5">đ1</text>
+      <circle cx="174" cy="88" r="3.4" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="174" y="78" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ2</text>
+      <circle cx="222" cy="112" r="3.4" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="222" y="130" text-anchor="middle" fill="var(--muted)" font-size="9.5">đ2</text>
+      <circle cx="270" cy="52" r="3.4" fill="var(--surface)" stroke="var(--up)" stroke-width="1.8"/>
+      <text class="t-num" x="270" y="42" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ3</text>
+      <circle cx="370" cy="52" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="370" y="42" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ1</text>
+      <circle cx="418" cy="108" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="418" y="126" text-anchor="middle" fill="var(--muted)" font-size="9.5">đ1</text>
+      <circle cx="466" cy="82" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="466" y="72" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ2</text>
+      <circle cx="514" cy="140" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="514" y="158" text-anchor="middle" fill="var(--muted)" font-size="9.5">đ2</text>
+      <circle cx="562" cy="116" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="562" y="106" text-anchor="middle" fill="var(--muted)" font-size="9.5">Đ3</text>
+      <circle cx="610" cy="176" r="3.4" fill="var(--surface)" stroke="var(--down)" stroke-width="1.8"/>
+      <text class="t-num" x="610" y="194" text-anchor="middle" fill="var(--muted)" font-size="9.5">đ3</text>
+      </svg>
+      <figcaption>Định nghĩa này <b>khách quan</b>: hai người nhìn cùng một biểu đồ phải ra cùng kết luận. Khi một đáy mới thủng đáy cũ, xu hướng tăng đã kết thúc — dù cảm giác của bạn nói gì.</figcaption>
+      </figure>
+
+      <h3>Hỗ trợ và kháng cự là <i>vùng</i>, không phải đường kẻ</h3>
+      <p><b>Hỗ trợ</b>: vùng giá mà trước đây người mua đã từng nhảy vào chặn đà rơi. <b>Kháng cự</b>: vùng người bán đã từng ra hàng. Vùng bị phá vỡ rồi thì thường đảo vai — kháng cự cũ thành hỗ trợ mới.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 236" role="img" aria-label="HỖ TRỢ / KHÁNG CỰ LÀ MỘT VÙNG">
+      <text class="t-eb" x="0" y="11">HỖ TRỢ / KHÁNG CỰ LÀ MỘT VÙNG</text>
+      <rect data-grow="" x="40" y="86" width="560" height="22" rx="3" fill="var(--accent-wash)" stroke="var(--accent)" stroke-opacity=".5" stroke-dasharray="5 4"/>
+      <text class="t-num" x="46" y="80" fill="var(--accent-ink)">VÙNG 30 – 31</text>
+      <polyline data-draw="" style="animation-delay:.2s" points="40,196 95,100 140,168 200,96 255,178 315,94 360,152 420,66 465,102 520,54 600,26" fill="none" stroke="var(--ink-2)" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="95" cy="100" r="3.6" fill="var(--down)"/>
+      <circle cx="200" cy="96" r="3.6" fill="var(--down)"/>
+      <circle cx="315" cy="94" r="3.6" fill="var(--down)"/>
+      <text class="t-num" x="205" y="66" text-anchor="middle" fill="var(--down)">bị chặn 3 lần</text>
+      <circle cx="420" cy="66" r="3.6" fill="var(--up)"/>
+      <text class="t-num" x="418" y="50" text-anchor="middle" fill="var(--up)">PHÁ VỠ</text>
+      <circle cx="465" cy="102" r="3.6" fill="var(--up)"/>
+      <line x1="465" y1="112" x2="465" y2="132" stroke="var(--line)" stroke-dasharray="3 3"/>
+      <text class="t-num" x="474" y="140" fill="var(--up)">kháng cự cũ → hỗ trợ mới</text>
+      <text class="t-lbl" x="0" y="216">Người từng kẹt hàng ở vùng này chờ “về bờ để bán” — đó là toàn bộ bí mật của kháng cự.</text>
+      </svg>
+      <figcaption>Kháng cự không phải phép màu, nó là <b>ký ức đám đông</b>. Và khi vùng đó bị phá vỡ dứt khoát, chính những người từng bán ở đó lại trở thành người mua — kháng cự đảo vai thành hỗ trợ.</figcaption>
+      </figure>
+      <p class="aside"><b>Ví dụ đời thường</b>Bạn từng mua một mã ở giá 30 rồi nó rơi về 24. Khi giá bò về lại 30, cảm giác của bạn là gì? “Về bờ rồi, bán thôi.” Hàng nghìn người cùng nghĩ vậy — đó chính là lý do 30 trở thành kháng cự. Kháng cự không phải phép màu, nó là <i>ký ức đám đông</i>.</p>
+
+      <h3>Khối lượng — máy đo độ tin cậy</h3>
+      <p>Giá nói <i>chuyện gì</i>, khối lượng nói <i>có bao nhiêu người đồng ý</i>. Vượt kháng cự kèm khối lượng lớn gấp 2–3 lần trung bình → đáng tin. Vượt trong khối lượng èo uột → thường là bẫy, sau đó rơi ngược lại.</p>
+      <figure class="fig">
+      <svg viewBox="0 0 640 222" role="img" aria-label="KHỐI LƯỢNG XÁC NHẬN CÚ PHÁ VỠ">
+      <text class="t-eb" x="0" y="11">KHỐI LƯỢNG XÁC NHẬN CÚ PHÁ VỠ</text>
+      <text class="t-num" x="152" y="30" text-anchor="middle" fill="var(--up)">PHÁ VỠ CÓ KHỐI LƯỢNG</text>
+      <text class="t-lbl" x="152" y="45" text-anchor="middle">đáng tin</text>
+      <text class="t-num" x="462" y="30" text-anchor="middle" fill="var(--down)">PHÁ VỠ KL ÈO UỖT</text>
+      <text class="t-lbl" x="462" y="45" text-anchor="middle">thường là bẫy</text>
+      <line x1="30" y1="72" x2="300" y2="72" stroke="var(--accent)" stroke-opacity=".55" stroke-dasharray="5 4"/>
+      <line x1="340" y1="72" x2="610" y2="72" stroke="var(--accent)" stroke-opacity=".55" stroke-dasharray="5 4"/>
+      <text class="t-num" x="30" y="66" fill="var(--accent-ink)" font-size="9.5">kháng cự</text>
+      <text class="t-num" x="340" y="66" fill="var(--accent-ink)" font-size="9.5">kháng cự</text>
+      <polyline data-draw="" points="30,118 65,104 100,109 135,90 170,78 205,58 240,46 275,38" fill="none" stroke="var(--up)" stroke-width="2.2" stroke-linejoin="round"/>
+      <polyline data-draw="" style="animation-delay:.2s" points="340,118 375,104 410,109 445,90 480,68 515,58 550,96 585,120" fill="none" stroke="var(--down)" stroke-width="2.2" stroke-linejoin="round"/>
+      <line x1="0" y1="140" x2="640" y2="140" stroke="var(--line-soft)"/>
+      <line x1="30" y1="206" x2="610" y2="206" stroke="var(--line)"/>
+      <rect data-rise="" style="animation-delay:0.30s" x="20" y="192" width="20" height="14" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.35s" x="55" y="196" width="20" height="10" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.40s" x="90" y="194" width="20" height="12" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.45s" x="125" y="190" width="20" height="16" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.50s" x="160" y="188" width="20" height="18" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.55s" x="195" y="154" width="20" height="52" fill="var(--up)" fill-opacity=".9"/>
+      <rect data-rise="" style="animation-delay:0.60s" x="230" y="162" width="20" height="44" fill="var(--up)" fill-opacity=".9"/>
+      <rect data-rise="" style="animation-delay:0.65s" x="265" y="176" width="20" height="30" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.30s" x="330" y="192" width="20" height="14" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.35s" x="365" y="196" width="20" height="10" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.40s" x="400" y="194" width="20" height="12" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.45s" x="435" y="191" width="20" height="15" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.50s" x="470" y="189" width="20" height="17" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.55s" x="505" y="190" width="20" height="16" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.60s" x="540" y="186" width="20" height="20" fill="var(--muted)" fill-opacity=".35"/>
+      <rect data-rise="" style="animation-delay:0.65s" x="575" y="193" width="20" height="13" fill="var(--muted)" fill-opacity=".35"/>
+      <text class="t-num" x="0" y="162" fill="var(--muted)" font-size="9.5">KHỐI LƯỢNG</text>
+      </svg>
+      <figcaption>Giá cho biết <b>chuyện gì</b> đang xảy ra, khối lượng cho biết <b>bao nhiêu người đồng ý</b>. Vượt kháng cự mà khối lượng không nhích lên thì cú vượt đó thường bị trả lại.</figcaption>
+      </figure>
+
+      <h3>Chỉ báo: học đúng ba cái, hiểu chúng làm gì</h3>
+      <dl class="dl">
+        <div><dt>MA 20 / 50 / 200<small>Đường trung bình động</small></dt><dd>Giá trung bình N phiên gần nhất — làm mượt nhiễu để thấy xu hướng. Giá nằm trên MA200 thường được xem là xu hướng dài hạn còn tăng.</dd></div>
+        <div><dt>RSI<small>0–100</small></dt><dd>Đo sức mạnh của đà tăng gần đây. Trên 70 gọi là “quá mua”, dưới 30 là “quá bán”. <b>Nhưng</b> trong xu hướng tăng mạnh, RSI có thể nằm trên 70 suốt nhiều tuần — bán chỉ vì RSI &gt; 70 là sai lầm phổ biến.</dd></div>
+        <div><dt>MACD</dt><dd>Hiệu của hai đường trung bình — đo <i>gia tốc</i> của xu hướng. Hữu ích để thấy đà đang mạnh lên hay yếu đi.</dd></div>
+      </dl>
+      <p class="warn"><b>Cạm bẫy chỉ báo</b>Mọi chỉ báo đều được tính <i>từ</i> giá, nên chúng luôn đi sau giá. Chồng 6 chỉ báo lên biểu đồ không cho bạn 6 nguồn thông tin — nó cho bạn cùng một thông tin lặp lại 6 lần, và cảm giác chắc chắn giả tạo.</p>
+
+      <h3>Mô hình giá — dùng có kiểm soát</h3>
+      <p>Cờ, tam giác, hai đáy, vai–đầu–vai đều có logic tâm lý đằng sau. Nhưng não người rất giỏi nhìn ra hình thù trong đám mây. Quy tắc an toàn: <b>chỉ giao dịch mô hình khi nó xác nhận điều mà xu hướng và khối lượng đã nói</b>, không dùng nó để cãi lại xu hướng.</p>
+
+      <label class="mark"><input type="checkbox" data-level="c4"> Đã học xong cấp 4</label>
+    </section>
+
+    <!-- ================= CẤP 5 ================= -->
+    <section class="level" id="c5">
+      <div class="level-head">
+        <span class="level-num">05</span>
+        <div>
+          <h2>Quản trị vốn &amp; tâm lý</h2>
+          <p class="level-meta">Cấp quyết định bạn sống hay chết · Học suốt đời</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> đảm bảo rằng không một quyết định sai nào có thể loại bạn khỏi cuộc chơi. Nếu chỉ có thời gian cho một cấp, hãy chọn cấp này.</p>
+
+      <h3>Toán học tàn nhẫn của thua lỗ</h3>
+      <div class="formula">Lỗ  −10%   →  cần  +11%   để hòa vốn
+Lỗ  −20%   →  cần  +25%
+Lỗ  −33%   →  cần  +50%
+Lỗ  −50%   →  cần +100%
+Lỗ  −75%   →  cần +300%</div>
+<figure class="fig">
+<svg viewBox="0 0 640 240" role="img" aria-label="MUỐN VỀ BỜ CẦN LÃI BAO NHIÊU">
+<text class="t-eb" x="0" y="11">MUỐN VỀ BỜ CẦN LÃI BAO NHIÊU</text>
+<line x1="90.0" y1="34" x2="90.0" y2="212" stroke="var(--line-soft)"/>
+<text class="t-num" x="90.0" y="28" text-anchor="middle" fill="var(--muted)">+0%</text>
+<line x1="256.7" y1="34" x2="256.7" y2="212" stroke="var(--line-soft)"/>
+<text class="t-num" x="256.7" y="28" text-anchor="middle" fill="var(--muted)">+100%</text>
+<line x1="423.3" y1="34" x2="423.3" y2="212" stroke="var(--line-soft)"/>
+<text class="t-num" x="423.3" y="28" text-anchor="middle" fill="var(--muted)">+200%</text>
+<line x1="590.0" y1="34" x2="590.0" y2="212" stroke="var(--line-soft)"/>
+<text class="t-num" x="590.0" y="28" text-anchor="middle" fill="var(--muted)">+300%</text>
+<text class="t-num" x="78" y="60" text-anchor="end" fill="var(--down)">−10%</text>
+<rect data-grow="" style="animation-delay:0.00s" x="90" y="44" width="18.3" height="24" rx="3" fill="var(--up)" fill-opacity="0.35"/>
+<text class="t-num" x="116.3" y="60" fill="var(--ink)">+11%</text>
+<text class="t-num" x="78" y="94" text-anchor="end" fill="var(--down)">−20%</text>
+<rect data-grow="" style="animation-delay:0.10s" x="90" y="78" width="41.7" height="24" rx="3" fill="var(--up)" fill-opacity="0.49"/>
+<text class="t-num" x="139.7" y="94" fill="var(--ink)">+25%</text>
+<text class="t-num" x="78" y="128" text-anchor="end" fill="var(--down)">−33%</text>
+<rect data-grow="" style="animation-delay:0.20s" x="90" y="112" width="83.3" height="24" rx="3" fill="var(--up)" fill-opacity="0.63"/>
+<text class="t-num" x="181.3" y="128" fill="var(--ink)">+50%</text>
+<text class="t-num" x="78" y="162" text-anchor="end" fill="var(--down)">−50%</text>
+<rect data-grow="" style="animation-delay:0.30s" x="90" y="146" width="166.7" height="24" rx="3" fill="var(--up)" fill-opacity="0.77"/>
+<text class="t-num" x="246.7" y="162" text-anchor="end" fill="var(--surface)">+100%</text>
+<text class="t-num" x="78" y="196" text-anchor="end" fill="var(--down)">−75%</text>
+<rect data-grow="" style="animation-delay:0.40s" x="90" y="180" width="500.0" height="24" rx="3" fill="var(--up)" fill-opacity="0.91"/>
+<text class="t-num" x="580.0" y="196" text-anchor="end" fill="var(--surface)">+300%</text>
+<line x1="90" y1="34" x2="90" y2="212" stroke="var(--line)"/>
+<text class="t-lbl" x="0" y="234">Lỗ bao nhiêu → cần lãi bao nhiêu để về đúng vốn cũ</text>
+</svg>
+<figcaption>Lỗ và lãi <b>không đối xứng</b>. Mất một nửa tài khoản thì phải nhân đôi phần còn lại mới hoà — mất 75% thì cần gấp bốn. Đây là toàn bộ lý do vì sao giữ khoản lỗ nhỏ quan trọng hơn việc tìm cổ phiếu tăng mạnh.</figcaption>
+</figure>
+      <p>Lỗ và lãi <b>không đối xứng</b>. Đây là toàn bộ lý do vì sao “giữ cho khoản lỗ nhỏ” quan trọng hơn “tìm cho được cổ phiếu tăng mạnh”.</p>
+
+      <h3>Quy mô lệnh: quyết định trước khi bấm mua</h3>
+      <p>Nguyên tắc: <b>mỗi lệnh chỉ được phép làm bạn mất tối đa 1–2% tổng tài khoản</b>. Không phải 1–2% giá trị lệnh — mà 1–2% toàn bộ vốn.</p>
+      <div class="formula">Số cổ phiếu =  (NAV × % rủi ro cho phép) ÷ (Giá mua − Giá cắt lỗ)
+
+Ví dụ:  NAV 200.000.000đ,  rủi ro 1%  → chấp nhận mất 2.000.000đ
+        Mua HPG giá 27.000đ, cắt lỗ 25.000đ  → rủi ro 2.000đ/cp
+        Số cp = 2.000.000 ÷ 2.000 = 1.000 cp  (10 lô, ~27 triệu)</div>
+      <p>Với công thức này, sai 10 lệnh liên tiếp bạn vẫn chỉ mất khoảng 10% tài khoản — vẫn còn sống, vẫn còn học được. Không có nó, hai lệnh sai là xong.</p>
+
+      <h3>Cắt lỗ: đặt trước khi mua, không phải khi đã đau</h3>
+      <p>Điểm cắt lỗ phải được xác định <b>trước khi vào lệnh</b>, và dựa trên cấu trúc giá (thủng vùng hỗ trợ, thủng MA quan trọng, luận điểm đầu tư bị bác bỏ) — chứ không dựa trên “tôi chịu được lỗ bao nhiêu tiền”.</p>
+      <p class="warn"><b>Câu nói giết nhiều tài khoản nhất</b>“Chưa bán thì chưa lỗ.” Sai. Bạn đã lỗ rồi — khoản lỗ chỉ đang chưa được ghi nhận vào cảm xúc của bạn. Trong khi đó vốn của bạn bị kẹt, và cơ hội tốt hơn thì trôi qua.</p>
+
+      <h3>Tỷ lệ lãi/lỗ và kỳ vọng toán học</h3>
+      <p>Chỉ vào lệnh khi phần thưởng kỳ vọng ít nhất gấp đôi rủi ro (R:R ≥ 1:2). Khi đó bạn <b>đúng 40% số lần vẫn có lãi</b>:</p>
+      <div class="formula">Kỳ vọng = (Tỷ lệ thắng × Lãi trung bình) − (Tỷ lệ thua × Lỗ trung bình)
+        = (0,40 × 2R) − (0,60 × 1R)
+        = 0,80R − 0,60R  =  +0,20R mỗi lệnh</div>
+        <figure class="fig">
+        <svg viewBox="0 0 640 206" role="img" aria-label="MÔ PHỎNG 10 LỆNH VỚI R:R 1:2, TỶ LỆ THẮNG 40%">
+        <text class="t-eb" x="0" y="11">MÔ PHỎNG 10 LỆNH VỚI R:R 1:2, TỶ LỆ THẮNG 40%</text>
+        <line x1="40" y1="120" x2="620" y2="120" stroke="var(--line)" stroke-dasharray="4 4"/>
+        <text class="t-num" x="34" y="124" text-anchor="end" fill="var(--muted)">0</text>
+        <line x1="40" y1="76" x2="620" y2="76" stroke="var(--line-soft)"/>
+        <text class="t-num" x="34" y="80" text-anchor="end" fill="var(--muted)">+2R</text>
+        <polyline data-draw="" points="60,120 114,142 168,98 222,120 276,142 330,98 384,54 438,76 492,98 546,54 600,76" fill="none" stroke="var(--ink-2)" stroke-width="2.2" stroke-linejoin="round"/>
+        <circle cx="114" cy="142" r="3.6" fill="var(--down)"/>
+        <rect x="105" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="114" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <circle cx="168" cy="98" r="3.6" fill="var(--up)"/>
+        <rect x="159" y="176" width="18" height="18" rx="4" fill="var(--up)" fill-opacity=".16"/>
+        <text class="t-num" x="168" y="189" text-anchor="middle" fill="var(--up)" font-size="10">T</text>
+        <circle cx="222" cy="120" r="3.6" fill="var(--down)"/>
+        <rect x="213" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="222" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <circle cx="276" cy="142" r="3.6" fill="var(--down)"/>
+        <rect x="267" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="276" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <circle cx="330" cy="98" r="3.6" fill="var(--up)"/>
+        <rect x="321" y="176" width="18" height="18" rx="4" fill="var(--up)" fill-opacity=".16"/>
+        <text class="t-num" x="330" y="189" text-anchor="middle" fill="var(--up)" font-size="10">T</text>
+        <circle cx="384" cy="54" r="3.6" fill="var(--up)"/>
+        <rect x="375" y="176" width="18" height="18" rx="4" fill="var(--up)" fill-opacity=".16"/>
+        <text class="t-num" x="384" y="189" text-anchor="middle" fill="var(--up)" font-size="10">T</text>
+        <circle cx="438" cy="76" r="3.6" fill="var(--down)"/>
+        <rect x="429" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="438" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <circle cx="492" cy="98" r="3.6" fill="var(--down)"/>
+        <rect x="483" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="492" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <circle cx="546" cy="54" r="3.6" fill="var(--up)"/>
+        <rect x="537" y="176" width="18" height="18" rx="4" fill="var(--up)" fill-opacity=".16"/>
+        <text class="t-num" x="546" y="189" text-anchor="middle" fill="var(--up)" font-size="10">T</text>
+        <circle cx="600" cy="76" r="3.6" fill="var(--down)"/>
+        <rect x="591" y="176" width="18" height="18" rx="4" fill="var(--down)" fill-opacity=".16"/>
+        <text class="t-num" x="600" y="189" text-anchor="middle" fill="var(--down)" font-size="10">B</text>
+        <text class="t-lbl" x="40" y="189">Lệnh</text>
+        <circle cx="600" cy="76" r="6.5" fill="none" stroke="var(--up)" stroke-width="1.6"/>
+        <text class="t-num" x="592" y="64" text-anchor="end" fill="var(--up)">+2R</text>
+        <text class="t-num" x="40" y="34" fill="var(--ink)">Thắng 4/10 lệnh · R:R = 1:2</text>
+        <text class="t-lbl" x="40" y="50">T = thắng (+2R) · B = thua (−1R)</text>
+        </svg>
+        <figcaption>Sai 6 lần trên 10 mà tài khoản vẫn đi lên. <b>Bạn không cần đúng nhiều — bạn cần đúng to và sai nhỏ.</b> R là số tiền bạn chấp nhận mất ở mỗi lệnh.</figcaption>
+        </figure>
+      <p>Đây là bài học giải phóng nhất trong đầu tư: <b>bạn không cần đúng nhiều. Bạn cần đúng to và sai nhỏ.</b></p>
+
+      <h3>Đa dạng hóa vừa đủ</h3>
+      <ul>
+        <li>5–8 mã là hợp lý. Dưới 3 mã: một tin xấu là gãy danh mục. Trên 15 mã: bạn không còn theo dõi nổi, mà cũng chỉ ngang chỉ số — thà mua ETF.</li>
+        <li>Không quá 2–3 mã cùng một ngành. Bốn cổ phiếu bất động sản <b>không phải</b> là đa dạng hóa — chúng cùng chết vì một lý do.</li>
+        <li>Giữ luôn một phần tiền mặt. Tiền mặt là quyền được hành động khi cơ hội xuất hiện.</li>
+      </ul>
+
+      <h3>Margin — vì sao người mới phải tránh</h3>
+      <p>Margin là vay tiền công ty chứng khoán để mua thêm. Nó nhân đôi lãi <i>và</i> nhân đôi lỗ. Khi giá giảm tới ngưỡng, bạn bị <b>call margin</b> (yêu cầu nộp thêm tiền); không nộp kịp thì bị <b>force sell</b> — bán cưỡng bức ngay tại đáy, không hỏi ý bạn. Điều tệ nhất: nó tước mất khả năng chờ đợi của bạn, thứ vũ khí duy nhất mà nhà đầu tư cá nhân thực sự có.</p>
+
+      <h3>Sáu cái bẫy trong đầu bạn</h3>
+      <dl class="dl">
+        <div><dt>Ngại thua lỗ<small>Loss aversion</small></dt><dd>Mất 10 triệu đau gấp đôi niềm vui khi được 10 triệu. Kết quả: gồng lỗ rất giỏi, chốt lãi rất non. Chính xác là ngược với điều cần làm.</dd></div>
+        <div><dt>Chi phí chìm<small>Sunk cost</small></dt><dd>“Tôi đã lỗ 40% mã này rồi, bán bây giờ thì phí quá.” Số tiền đã mất không quan tâm bạn nghĩ gì. Câu hỏi đúng luôn là: <i>nếu hôm nay tôi đang cầm tiền mặt, tôi có mua mã này không?</i></dd></div>
+        <div><dt>Thiên kiến xác nhận</dt><dd>Mua xong chỉ đọc tin tốt về mã đó, vào đúng nhóm chat toàn người đang cầm mã đó. Cách chữa: viết sẵn ra điều gì sẽ chứng minh mình sai.</dd></div>
+        <div><dt>FOMO</dt><dd>Mã đã tăng 5 phiên trần, ai cũng khoe lãi, bạn nhảy vào. Bạn thường là người mua cuối cùng — người trả tiền để những người vào trước thoát hàng.</dd></div>
+        <div><dt>Neo giá<small>Anchoring</small></dt><dd>“Nó từng 50, giờ 30, rẻ quá.” Giá cũ không phải giá trị. Doanh nghiệp có thể đã xấu đi đúng bằng 40% đó.</dd></div>
+        <div><dt>Tự tin thái quá</dt><dd>Thắng 5 lệnh liền, bạn kết luận mình giỏi và tăng gấp ba khối lượng. Thị trường sẽ dạy lại bài này, học phí rất cao.</dd></div>
+      </dl>
+
+      <h3>Nhật ký giao dịch — công cụ rẻ nhất, hiệu quả nhất</h3>
+      <p>Mỗi lệnh ghi lại: mã, ngày, giá vào, <b>lý do mua</b>, điểm cắt lỗ, mục tiêu, và cảm xúc lúc đó. Khi đóng lệnh, ghi kết quả và <b>một dòng tôi đã học được gì</b>.</p>
+      <p>Sau 50 lệnh, đọc lại — bạn sẽ nhìn thấy sai lầm lặp lại của chính mình rõ hơn bất kỳ cuốn sách nào chỉ ra được. Đây là thứ chuyển bạn từ “người đoán giá” thành “người có quy trình”.</p>
+
+      <label class="mark"><input type="checkbox" data-level="c5"> Đã học xong cấp 5</label>
+    </section>
+
+    <!-- ================= CẤP 6 ================= -->
+    <section class="level" id="c6">
+      <div class="level-head">
+        <span class="level-num">06</span>
+        <div>
+          <h2>Vĩ mô, dòng tiền, chu kỳ</h2>
+          <p class="level-meta">Hiểu thủy triều, không chỉ hiểu con thuyền · 4 tuần</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> biết vì sao “cổ phiếu tốt vẫn giảm” — và nhận ra khi nào cả thị trường đang thuận hoặc nghịch chiều với bạn.</p>
+
+      <h3>Lãi suất là trọng lực của mọi tài sản</h3>
+      <p>Đây là biến số vĩ mô quan trọng nhất. Lãi suất tiết kiệm 4%/năm thì cổ phiếu có tỷ suất lợi nhuận 8% trông rất hấp dẫn. Lãi suất lên 10% thì cũng cổ phiếu đó trở nên vô duyên — mà lại còn rủi ro hơn.</p>
+      <p class="aside"><b>Cách nhớ</b>Lãi suất là trọng lực. Trọng lực yếu, mọi thứ bay lên dễ dàng — kể cả những thứ không đáng bay. Trọng lực mạnh, mọi thứ nặng trịch — kể cả những thứ tốt.</p>
+      <p>Lãi suất còn đánh vào doanh nghiệp hai lần: chi phí lãi vay tăng ăn vào lợi nhuận, và dòng tiền tương lai bị chiết khấu mạnh hơn nên định giá tụt.</p>
+
+      <h3>Các biến số cần theo dõi</h3>
+      <dl class="dl">
+        <div><dt>Lãi suất huy động &amp; điều hành</dt><dd>Xu hướng quan trọng hơn con số. Chu kỳ hạ lãi suất thường đi kèm với sóng tăng của thị trường.</dd></div>
+        <div><dt>Lạm phát (CPI)</dt><dd>Lạm phát cao buộc Ngân hàng Nhà nước siết tiền tệ → lãi suất lên → chứng khoán chịu áp lực.</dd></div>
+        <div><dt>Tỷ giá USD/VND</dt><dd>Tỷ giá căng thì khối ngoại rút vốn, doanh nghiệp vay USD chịu lỗ tỷ giá, và Ngân hàng Nhà nước phải hút tiền về để giữ giá VND.</dd></div>
+        <div><dt>Tăng trưởng tín dụng</dt><dd>Tiền được bơm ra nền kinh tế bao nhiêu. Tín dụng nới → thanh khoản dồi dào → một phần chảy sang chứng khoán.</dd></div>
+        <div><dt>Thanh khoản thị trường</dt><dd>Giá trị khớp lệnh bình quân/phiên trên HOSE. Thanh khoản cạn dần trong khi chỉ số vẫn tăng là dấu hiệu sóng đang yếu.</dd></div>
+        <div><dt>Khối ngoại &amp; tự doanh</dt><dd>Mua/bán ròng của nhà đầu tư nước ngoài và khối tự doanh công ty chứng khoán. Đọc như <i>một dữ kiện tham khảo</i>, không phải mệnh lệnh — họ cũng sai, và họ có mục tiêu khác bạn.</dd></div>
+      </dl>
+
+      <h3>Chu kỳ kinh tế và sự luân chuyển của dòng tiền</h3>
+      <p>Tiền không ở yên một chỗ. Qua mỗi giai đoạn chu kỳ, nó chảy sang nhóm ngành khác nhau — đây là lý do “mua và giữ mọi thứ mãi mãi” không phải luôn là câu trả lời ở một thị trường mới nổi như Việt Nam.</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Giai đoạn</th><th>Đặc điểm</th><th>Nhóm thường dẫn dắt</th></tr></thead>
+          <tbody>
+            <tr><td>Phục hồi sớm</td><td>Lãi suất vừa hạ, kinh tế bắt đầu ấm</td><td>Chứng khoán, ngân hàng, bất động sản</td></tr>
+            <tr><td>Tăng trưởng</td><td>Sản xuất, tiêu dùng mở rộng</td><td>Thép, xây dựng, khu công nghiệp, bán lẻ</td></tr>
+            <tr><td>Cuối chu kỳ</td><td>Lạm phát nóng, lãi suất bắt đầu lên</td><td>Dầu khí, hàng hóa cơ bản</td></tr>
+            <tr><td>Suy giảm</td><td>Lãi suất cao, cầu yếu</td><td>Điện, nước, dược — nhóm phòng thủ</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure class="fig">
+      <svg viewBox="0 0 640 240" role="img" aria-label="DÒNG TIỀN LUÂN CHUYỂN QUA CHU KỲ KINH TẾ">
+      <text class="t-eb" x="0" y="11">DÒNG TIỀN LUÂN CHUYỂN QUA CHU KỲ KINH TẾ</text>
+      <rect x="190" y="56" width="140" height="122" fill="var(--surface-2)" fill-opacity=".55"/>
+      <rect x="470" y="56" width="140" height="122" fill="var(--surface-2)" fill-opacity=".55"/>
+      <line x1="190" y1="56" x2="190" y2="178" stroke="var(--line)" stroke-dasharray="4 5"/>
+      <line x1="330" y1="56" x2="330" y2="178" stroke="var(--line)" stroke-dasharray="4 5"/>
+      <line x1="470" y1="56" x2="470" y2="178" stroke="var(--line)" stroke-dasharray="4 5"/>
+      <polyline data-draw="" points="50.0,164.0 54.7,163.9 59.3,163.7 64.0,163.4 68.7,163.0 73.3,162.4 78.0,161.7 82.7,160.9 87.3,160.0 92.0,159.0 96.7,157.8 101.3,156.6 106.0,155.2 110.7,153.7 115.3,152.2 120.0,150.5 124.7,148.8 129.3,146.9 134.0,145.0 138.7,143.1 143.3,141.0 148.0,138.9 152.7,136.7 157.3,134.5 162.0,132.2 166.7,129.9 171.3,127.6 176.0,125.2 180.7,122.8 185.3,120.4 190.0,118.0 194.7,115.6 199.3,113.2 204.0,110.8 208.7,108.4 213.3,106.1 218.0,103.8 222.7,101.5 227.3,99.3 232.0,97.1 236.7,95.0 241.3,92.9 246.0,91.0 250.7,89.1 255.3,87.2 260.0,85.5 264.7,83.8 269.3,82.3 274.0,80.8 278.7,79.4 283.3,78.2 288.0,77.0 292.7,76.0 297.3,75.1 302.0,74.3 306.7,73.6 311.3,73.0 316.0,72.6 320.7,72.3 325.3,72.1 330.0,72.0 334.7,72.1 339.3,72.3 344.0,72.6 348.7,73.0 353.3,73.6 358.0,74.3 362.7,75.1 367.3,76.0 372.0,77.0 376.7,78.2 381.3,79.4 386.0,80.8 390.7,82.3 395.3,83.8 400.0,85.5 404.7,87.2 409.3,89.1 414.0,91.0 418.7,92.9 423.3,95.0 428.0,97.1 432.7,99.3 437.3,101.5 442.0,103.8 446.7,106.1 451.3,108.4 456.0,110.8 460.7,113.2 465.3,115.6 470.0,118.0 474.7,120.4 479.3,122.8 484.0,125.2 488.7,127.6 493.3,129.9 498.0,132.2 502.7,134.5 507.3,136.7 512.0,138.9 516.7,141.0 521.3,143.1 526.0,145.0 530.7,146.9 535.3,148.8 540.0,150.5 544.7,152.2 549.3,153.7 554.0,155.2 558.7,156.6 563.3,157.8 568.0,159.0 572.7,160.0 577.3,160.9 582.0,161.7 586.7,162.4 591.3,163.0 596.0,163.4 600.7,163.7 605.3,163.9 610.0,164.0" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linejoin="round"/>
+      <circle cx="50" cy="164" r="4" fill="var(--accent)"/><circle cx="330" cy="72" r="4" fill="var(--accent)"/><circle cx="610" cy="164" r="4" fill="var(--accent)"/>
+      <text class="t-num" x="330" y="60" text-anchor="middle" fill="var(--muted)" font-size="9.5">ĐỈNH</text>
+      <text class="t-num" x="120" y="198" text-anchor="middle" fill="var(--accent-ink)" font-size="10">PHỤC HỒI SỚM</text>
+      <text class="t-lbl" x="120" y="214" text-anchor="middle" font-size="9.5">Chứng khoán · Ngân hàng</text>
+      <text class="t-lbl" x="120" y="227" text-anchor="middle" font-size="9.5">Bất động sản</text>
+      <text class="t-num" x="260" y="198" text-anchor="middle" fill="var(--accent-ink)" font-size="10">TĂNG TRƯỞNG</text>
+      <text class="t-lbl" x="260" y="214" text-anchor="middle" font-size="9.5">Thép · Xây dựng</text>
+      <text class="t-lbl" x="260" y="227" text-anchor="middle" font-size="9.5">Khu công nghiệp · Bán lẻ</text>
+      <text class="t-num" x="400" y="198" text-anchor="middle" fill="var(--accent-ink)" font-size="10">CUỐI CHU KỲ</text>
+      <text class="t-lbl" x="400" y="214" text-anchor="middle" font-size="9.5">Dầu khí</text>
+      <text class="t-lbl" x="400" y="227" text-anchor="middle" font-size="9.5">Hàng hóa cơ bản</text>
+      <text class="t-num" x="540" y="198" text-anchor="middle" fill="var(--accent-ink)" font-size="10">SUY GIẢM</text>
+      <text class="t-lbl" x="540" y="214" text-anchor="middle" font-size="9.5">Điện · Nước · Dược</text>
+      <text class="t-lbl" x="540" y="227" text-anchor="middle" font-size="9.5">(nhóm phòng thủ)</text>
+      </svg>
+      <figcaption>Tiền không nằm yên một chỗ: mỗi giai đoạn nó chảy sang một nhóm ngành khác. Đây là <b>khung để đặt câu hỏi</b>, không phải lịch trình — nhịp của Việt Nam thường lệch so với sách giáo khoa Mỹ.</figcaption>
+      </figure>
+      <p class="warn"><b>Đừng máy móc</b>Đây là khung tham chiếu để đặt câu hỏi, không phải lịch trình. Thị trường Việt Nam chịu tác động rất mạnh từ chính sách và từ dòng tiền cá nhân trong nước, nên nhịp có thể lệch hẳn so với sách giáo khoa Mỹ.</p>
+
+      <h3>Lịch sự kiện nên nằm trong đầu</h3>
+      <ul>
+        <li><b>Mùa báo cáo tài chính</b> — quý I và III công bố cuối tháng 4 / tháng 10; báo cáo bán niên soát xét và báo cáo năm kiểm toán là hai mốc hay có bất ngờ.</li>
+        <li><b>Đại hội cổ đông thường niên</b> — tập trung tháng 3–4, nơi công bố kế hoạch kinh doanh và phương án cổ tức.</li>
+        <li><b>Ngày giao dịch không hưởng quyền</b> — giá bị điều chỉnh giảm; đừng hoảng khi thấy mã của mình “rơi” đúng ngày đó.</li>
+        <li><b>Đáo hạn phái sinh</b> — thứ Năm tuần thứ ba hằng tháng, phiên ATC hay biến động mạnh bất thường ở nhóm VN30.</li>
+        <li><b>Câu chuyện dài hạn</b> — nâng hạng thị trường mới nổi, vận hành hệ thống KRX, nới room ngoại: những thứ tác động tới dòng vốn tổ chức nhiều năm.</li>
+      </ul>
+
+      <label class="mark"><input type="checkbox" data-level="c6"> Đã học xong cấp 6</label>
+    </section>
+
+    <!-- ================= CẤP 7 ================= -->
+    <section class="level" id="c7">
+      <div class="level-head">
+        <span class="level-num">07</span>
+        <div>
+          <h2>Hệ thống của riêng bạn</h2>
+          <p class="level-meta">Biến kiến thức thành quy trình · Liên tục</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> có một bản kế hoạch giao dịch viết ra giấy, và tuân thủ nó ngay cả khi thị trường làm bạn muốn phá luật.</p>
+
+      <h3>Chọn trường phái phù hợp với cuộc sống của bạn</h3>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th>Trường phái</th><th>Nắm giữ</th><th>Dựa chủ yếu vào</th><th>Hợp với ai</th></tr></thead>
+          <tbody>
+            <tr><td>Đầu tư giá trị</td><td>1–5 năm</td><td>Cấp 2 &amp; 3</td><td>Người kiên nhẫn, có việc chính bận rộn</td></tr>
+            <tr><td>Đầu tư tăng trưởng</td><td>6 tháng–3 năm</td><td>Cấp 3 &amp; 6</td><td>Người chịu được biến động mạnh</td></tr>
+            <tr><td>Cổ tức</td><td>Dài hạn</td><td>Cấp 2</td><td>Người cần dòng tiền đều, ngại rủi ro</td></tr>
+            <tr><td>Swing / theo sóng ngành</td><td>2 tuần–3 tháng</td><td>Cấp 4 &amp; 6</td><td>Người theo dõi được thị trường hằng ngày</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="warn"><b>Sai lầm phổ biến nhất ở cấp này</b>Đổi trường phái giữa chừng để né việc thừa nhận sai. Mua để lướt sóng, giá giảm, tự phong mình thành “nhà đầu tư dài hạn”. Trường phái phải chọn <i>trước</i> khi vào lệnh và ghi vào nhật ký.</p>
+
+      <h3>Bản kế hoạch giao dịch — sáu dòng là đủ</h3>
+      <ol class="steps">
+        <li><b>Vũ trụ cổ phiếu:</b> tôi chỉ chơi trong nhóm nào? (ví dụ: VN30 + các mã HOSE thanh khoản &gt; 20 tỷ/phiên)</li>
+        <li><b>Tiêu chí mua:</b> điều kiện cơ bản và kỹ thuật nào phải cùng thỏa mãn?</li>
+        <li><b>Quy mô lệnh:</b> rủi ro bao nhiêu % NAV mỗi lệnh, tối đa bao nhiêu mã cùng lúc?</li>
+        <li><b>Cắt lỗ:</b> đặt ở đâu, theo quy tắc nào?</li>
+        <li><b>Chốt lời:</b> theo mục tiêu giá, theo R:R, hay theo tín hiệu gãy xu hướng?</li>
+        <li><b>Điều kiện đứng ngoài:</b> khi nào tôi không giao dịch gì cả? (thị trường thủng MA200, tuần tôi đang căng thẳng, sau ba lệnh thua liên tiếp…)</li>
+      </ol>
+
+      <h3>Thử nghiệm trước khi cược thật</h3>
+      <ul>
+        <li><b>Giao dịch giấy 2–3 tháng:</b> ghi lệnh vào file, không dùng tiền thật. Đủ để lộ ra những lỗ hổng ngớ ngẩn nhất trong hệ thống.</li>
+        <li><b>Vốn nhỏ thật:</b> sau đó chạy tiền thật với số rất nhỏ. Cảm xúc khi có tiền thật là một biến số hoàn toàn khác — phải nếm nó sớm, khi học phí còn rẻ.</li>
+        <li><b>Kiểm chứng thủ công:</b> lôi biểu đồ 3 năm trước, che phần bên phải, và ra quyết định theo đúng quy tắc của mình. Đếm kết quả.</li>
+      </ul>
+
+      <h3>Đo hiệu suất cho đúng</h3>
+      <p>So sánh danh mục của bạn với <b>VN-Index cùng kỳ</b>, không so với anh hàng xóm đang khoe lệnh thắng (không ai khoe lệnh thua). Nếu ba năm liền bạn thua VN-Index, câu trả lời trung thực có thể là: mua ETF chỉ số và dành thời gian cho nghề chính của bạn — <b>đó là một quyết định đầu tư thông minh, không phải thất bại.</b></p>
+
+      <h3>Hai thói quen giữ bạn ở lại lâu dài</h3>
+      <ul>
+        <li><b>Tái cân bằng định kỳ:</b> mỗi 6–12 tháng đưa tỷ trọng về đúng kế hoạch. Việc này ép bạn bán bớt cái đã tăng nhiều và mua thêm cái đang rẻ — trái ngược hoàn toàn với bản năng.</li>
+        <li><b>Đầu tư đều đặn (DCA):</b> mỗi tháng bỏ một số tiền cố định vào thị trường, bất kể giá. Bạn ngừng phải đoán đáy, và biến biến động thành lợi thế.</li>
+      </ul>
+
+      <label class="mark"><input type="checkbox" data-level="c7"> Đã học xong cấp 7</label>
+    </section>
+
+  </main>
+</div>
+
+<div class="wrap">
+  <section class="outro" id="ketthuc">
+    <p class="eyebrow">Gợi ý thực hành</p>
+    <h2 style="margin-top:12px">Lộ trình 6 tháng đầu tiên</h2>
+    <ol class="plan">
+      <li><span class="when">Tháng 1</span><span><b>Cấp 0 + 1.</b> Mở tài khoản nhưng chưa nạp tiền. Mỗi ngày mở bảng điện 15 phút, tập đọc màu, đọc phiên ATC. Đặt lệnh ảo trên tài khoản demo.</span></li>
+      <li><span class="when">Tháng 2</span><span><b>Cấp 2.</b> Chọn 3 doanh nghiệp bạn dùng sản phẩm hằng ngày. Tải báo cáo tài chính năm gần nhất, đọc hết, tự tính EPS, P/E, ROE bằng tay.</span></li>
+      <li><span class="when">Tháng 3</span><span><b>Cấp 5 (đọc trước cấp 3–4).</b> Nạp một khoản rất nhỏ. Mua 1 chứng chỉ quỹ ETF. Bắt đầu viết nhật ký giao dịch ngay từ lệnh đầu tiên.</span></li>
+      <li><span class="when">Tháng 4</span><span><b>Cấp 3.</b> Viết luận điểm đầu tư ba câu cho 3 doanh nghiệp đã đọc. Mua 1–2 mã với quy mô nhỏ, có điểm cắt lỗ rõ ràng.</span></li>
+      <li><span class="when">Tháng 5</span><span><b>Cấp 4.</b> Mỗi ngày đọc 5 biểu đồ, chỉ dùng nến + khối lượng + MA20/50. Không thêm chỉ báo nào khác.</span></li>
+      <li><span class="when">Tháng 6</span><span><b>Cấp 6 + 7.</b> Đọc lại toàn bộ nhật ký, tìm sai lầm lặp lại. Viết bản kế hoạch giao dịch sáu dòng của riêng bạn.</span></li>
+    </ol>
+
+    <h3>Bốn cuốn sách, đọc theo thứ tự này</h3>
+    <ol class="steps">
+      <li><i>Nhà đầu tư thông minh</i> — Benjamin Graham. Chương 8 và 20 là phần quan trọng nhất; đọc riêng hai chương đó trước cũng được.</li>
+      <li><i>Trên đỉnh phố Wall</i> — Peter Lynch. Dễ đọc nhất, dạy cách tìm ý tưởng đầu tư từ đời sống hằng ngày.</li>
+      <li><i>Phân tích kỹ thuật thị trường tài chính</i> — John Murphy. Sách tra cứu cho cấp 4, không cần đọc một mạch.</li>
+      <li><i>Trading in the Zone</i> — Mark Douglas. Về tâm lý. Đọc khi bạn đã thua vài lệnh thật — lúc đó mới thấm.</li>
+    </ol>
+
+    <h3>Năm sai lầm khiến người mới rời thị trường sớm nhất</h3>
+    <ol class="steps">
+      <li>Vào thị trường bằng tiền cần dùng trong ngắn hạn.</li>
+      <li>Mua theo lời phím hàng, không hiểu mình đang sở hữu cái gì.</li>
+      <li>Không có điểm cắt lỗ, rồi “gồng” cho tới khi lỗ quá sâu để dám bán.</li>
+      <li>Dùng margin trong năm đầu tiên.</li>
+      <li>Trung bình giá xuống một cách vô kỷ luật — dồn thêm tiền vào mã đang sai, biến một khoản lỗ nhỏ thành khoản lỗ quyết định.</li>
+    </ol>
+
+    <p class="disclaimer">Trang này tổng hợp kiến thức nền tảng, không phải khuyến nghị mua bán. Các mã cổ phiếu và con số trong bảng minh họa là ví dụ để giải thích cơ chế, không phản ánh giá thị trường thực tế. Mức phí, biên độ và quy định giao dịch có thể thay đổi — hãy đối chiếu với biểu phí của công ty chứng khoán và quy chế hiện hành của HOSE, HNX, VSDC trước khi áp dụng.</p>
+  </section>
+</div>
+
+<script>
+(function(){
+  var boxes = document.querySelectorAll('.mark input[data-level]');
+  var links = document.querySelectorAll('#toc a');
+  var KEY = 'ck-tien-do';
+
+  function load(){
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }
+    catch(e){ return {}; }
+  }
+  function save(state){
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
+  }
+  function paint(state){
+    links.forEach(function(a){
+      var id = (a.getAttribute('href') || '').slice(1);
+      a.classList.toggle('done', !!state[id]);
+    });
+  }
+
+  var state = load();
+  boxes.forEach(function(box){
+    var id = box.getAttribute('data-level');
+    box.checked = !!state[id];
+    box.addEventListener('change', function(){
+      state[id] = box.checked;
+      if (!box.checked) { delete state[id]; }
+      save(state);
+      paint(state);
+    });
+  });
+  paint(state);
+
+  var figs = Array.prototype.slice.call(document.querySelectorAll('.fig'));
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (figs.length && !reduce && 'IntersectionObserver' in window) {
+    figs.forEach(function(f){ f.classList.add('anim'); });
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.18 });
+    figs.forEach(function(f){ io.observe(f); });
+  }
+
+  (function(){
+    var host = document.getElementById('lab');
+    var tag = document.getElementById('lab-data');
+    if (!host || !tag) return;
+    var CFG, SVG = document.getElementById('lab-svg'), READ = document.getElementById('lab-read');
+    try { CFG = JSON.parse(tag.textContent); } catch(e){ return; }
+    var RAW = CFG.bars, tf = 'D', bars = RAW, sel = -1;
+    var NS = 'http://www.w3.org/2000/svg';
+    var W = 720, H = 400, L = 10, R = 664, PT = 26, PB = 258, VT = 288, VB = 348;
+
+    function vn(n){ return n.toLocaleString('vi-VN'); }
+    function dm(s){ return s.slice(8,10) + '/' + s.slice(5,7); }
+    function dmy(s){ return s.slice(8,10) + '/' + s.slice(5,7) + '/' + s.slice(0,4); }
+
+    function weekly(rows){
+      var out = [], cur = null;
+      for (var i=0;i<rows.length;i++){
+        var r = rows[i], d = new Date(r[0] + 'T00:00:00Z');
+        var wk = Math.floor((d.getTime()/86400000 + 3) / 7);
+        if (!cur || cur.wk !== wk){
+          cur = { wk:wk, k:1, b:[r[0], r[1], r[2], r[3], r[4], r[5]] };
+          out.push(cur);
+        } else {
+          var b = cur.b;
+          if (r[2] > b[2]) b[2] = r[2];
+          if (r[3] < b[3]) b[3] = r[3];
+          b[4] = r[4]; b[5] += r[5];
+          cur.k++;
+        }
+        cur.end = r[0];
+      }
+      return out.map(function(o){ var b = o.b.slice(); b[6] = o.end; b[7] = o.k; return b; });
+    }
+
+    function el(n, a){
+      var e = document.createElementNS(NS, n);
+      for (var k in a) if (a[k] !== null && a[k] !== undefined) e.setAttribute(k, a[k]);
+      return e;
+    }
+
+    function draw(){
+      while (SVG.firstChild) SVG.removeChild(SVG.firstChild);
+      var n = bars.length, i;
+      var hi = -Infinity, lo = Infinity, vmax = 0;
+      for (i=0;i<n;i++){
+        if (bars[i][2] > hi) hi = bars[i][2];
+        if (bars[i][3] < lo) lo = bars[i][3];
+        if (bars[i][5] > vmax) vmax = bars[i][5];
+      }
+      var pad = (hi - lo) * 0.06 || 1;
+      hi += pad; lo -= pad;
+      var py = function(p){ return PB - (p - lo) * (PB - PT) / (hi - lo); };
+      var pitch = (R - L) / n;
+      var cx = function(i){ return L + pitch * (i + 0.5); };
+      var bw = Math.max(2, Math.min(13, pitch * 0.66));
+
+      // luoi gia
+      var rawStep = (hi - lo) / 6, mag = Math.pow(10, Math.floor(Math.log(rawStep)/Math.LN10));
+      var nm = rawStep / mag;
+      var step = (nm <= 1 ? 1 : nm <= 2 ? 2 : nm <= 2.5 ? 2.5 : nm <= 5 ? 5 : 10) * mag;
+      var start = Math.ceil(lo / step) * step;
+      for (var p = start; p <= hi; p += step){
+        SVG.appendChild(el('line', {x1:L, y1:py(p), x2:R, y2:py(p), stroke:'var(--line-soft)'}));
+        SVG.appendChild(el('text', {x:R+8, y:py(p)+4, class:'t-num', fill:'var(--muted)'})).textContent = (p/1000).toFixed(1);
+      }
+
+      // vung gia dang chu y
+      var z = CFG.zone;
+      if (z[0] > lo && z[1] < hi){
+        SVG.appendChild(el('rect', {x:L, y:py(z[1]), width:R-L, height:Math.max(2, py(z[0])-py(z[1])),
+          fill:'var(--accent)', 'fill-opacity':'.11', stroke:'var(--accent)', 'stroke-opacity':'.42',
+          'stroke-dasharray':'5 4'}));
+        var zt = el('text', {x:L+7, y:py(z[1])-6, class:'t-num', fill:'var(--accent-ink)', 'font-size':'9.5'});
+        zt.textContent = 'vùng ' + (z[0]/1000).toFixed(1) + ' – ' + (z[1]/1000).toFixed(1)
+          + ' · ' + CFG.touch + ' phiên chạm rồi bật lên';
+        SVG.appendChild(zt);
+      }
+
+      // nen + khoi luong
+      for (i=0;i<n;i++){
+        var b = bars[i], up = b[4] >= b[1], col = up ? 'var(--up)' : 'var(--down)';
+        var g = el('g', {'data-i':i, class:'cd', style:'cursor:pointer'});
+        g.appendChild(el('line', {x1:cx(i), y1:py(b[2]), x2:cx(i), y2:py(b[3]),
+          stroke:col, 'stroke-width':Math.max(1, bw*0.16)}));
+        var yo = py(b[1]), yc = py(b[4]);
+        g.appendChild(el('rect', {x:cx(i)-bw/2, y:Math.min(yo,yc), width:bw,
+          height:Math.max(Math.abs(yc-yo), 1.4), fill:col}));
+        if (vmax > 0 && b[5] > 0){
+          var vh = (b[5]/vmax) * (VB - VT);
+          g.appendChild(el('rect', {x:cx(i)-bw/2, y:VB-vh, width:bw, height:vh,
+            fill:col, 'fill-opacity':'.42'}));
+        }
+        g.appendChild(el('rect', {x:cx(i)-pitch/2, y:PT-2, width:pitch, height:VB-PT+4,
+          fill:'transparent'}));
+        SVG.appendChild(g);
+      }
+      SVG.appendChild(el('line', {x1:L, y1:VB, x2:R, y2:VB, stroke:'var(--line)'}));
+      var vl = el('text', {x:L, y:VT-6, class:'t-num', fill:'var(--muted)', 'font-size':'9.5'});
+      vl.textContent = 'KHỐI LƯỢNG'; SVG.appendChild(vl);
+
+      // nhan thoi gian
+      var every = Math.max(1, Math.round(n / 6));
+      for (i=0;i<n;i+=every){
+        var ax = cx(i), an = 'middle';
+        if (ax - 20 < L){ ax = L; an = 'start'; }
+        else if (ax + 20 > R){ ax = R; an = 'end'; }
+        var t = el('text', {x:ax, y:370, class:'t-num', fill:'var(--muted)', 'text-anchor':an});
+        t.textContent = dm(bars[i][0]); SVG.appendChild(t);
+      }
+
+      if (sel >= 0 && sel < n){
+        var s = bars[sel];
+        SVG.appendChild(el('line', {x1:cx(sel), y1:PT-2, x2:cx(sel), y2:VB,
+          stroke:'var(--ink)', 'stroke-opacity':'.32', 'stroke-dasharray':'3 3'}));
+        SVG.appendChild(el('rect', {x:cx(sel)-Math.max(bw,7)/2-3, y:py(s[2])-4,
+          width:Math.max(bw,7)+6, height:py(s[3])-py(s[2])+8, rx:3,
+          fill:'none', stroke:'var(--ink)', 'stroke-opacity':'.55'}));
+        SVG.appendChild(el('line', {x1:L, y1:py(s[4]), x2:R, y2:py(s[4]),
+          stroke:'var(--ink)', 'stroke-opacity':'.3', 'stroke-dasharray':'2 4'}));
+      }
+    }
+
+    function avgVol(i){
+      var a = 0, k = 0;
+      for (var j = Math.max(0, i-19); j <= i; j++){ if (bars[j][5] > 0){ a += bars[j][5]; k++; } }
+      return { avg: k ? a/k : 0, n: k };
+    }
+
+    function readout(){
+      if (sel < 0){ READ.innerHTML = '<p class="lab-empty">Chưa chọn cây nến nào — bấm vào đồ thị ở trên.</p>'; return; }
+      var b = bars[sel], o=b[1], h=b[2], l=b[3], c=b[4], v=b[5];
+      var rng = h - l, body = Math.abs(c-o);
+      var upSh = h - Math.max(o,c), dnSh = Math.min(o,c) - l;
+      var pb = rng ? body/rng*100 : 0, pu = rng ? upSh/rng*100 : 0, pd = rng ? dnSh/rng*100 : 0;
+      var prev = sel > 0 ? bars[sel-1][4] : o;
+      var chg = prev ? (c-prev)/prev*100 : 0;
+      var up = c >= o, col = up ? 'var(--up)' : 'var(--down)';
+      var av = avgVol(sel), vr = av.avg ? v/av.avg : 0;
+      var partial = (tf === 'W' && b[7] && b[7] < 5);
+
+      var why = [];
+      if (rng === 0) why.push('Phiên này giá không dao động — gần như không có giao dịch đáng kể.');
+      else if (pb > 70) why.push('<b>Thân dài (' + pb.toFixed(0) + '% biên độ)</b> — phe ' + (up?'mua':'bán') + ' kiểm soát gần như cả phiên, ít giằng co.');
+      else if (pb < 12) why.push('<b>Thân rất ngắn (' + pb.toFixed(0) + '%)</b> — mở và đóng gần bằng nhau: hai phe hoà nhau, đám đông lưỡng lự.');
+      else why.push('Thân vừa (' + pb.toFixed(0) + '% biên độ) — có xu hướng nhưng vẫn còn giằng co.');
+      if (pd > 45) why.push('<b>Bóng dưới dài (' + pd.toFixed(0) + '%)</b> — giá từng bị dìm xuống ' + vn(l) + 'đ rồi được mua ngược lên: có lực đỡ ở vùng đó.');
+      if (pu > 45) why.push('<b>Bóng trên dài (' + pu.toFixed(0) + '%)</b> — có lúc lên tới ' + vn(h) + 'đ nhưng bị bán ép về: có lực cản ở trên.');
+      var ky = tf === 'W' ? ' tuần' : ' phiên';
+      if (partial){
+        why.push('<b>Tuần này chưa kết thúc</b> — mới có ' + b[7] + ' phiên, nên không so khối lượng với các tuần trọn vẹn được.');
+      } else if (v > 0 && av.avg > 0 && av.n > 3){
+        if (vr >= 2) why.push('Khối lượng <b>gấp ' + vr.toFixed(1) + ' lần</b> trung bình ' + av.n + ky + ' gần nhất — nhiều người cùng hành động, tín hiệu đáng tin hơn.');
+        else if (vr <= 0.6) why.push('Khối lượng chỉ bằng ' + Math.round(vr*100) + '% trung bình ' + av.n + ky + ' gần nhất — ít người tham gia, đừng tin vội.');
+      }
+      why.push('Đặt câu hỏi cuối cùng: cây nến này nằm ở đâu trong xu hướng, và cách vùng giá quan trọng bao xa?');
+
+      var per = tf === 'W'
+        ? 'Tuần ' + dmy(b[0]) + (b[6] && b[6] !== b[0] ? ' – ' + dm(b[6]) : '')
+        : dmy(b[0]);
+      var cells = [['Mở', o], ['Cao', h], ['Thấp', l], ['Đóng', c]].map(function(x){
+        return '<div><dt>' + x[0] + '</dt><dd>' + vn(x[1]) + '</dd></div>';
+      }).join('');
+      cells += '<div><dt>Khối lượng</dt><dd>' + (v > 0 ? vn(v) : '—') + '</dd></div>';
+
+      READ.innerHTML =
+        '<div class="lab-r1"><span class="lab-date">' + per + '</span>' +
+        '<span class="lab-chg" style="color:' + col + '">' + (chg>=0?'+':'−') + Math.abs(chg).toFixed(2) + '%</span>' +
+        '<span class="lab-tag" style="color:' + col + ';border-color:' + col + '">' +
+        (up ? 'nến tăng' : 'nến giảm') + '</span></div>' +
+        '<dl class="lab-ohlc">' + cells + '</dl>' +
+        '<div class="lab-why">' + why.join(' ') + '</div>';
+    }
+
+    function pick(i){
+      if (i < 0 || i >= bars.length) return;
+      sel = i; draw(); readout();
+    }
+
+    SVG.addEventListener('click', function(e){
+      var g = e.target.closest ? e.target.closest('[data-i]') : null;
+      if (g) pick(+g.getAttribute('data-i'));
+    });
+    SVG.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowRight'){ pick(sel < 0 ? 0 : sel+1); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft'){ pick(sel < 0 ? bars.length-1 : sel-1); e.preventDefault(); }
+    });
+    host.querySelectorAll('[data-tf]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        tf = btn.getAttribute('data-tf');
+        host.querySelectorAll('[data-tf]').forEach(function(o){
+          var on = o === btn;
+          o.classList.toggle('on', on);
+          o.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+        bars = tf === 'W' ? weekly(RAW) : RAW;
+        sel = bars.length - 1; draw(); readout();
+      });
+    });
+    host.querySelectorAll('.lab-jump').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var d = btn.getAttribute('data-date');
+        if (tf !== 'D'){
+          tf = 'D'; bars = RAW;
+          host.querySelectorAll('[data-tf]').forEach(function(o){
+            var on = o.getAttribute('data-tf') === 'D';
+            o.classList.toggle('on', on);
+            o.setAttribute('aria-pressed', on ? 'true' : 'false');
+          });
+        }
+        for (var i=0;i<bars.length;i++) if (bars[i][0] === d){ pick(i); break; }
+        SVG.focus({ preventScroll:true });
+      });
+    });
+
+    sel = RAW.length - 1;
+    draw(); readout();
+  })();
+
+  var sections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
+  function spy(){
+    var best = null, bestTop = -Infinity;
+    var mark = window.scrollY + window.innerHeight * 0.3;
+    sections.forEach(function(s){
+      var top = s.offsetTop;
+      if (top <= mark && top > bestTop) { bestTop = top; best = s.id; }
+    });
+    if (best === null && sections.length) best = sections[0].id;
+    links.forEach(function(a){
+      a.classList.toggle('on', a.getAttribute('href') === '#' + best);
+    });
+  }
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function(){ spy(); ticking = false; });
+  }, { passive: true });
+  spy();
+})();
+</script>
+</body>
+</html>

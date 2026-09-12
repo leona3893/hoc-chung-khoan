@@ -4,7 +4,7 @@ Tài liệu học chứng khoán cơ bản, dạng trang HTML tĩnh — đọc o
 
 ## Nội dung
 
-- [`chung-khoan-tu-so-0.html`](chung-khoan-tu-so-0.html) — bài học "Chứng khoán từ số 0"
+- [`index.html`](index.html) — bài học "Chứng khoán từ số 0"
 
 8 cấp độ từ bản chất cổ phiếu đến quản trị vốn, kèm 17 hình minh hoạ SVG (biên độ trần/sàn, phiên giao dịch, T+2, nến Nhật, bẫy P/E ngành chu kỳ, toán học thua lỗ…). Trang tự đổi giao diện sáng/tối theo hệ điều hành và chạy offline, không cần mạng.
 
@@ -14,10 +14,12 @@ Phần phân tích kỹ thuật có **đồ thị nến tương tác**: 71 phiê
 
 ## Cách xem
 
-Tải repo về rồi mở file `.html` bằng trình duyệt bất kỳ:
+Xem trực tiếp: **https://leona3893.github.io/hoc-chung-khoan/**
+
+Hoặc tải repo về rồi mở file `.html` bằng trình duyệt bất kỳ:
 
 ```bash
 git clone https://github.com/leona3893/hoc-chung-khoan.git
 cd hoc-chung-khoan
-# mở chung-khoan-tu-so-0.html
+# mở index.html
 ```
