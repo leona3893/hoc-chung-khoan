@@ -11,498 +11,22 @@ img{max-width:100%}
 [hidden]{display:none!important}
 </style>
 <title>Chứng khoán từ số 0</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%274%27 y=%2712%27 width=%276%27 height=%2712%27 fill=%27%23007A4D%27/%3E%3Crect x=%276%27 y=%276%27 width=%272%27 height=%2722%27 fill=%27%23007A4D%27/%3E%3Crect x=%2718%27 y=%278%27 width=%276%27 height=%2714%27 fill=%27%23D31510%27/%3E%3Crect x=%2720%27 y=%274%27 width=%272%27 height=%2724%27 fill=%27%23D31510%27/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,600&family=Source+Code+Pro:wght@400;500;700&display=swap">
-<style>
-:root{
-  --ground:#F3F5F7;
-  --surface:#FFFFFF;
-  --surface-2:#EAEDF1;
-  --ink:#151A21;
-  --ink-2:#39424F;
-  --muted:#5B6675;
-  --line:#DCE1E7;
-  --line-soft:#E7EBF0;
-  --accent:#B0740E;
-  --accent-ink:#8A5A08;
-  --accent-wash:#FBF0DC;
-  --up:#12864A;
-  --down:#C92A2A;
-  --ceil:#8B2FC9;
-  --floor:#1F5FD0;
-  --ref:#B0740E;
-  --shadow:0 1px 2px rgba(20,28,40,.05), 0 8px 24px -12px rgba(20,28,40,.16);
-  --radius:10px;
-  --font-body:"Be Vietnam Pro","Segoe UI",system-ui,sans-serif;
-  --font-serif:"Newsreader",Georgia,serif;
-  --font-mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",monospace;
-  --fs-xs:.75rem; --fs-sm:.875rem; --fs-base:1.0625rem; --fs-lg:1.1875rem;
-  --fs-xl:1.4rem; --fs-2xl:1.85rem;
-}
-
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --ground:#0E1116;
-    --surface:#161A21;
-    --surface-2:#1D222B;
-    --ink:#E9ECF1;
-    --ink-2:#C4CBD5;
-    --muted:#94A0B0;
-    --line:#272E39;
-    --line-soft:#20262F;
-    --accent:#EFB544;
-    --accent-ink:#F2C067;
-    --accent-wash:#241D0F;
-    --up:#2FBF6B;
-    --down:#F2605B;
-    --ceil:#BE72F0;
-    --floor:#5C9CFF;
-    --ref:#EFB544;
-    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
-  }
-}
-:root[data-theme="dark"]{
-  --ground:#0E1116;
-  --surface:#161A21;
-  --surface-2:#1D222B;
-  --ink:#E9ECF1;
-  --ink-2:#C4CBD5;
-  --muted:#94A0B0;
-  --line:#272E39;
-  --line-soft:#20262F;
-  --accent:#EFB544;
-  --accent-ink:#F2C067;
-  --accent-wash:#241D0F;
-  --up:#2FBF6B;
-  --down:#F2605B;
-  --ceil:#BE72F0;
-  --floor:#5C9CFF;
-  --ref:#EFB544;
-  --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
-}
-
-*{box-sizing:border-box}
-body{
-  margin:0; background:var(--ground); color:var(--ink);
-  font-family:var(--font-body); font-size:var(--fs-base); line-height:1.68;
-  -webkit-font-smoothing:antialiased;
-}
-h1,h2,h3{ text-wrap:balance; margin:0; line-height:1.22; letter-spacing:-.02em; font-weight:800 }
-p{margin:0}
-a{color:var(--accent-ink)}
-:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:4px }
-
-.wrap{ max-width:1180px; margin:0 auto; padding:0 clamp(16px,4vw,40px) }
-.masthead{
-  border-bottom:1px solid var(--line);
-  background:radial-gradient(120% 150% at 92% -20%, var(--accent-wash) 0%, transparent 58%), var(--surface);
-}
-.masthead .wrap{ padding-top:clamp(34px,6vw,60px); padding-bottom:clamp(26px,4vw,38px) }
-.eyebrow{
-  font-family:var(--font-mono); font-size:var(--fs-xs); font-weight:500;
-  letter-spacing:.16em; text-transform:uppercase; color:var(--accent-ink);
-}
-h1{ font-size:clamp(2.1rem,6vw,3.3rem); letter-spacing:-.035em; margin:14px 0 0 }
-.h1-sub{ display:block; font-weight:400; font-size:clamp(1rem,2.3vw,1.2rem); color:var(--muted);
-  letter-spacing:-.01em; margin-top:14px; max-width:58ch; line-height:1.58 }
-.facts{ display:flex; flex-wrap:wrap; margin:28px 0 0; border:1px solid var(--line);
-  border-radius:var(--radius); overflow:hidden; background:var(--surface) }
-.fact{ flex:1 1 155px; padding:13px 18px; border-right:1px solid var(--line-soft) }
-.fact:last-child{border-right:0}
-.fact dt{ font-family:var(--font-mono); font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted) }
-.fact dd{ margin:4px 0 0; font-weight:600; font-size:var(--fs-sm) }
-
-.shell{ display:grid; grid-template-columns:1fr }
-@media (min-width:1000px){
-  .shell{ grid-template-columns:238px minmax(0,1fr); gap:0 56px; align-items:start }
-}
-.rail{ display:none }
-@media (min-width:1000px){
-  .rail{ display:block; position:sticky; top:0; max-height:100vh; overflow-y:auto; padding:44px 0 40px }
-}
-.rail-title{ font-family:var(--font-mono); font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--muted); padding-left:12px }
-.rail ol{ list-style:none; margin:14px 0 0; padding:0; display:flex; flex-direction:column; gap:1px }
-.rail li{ margin:0 }
-.rail a{
-  display:grid; grid-template-columns:30px minmax(0,1fr); gap:6px; align-items:baseline;
-  padding:7px 10px; border-radius:0 6px 6px 0; text-decoration:none; color:var(--muted);
-  font-size:var(--fs-sm); line-height:1.35; border-left:2px solid transparent;
-}
-.rail a .n{ font-family:var(--font-mono); font-size:11px; font-weight:500; opacity:.8 }
-.rail a:hover{ color:var(--ink); background:var(--surface-2) }
-.rail a.on{ color:var(--ink); font-weight:600; border-left-color:var(--accent); background:var(--surface-2) }
-.rail a.done .n{ color:var(--up); opacity:1 }
-.rail-note{ margin:20px 0 0 12px; padding-left:12px; border-left:2px solid var(--line);
-  font-size:var(--fs-xs); color:var(--muted); line-height:1.55 }
-
-main{ padding:clamp(30px,5vw,52px) 0 0; min-width:0; max-width:70ch }
-
-.level{ padding-bottom:clamp(38px,6vw,60px); scroll-margin-top:20px }
-.level + .level{ border-top:1px solid var(--line); padding-top:clamp(38px,6vw,58px) }
-.level-head{ display:flex; align-items:flex-start; gap:16px }
-.level-num{
-  font-family:var(--font-mono); font-weight:700; font-size:var(--fs-2xl); line-height:1;
-  color:transparent; -webkit-text-stroke:1.4px var(--accent); flex:0 0 auto; padding-top:5px; letter-spacing:-.04em;
-}
-.level h2{ font-size:clamp(1.45rem,3.6vw,1.95rem) }
-.level-meta{ margin-top:7px; font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--muted) }
-.goal{
-  margin:22px 0 0; padding:14px 18px; background:var(--surface); border:1px solid var(--line);
-  border-left:3px solid var(--accent); border-radius:0 var(--radius) var(--radius) 0; font-size:var(--fs-sm);
-}
-.goal b{ font-weight:600 }
-
-h3{ font-size:var(--fs-lg); margin:34px 0 0; letter-spacing:-.015em; font-weight:600 }
-h3 + p, h3 + .dl, h3 + ul, h3 + ol, h3 + .board-wrap, h3 + .tbl-wrap, h3 + .aside, h3 + .formula{ margin-top:10px }
-p + p, p + ul, p + ol, p + .dl, ul + p, ol + p, .dl + p, p + .aside, .dl + .aside, ul + .aside,
-p + .warn, ul + .warn, ol + .warn, .dl + .warn, .aside + p, .warn + p, p + .board-wrap, p + .tbl-wrap,
-p + .formula, .formula + p, .board-wrap + p, .tbl-wrap + p, ul + ul, .aside + .warn{ margin-top:15px }
-
-ul, ol.steps{ margin:0; padding-left:1.2em }
-li + li{ margin-top:7px }
-li::marker{ color:var(--muted) }
-b, strong{ font-weight:600 }
-code{ font-family:var(--font-mono); font-size:.86em; background:var(--surface-2); padding:1px 5px; border-radius:4px }
-
-.dl{ margin:0; border-top:1px solid var(--line-soft) }
-.dl > div{ display:grid; grid-template-columns:1fr; gap:3px; padding:12px 0; border-bottom:1px solid var(--line-soft) }
-@media(min-width:640px){ .dl > div{ grid-template-columns:172px minmax(0,1fr); gap:0 22px; align-items:baseline } }
-.dl dt{ font-weight:600; font-size:var(--fs-sm) }
-.dl dt small{ display:block; font-family:var(--font-mono); font-weight:400; font-size:10px; color:var(--muted);
-  letter-spacing:.06em; text-transform:uppercase; margin-top:2px }
-.dl dd{ margin:0; font-size:var(--fs-sm); color:var(--ink-2) }
-
-.aside{
-  font-family:var(--font-serif); font-style:italic; font-size:1.07rem; line-height:1.62;
-  color:var(--ink-2); padding:2px 0 2px 18px; border-left:2px solid var(--accent);
-}
-.aside b{ font-style:normal; font-family:var(--font-mono); font-size:10px; font-weight:500;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--accent-ink); display:block; margin-bottom:5px }
-.warn{ padding:2px 0 2px 18px; border-left:2px solid var(--down); font-size:var(--fs-sm); color:var(--ink-2) }
-.warn b{ font-family:var(--font-mono); font-size:10px; font-weight:500; letter-spacing:.14em;
-  text-transform:uppercase; color:var(--down); display:block; margin-bottom:5px }
-
-.formula{ font-family:var(--font-mono); font-size:var(--fs-sm); background:var(--surface-2);
-  border:1px solid var(--line-soft); border-radius:var(--radius); padding:14px 16px;
-  overflow-x:auto; white-space:pre; line-height:1.7; color:var(--ink) }
-
-.board-wrap,.tbl-wrap{ overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--surface) }
-table.board{ border-collapse:collapse; width:100%; min-width:530px; font-family:var(--font-mono);
-  font-size:var(--fs-sm); font-variant-numeric:tabular-nums }
-table.board th{ text-align:right; font-weight:500; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--muted); padding:10px 14px; border-bottom:1px solid var(--line); white-space:nowrap }
-table.board th:first-child, table.board td:first-child{ text-align:left }
-table.board td{ text-align:right; padding:9px 14px; border-bottom:1px solid var(--line-soft); white-space:nowrap }
-table.board tr:last-child td{ border-bottom:0 }
-.c-ceil{color:var(--ceil)} .c-floor{color:var(--floor)} .c-ref{color:var(--ref)}
-.c-up{color:var(--up)} .c-down{color:var(--down)}
-.legend{ display:flex; flex-wrap:wrap; gap:7px 16px; margin-top:12px; font-family:var(--font-mono); font-size:var(--fs-xs) }
-.legend span{ display:inline-flex; align-items:center; gap:6px; color:var(--muted) }
-.legend i{ width:9px; height:9px; border-radius:2px; display:inline-block }
-
-table.tbl{ border-collapse:collapse; width:100%; min-width:470px; font-size:var(--fs-sm) }
-table.tbl th{ text-align:left; font-weight:600; font-size:10px; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--muted); padding:10px 14px; border-bottom:1px solid var(--line) }
-table.tbl td{ padding:10px 14px; border-bottom:1px solid var(--line-soft); vertical-align:top; color:var(--ink-2) }
-table.tbl td:first-child{ color:var(--ink); font-weight:600; white-space:nowrap }
-table.tbl tr:last-child td{ border-bottom:0 }
-
-.mark{ display:inline-flex; align-items:center; gap:9px; margin-top:28px; cursor:pointer;
-  font-family:var(--font-mono); font-size:var(--fs-xs); letter-spacing:.08em; text-transform:uppercase; color:var(--muted) }
-.mark input{ width:15px; height:15px; accent-color:var(--up); cursor:pointer; margin:0 }
-.mark:hover{ color:var(--ink) }
-
-.outro{ border-top:1px solid var(--line); padding:clamp(34px,5vw,50px) 0 clamp(48px,7vw,76px) }
-.outro h2{ font-size:var(--fs-xl) }
-.plan{ list-style:none; padding:0; margin:16px 0 0; border-top:1px solid var(--line-soft) }
-.plan li{ display:grid; grid-template-columns:86px minmax(0,1fr); gap:16px; padding:12px 0;
-  border-bottom:1px solid var(--line-soft); margin:0; font-size:var(--fs-sm); color:var(--ink-2) }
-.plan .when{ font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--accent-ink); letter-spacing:.03em; padding-top:2px }
-.disclaimer{ margin-top:32px; padding-top:20px; border-top:1px solid var(--line); font-size:var(--fs-xs);
-  color:var(--muted); line-height:1.65; max-width:64ch }
-
-/* ---------- Hình minh hoạ ---------- */
-.fig{ margin:18px 0 0; padding:15px 16px 12px; background:var(--surface);
-  border:1px solid var(--line); border-radius:var(--radius) }
-.fig svg{ display:block; width:100%; height:auto }
-.fig figcaption{ margin-top:12px; padding-top:11px; border-top:1px solid var(--line-soft);
-  font-size:var(--fs-xs); color:var(--muted); line-height:1.62 }
-.fig figcaption b{ color:var(--ink-2); font-weight:600 }
-.fig text{ font-family:var(--font-body); fill:var(--ink-2) }
-.fig .t-eb{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.11em; fill:var(--muted) }
-.fig .t-lbl{ font-size:11px; fill:var(--muted) }
-.fig .t-key{ font-size:11.5px; font-weight:600; fill:var(--ink) }
-.fig .t-num{ font-family:var(--font-mono); font-size:11px; fill:var(--ink-2) }
-.fig .t-mono{ font-family:var(--font-mono) }
-h3 + .fig{ margin-top:12px }
-p + .fig, ul + .fig, ol + .fig, .dl + .fig, .formula + .fig, .tbl-wrap + .fig,
-.board-wrap + .fig, .aside + .fig, .warn + .fig{ margin-top:15px }
-.fig + p, .fig + .aside, .fig + .warn, .fig + ul, .fig + ol, .fig + .dl,
-.fig + .formula, .fig + .tbl-wrap, .fig + h3{ margin-top:15px }
-
-.fig.anim [data-draw]{ stroke-dasharray:2600; stroke-dashoffset:2600 }
-.fig.anim.in [data-draw]{ animation:fg-draw 1.1s ease forwards }
-@keyframes fg-draw{ to{ stroke-dashoffset:0 } }
-.fig.anim [data-rise]{ transform-box:fill-box; transform-origin:50% 100%; transform:scaleY(.02) }
-.fig.anim.in [data-rise]{ animation:fg-rise .62s cubic-bezier(.2,.75,.3,1) forwards }
-@keyframes fg-rise{ to{ transform:scaleY(1) } }
-.fig.anim [data-grow]{ transform-box:fill-box; transform-origin:0% 50%; transform:scaleX(.02) }
-.fig.anim [data-growc]{ transform-box:fill-box; transform-origin:50% 50%; transform:scaleX(.02) }
-.fig.anim.in [data-grow], .fig.anim.in [data-growc]{ animation:fg-grow .68s cubic-bezier(.2,.75,.3,1) forwards }
-@keyframes fg-grow{ to{ transform:scaleX(1) } }
-.fig.anim [data-fade]{ opacity:0 }
-.fig.anim.in [data-fade]{ animation:fg-fade .55s ease forwards }
-@keyframes fg-fade{ to{ opacity:1 } }
-.fig .playhead{ animation:fg-play 9s linear infinite }
-@keyframes fg-play{ from{ transform:translateX(0) } to{ transform:translateX(590px) } }
-@media (prefers-reduced-motion: reduce){
-  .fig .playhead{ display:none }
-  .fig.anim [data-draw], .fig.anim [data-rise], .fig.anim [data-grow],
-  .fig.anim [data-growc], .fig.anim [data-fade]{
-    stroke-dashoffset:0 !important; transform:none !important; opacity:1 !important }
-}
-
-/* ---------- Phòng thực hành đọc nến ---------- */
-.lab{ padding-bottom:14px }
-.lab-head{ display:flex; flex-wrap:wrap; gap:12px; align-items:flex-start;
-  justify-content:space-between; margin-bottom:12px }
-.lab-t{ font-weight:700; font-size:var(--fs-sm); letter-spacing:-.01em }
-.lab-s{ font-family:var(--font-mono); font-size:10px; color:var(--muted); margin-top:3px }
-.lab-tf{ display:flex; gap:0; border:1px solid var(--line); border-radius:7px; overflow:hidden }
-.lab-tf button{ font:500 var(--fs-xs)/1 var(--font-mono); color:var(--muted); background:transparent;
-  border:0; padding:7px 12px; cursor:pointer; letter-spacing:.04em }
-.lab-tf button + button{ border-left:1px solid var(--line) }
-.lab-tf button:hover{ color:var(--ink); background:var(--surface-2) }
-.lab-tf button.on{ color:var(--ink); background:var(--surface-2); font-weight:700 }
-.lab-plot svg{ display:block; width:100%; height:auto; touch-action:manipulation }
-.lab-plot svg:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:6px }
-.lab-bar{ display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center;
-  justify-content:space-between; margin-top:10px }
-.lab-hint{ font-family:var(--font-mono); font-size:10px; color:var(--muted) }
-.lab-jumps{ display:flex; flex-wrap:wrap; gap:6px }
-.lab-jump{ font:500 10px/1 var(--font-mono); color:var(--accent-ink); background:var(--accent-wash);
-  border:1px solid var(--accent); border-color:color-mix(in srgb, var(--accent) 40%, transparent);
-  border-radius:20px; padding:6px 11px; cursor:pointer; letter-spacing:.03em }
-.lab-jump:hover{ background:var(--surface-2); color:var(--ink) }
-.lab-read{ margin-top:12px; border:1px solid var(--line); border-radius:var(--radius);
-  background:var(--surface-2); padding:12px 14px }
-.lab-r1{ display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 12px }
-.lab-date{ font-family:var(--font-mono); font-size:var(--fs-sm); font-weight:700; color:var(--ink) }
-.lab-chg{ font-family:var(--font-mono); font-size:var(--fs-xs); font-weight:700 }
-.lab-tag{ font-family:var(--font-mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase;
-  border:1px solid; border-radius:4px; padding:2px 7px }
-.lab-ohlc{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px 16px; margin-top:10px }
-@media(min-width:520px){ .lab-ohlc{ grid-template-columns:repeat(5,minmax(0,1fr)) } }
-.lab-ohlc div{ font-family:var(--font-mono); font-size:var(--fs-xs) }
-.lab-ohlc dt{ font-size:9.5px; color:var(--muted); letter-spacing:.1em; text-transform:uppercase }
-.lab-ohlc dd{ margin:2px 0 0; color:var(--ink); font-weight:600 }
-.lab-why{ margin-top:11px; padding-top:10px; border-top:1px solid var(--line);
-  font-size:var(--fs-xs); color:var(--ink-2); line-height:1.6 }
-.lab-why b{ color:var(--ink); font-weight:600 }
-.lab-empty{ font-size:var(--fs-xs); color:var(--muted); font-style:italic }
-
-/* ==========================================================
-   Adobe Spectrum (S2) — token hoá, phẳng có viền, tầng bậc chính xác
-   nền gray-100 · thẻ gray-50 viền gray-200 · accent blue-900
-   bo 8px (control) / 12px (card) · motion 130–190ms · focus 2px blue-800
-   ========================================================== */
-:root{
-  --ground:#F8F8F8;
-  --surface:#FFFFFF;
-  --surface-2:#F3F3F3;
-  --ink:#222222;
-  --ink-2:#464646;
-  --muted:#6D6D6D;
-  --line:#D5D5D5;
-  --line-soft:#E6E6E6;
-  --accent:#0265DC;
-  --accent-ink:#0054B6;
-  --accent-wash:#E0F2FF;
-  --focus:#147AF3;
-  --up:#007A4D;
-  --down:#D31510;
-  --ceil:#7326D3;
-  --floor:#0B6E7C;
-  --ref:#A34D00;
-  --font-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
-  --font-serif:"Source Serif 4",Georgia,serif;
-  --font-mono:"Source Code Pro",ui-monospace,"Cascadia Mono",monospace;
-  --shadow:0 1px 4px rgba(0,0,0,.08);
-  --radius:12px;
-  --radius-ctl:8px;
-  --dur:160ms;
-  --ease:cubic-bezier(.45,0,.4,1);
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --ground:#1D1D1D;
-    --surface:#262626;
-    --surface-2:#323232;
-    --ink:#EBEBEB;
-    --ink-2:#D1D1D1;
-    --muted:#B2B2B2;
-    --line:#4A4A4A;
-    --line-soft:#3F3F3F;
-    --accent:#4B9CF5;
-    --accent-ink:#8CC3FA;
-    --accent-wash:#12325A;
-    --focus:#5AA9FA;
-    --up:#33C08C;
-    --down:#F87A73;
-    --ceil:#B889F7;
-    --floor:#3FC4DC;
-    --ref:#EBBE55;
-    --shadow:0 1px 4px rgba(0,0,0,.4);
-  }
-}
-:root[data-theme="dark"]{
-    --ground:#1D1D1D;
-    --surface:#262626;
-    --surface-2:#323232;
-    --ink:#EBEBEB;
-    --ink-2:#D1D1D1;
-    --muted:#B2B2B2;
-    --line:#4A4A4A;
-    --line-soft:#3F3F3F;
-    --accent:#4B9CF5;
-    --accent-ink:#8CC3FA;
-    --accent-wash:#12325A;
-    --focus:#5AA9FA;
-    --up:#33C08C;
-    --down:#F87A73;
-    --ceil:#B889F7;
-    --floor:#3FC4DC;
-    --ref:#EBBE55;
-  --shadow:0 1px 4px rgba(0,0,0,.4);
-}
-
-/* chữ: Adobe Clean → Source Sans 3; heading không bóp chữ, đậm 700 */
-body{ background:var(--ground); line-height:1.5 }
-main{ max-width:76ch }
-h1,h2,h3{ letter-spacing:0; font-weight:700 }
-h1{ font-weight:800; letter-spacing:-.01em }
-.h1-sub{ letter-spacing:0 }
-h3{ font-weight:700 }
-b,strong{ font-weight:700 }
-
-/* "detail" của Spectrum: nhãn nhỏ viết hoa, đậm, chữ thường không mono */
-.eyebrow, .rail-title, .fact dt, .level-meta, .rail-note, .plan .when,
-.dl dt small, .aside b, .warn b, .lab-s, .lab-hint, .lab-ohlc dt{
-  font-family:var(--font-body); font-weight:700; letter-spacing:.06em; text-transform:uppercase;
-}
-.eyebrow{ font-size:12px; color:var(--accent-ink) }
-.rail-title, .fact dt, .dl dt small, .lab-ohlc dt{ font-size:11px; color:var(--muted) }
-.level-meta, .rail-note, .lab-s, .lab-hint{ text-transform:none; letter-spacing:0; font-weight:400; font-size:var(--fs-sm) }
-.rail-note{ font-size:var(--fs-xs) }
-.plan .when{ text-transform:none; letter-spacing:0; font-weight:700; color:var(--accent-ink) }
-.aside b, .warn b{ font-size:11px }
-.aside b:not(:first-child), .warn b:not(:first-child){
-  display:inline; margin:0; font:inherit; font-weight:700; font-style:normal;
-  letter-spacing:0; text-transform:none; color:var(--ink);
-}
-.level-num{ color:var(--accent); -webkit-text-stroke:0; font-weight:800; font-family:var(--font-body) }
-
-/* chuyển động tiết chế 130–190ms, focus ring 2px cách 2px */
-a, button, .rail a, .mark, .mark input, .lab-jump, .lab-tf button, table.tbl tr, table.board tr{
-  transition:background-color var(--dur) var(--ease), color var(--dur) var(--ease),
-    border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
-}
-:focus-visible{ outline:2px solid var(--focus); outline-offset:2px; border-radius:4px }
-a{ color:var(--accent-ink); text-decoration-thickness:1px; text-underline-offset:2px }
-
-/* masthead phẳng, viền dưới */
-.masthead{ background:var(--surface); border-bottom:1px solid var(--line-soft); box-shadow:none }
-.facts{ border:1px solid var(--line-soft); border-radius:var(--radius); box-shadow:none }
-.fact{ border-right-color:var(--line-soft) }
-
-/* thẻ: layer-2 trắng, viền 1px, không bóng */
-.goal, .board-wrap, .tbl-wrap, .fig, .lab-read{
-  background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius); box-shadow:none;
-}
-.goal{ border-left:4px solid var(--accent); border-radius:var(--radius); padding:14px 18px }
-.fig{ padding:18px 18px 14px }
-.fig figcaption{ border-top-color:var(--line-soft) }
-
-/* in-line alert của S2: viền 2px, bo 12, nền lớp 2 */
-.aside, .warn{ padding:16px 20px; border-radius:var(--radius); background:var(--surface); box-shadow:none }
-.aside{ border:2px solid var(--line) }
-.warn{ border:2px solid var(--down) }
-
-/* code: khối gray-100 viền gray-200 */
-.formula, code{ background:var(--surface-2); border:1px solid var(--line-soft); box-shadow:none }
-.formula{ border-radius:var(--radius-ctl) }
-code{ border-radius:4px }
-
-/* SideNav: mục chọn = nền gray-200 + đậm, không thanh màu */
-.rail a{ border-left:0; border-radius:var(--radius-ctl); padding:8px 12px; min-height:36px; color:var(--ink-2) }
-.rail a:hover{ background:var(--surface-2); color:var(--ink); box-shadow:none }
-.rail a.on{ background:var(--line-soft); color:var(--ink); font-weight:700; box-shadow:none; border-left:0 }
-.rail a.on::before{ content:none }
-.rail a .n{ font-weight:600 }
-.rail a.done .n{ color:var(--up) }
-.rail-note{ border-left:2px solid var(--line-soft) }
-
-/* bảng: đầu bảng sentence-case đậm, nền gray-100; hàng cao 40px; hover gray-100 */
-table.board th, table.tbl th{
-  background:var(--surface-2); color:var(--ink-2); font-family:var(--font-body); font-weight:700;
-  font-size:13px; letter-spacing:0; text-transform:none; border-bottom:1px solid var(--line);
-}
-table.board td, table.tbl td{ border-bottom-color:var(--line-soft) }
-table.board tbody tr:hover td, table.tbl tbody tr:hover td{ background:var(--surface-2) }
-.dl > div{ border-bottom-color:var(--line-soft) }
-.level + .level{ border-top-color:var(--line-soft) }
-.plan li, .disclaimer{ border-color:var(--line-soft) }
-.legend{ font-family:var(--font-body); font-weight:600 }
-
-/* checkbox Spectrum: ô 16px, nhãn sentence-case, không chip */
-.mark{
-  margin-top:28px; padding:0; min-height:44px; border:0; border-radius:0; background:transparent; box-shadow:none;
-  font-family:var(--font-body); font-size:var(--fs-sm); font-weight:600; letter-spacing:0; text-transform:none; color:var(--ink-2);
-}
-.mark input{ width:16px; height:16px; accent-color:var(--accent); border-radius:2px }
-.mark:hover{ color:var(--ink); transform:none; box-shadow:none }
-.mark:active{ transform:none; box-shadow:none }
-.mark:has(input:checked){ background:transparent; color:var(--accent-ink); box-shadow:none; border:0 }
-.mark:has(input:focus-visible){ outline:2px solid var(--focus); outline-offset:4px; border-radius:4px }
-.mark input:focus-visible{ outline:none }
-
-/* phòng thực hành: ActionGroup (chọn = nền gray-800 chữ trắng) + nút outline pill */
-.lab-t{ font-weight:700 }
-.lab-tf{ border:0; background:transparent; padding:0; gap:4px; box-shadow:none; border-radius:0; overflow:visible }
-.lab-tf button{
-  font:700 var(--fs-sm)/1 var(--font-body); letter-spacing:0; color:var(--ink);
-  border:1px solid var(--line); border-radius:var(--radius-ctl); min-height:32px; padding:0 12px; background:var(--surface);
-}
-.lab-tf button + button{ border-left:1px solid var(--line) }
-.lab-tf button:hover{ background:var(--surface-2); color:var(--ink) }
-.lab-tf button.on{ background:var(--ink); color:var(--surface); border-color:var(--ink); box-shadow:none; font-weight:700 }
-.lab-jump{
-  font:700 var(--fs-xs)/1 var(--font-body); letter-spacing:0; color:var(--accent-ink);
-  background:transparent; border:2px solid var(--accent); border-radius:999px; min-height:32px; padding:0 14px; box-shadow:none;
-}
-.lab-jump:hover{ background:var(--accent-wash); color:var(--accent-ink); transform:none; box-shadow:none }
-.lab-jump:active, .lab-tf button:active{ transform:none; box-shadow:none }
-.lab-read{ background:var(--surface-2); border-radius:var(--radius); box-shadow:none }
-.lab-date{ font-family:var(--font-body); font-weight:700; font-size:var(--fs-base) }
-.lab-chg{ font-family:var(--font-body); font-weight:700 }
-.lab-tag{
-  font-family:var(--font-body); font-weight:700; font-size:11px; letter-spacing:.04em;
-  border:0; border-radius:999px; padding:4px 10px; background:color-mix(in srgb, currentColor 14%, transparent);
-}
-.lab-plot svg:focus-visible{ outline:2px solid var(--focus); outline-offset:2px }
-@media (pointer:coarse){ .lab-tf button, .lab-jump{ min-height:44px } }
-
-/* hình minh hoạ: nhãn nhỏ dùng detail style */
-.fig .t-eb{ font-family:var(--font-body); font-weight:700; letter-spacing:.06em; font-size:10px }
-.fig .t-key{ font-weight:700 }
-
-html{ scroll-behavior:smooth }
-@media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto } *{ animation:none !important; transition:none !important } }
-</style>
+<link rel="stylesheet" href="assets/site.css">
 
 </head>
 <body>
+<nav class="topnav" aria-label="Các trang">
+  <div class="wrap">
+    <a class="brand" href="index.html">Chứng khoán từ số 0</a>
+    <a class="nav" href="index.html" aria-current="page">Cổ phiếu</a>
+    <a class="nav" href="coin.html">Coin</a>
+    <a class="nav" href="phan-tich.html">Phòng phân tích</a>
+  </div>
+</nav>
 <header class="masthead">
   <div class="wrap">
     <p class="eyebrow">Lộ trình tự học · Thị trường Việt Nam</p>
@@ -531,6 +55,8 @@ html{ scroll-behavior:smooth }
       <li><a href="#c6"><span class="n">06</span><span>Vĩ mô, dòng tiền, chu kỳ</span></a></li>
       <li><a href="#c7"><span class="n">07</span><span>Hệ thống của riêng bạn</span></a></li>
       <li><a href="#ketthuc"><span class="n">→</span><span>Lộ trình 6 tháng</span></a></li>
+      <li><a href="coin.html"><span class="n">08</span><span>Coin &amp; thị trường crypto</span></a></li>
+      <li><a href="phan-tich.html"><span class="n">★</span><span>Phòng phân tích &amp; khuyến nghị</span></a></li>
     </ol>
     <p class="rail-note">Tick vào ô “Đã học xong” ở cuối mỗi cấp để đánh dấu tiến độ. Trình duyệt này sẽ nhớ giúp bạn.</p>
   </nav>
@@ -1119,19 +645,27 @@ html{ scroll-behavior:smooth }
       <p class="aside"><b>Chọn khung nào</b>Khung càng nhỏ, tín hiệu càng nhiều và càng nhiễu — phí giao dịch cũng nhân lên theo. Với người mới: đọc <b>khung tuần</b> để biết xu hướng lớn, <b>khung ngày</b> để ra quyết định, và bỏ qua mọi khung nhỏ hơn.</p>
       <p class="warn"><b>Một cây nến không bao giờ đủ</b>Một cây nến riêng lẻ gần như vô nghĩa. Nó chỉ có nghĩa khi đặt vào ba thứ xung quanh: nó nằm ở <i>vị trí nào</i> của xu hướng, ở <i>vùng giá nào</i>, và đi kèm <i>khối lượng bao nhiêu</i>. Bóng dưới dài ở đáy một nhịp giảm dài là một chuyện; cũng cây nến đó giữa vùng đi ngang là chuyện khác.</p>
       <h3>Thực hành: đọc nến trên chart thật</h3>
-      <p>Lý thuyết nến chỉ vào đầu khi bạn đặt tay lên dữ liệu thật. Đây là <b>71 phiên có thật của HPG</b>: một nhịp giảm từ vùng 23.5 xuống đáy 20.1 cuối tháng 7, rồi hồi lại. Bấm vào bất kỳ cây nến nào để xem bốn giá của phiên đó, tỷ lệ thân–bóng, khối lượng so với trung bình 20 phiên — và cách đọc nó.</p>
+      <p>Lý thuyết nến chỉ vào đầu khi bạn đặt tay lên dữ liệu thật. Đồ thị dưới đây lấy <b>giá đóng cửa thật, cập nhật tới phiên gần nhất</b> — mặc định là HPG, nhưng bạn gõ mã khác vào ô bên cạnh là nó đổi ngay. Bấm vào bất kỳ cây nến nào để xem bốn giá của phiên đó, tỷ lệ thân–bóng, khối lượng so với trung bình 20 phiên — và cách đọc nó. Bật thêm MA, Bollinger hay RSI để xem các chỉ báo ở cấp 4 nói gì về chính cây nến bạn đang chọn.</p>
       <figure class="fig lab" id="lab">
       <div class="lab-head">
-        <div><p class="lab-t">HPG · Hòa Phát</p><p class="lab-s">HOSE · giá đóng cửa thực tế, 01/06/2026 – 07/09/2026</p></div>
+        <div><p class="lab-t" id="lab-name">HPG · Hòa Phát</p><p class="lab-s" id="lab-sub">HOSE · đang tải dữ liệu…</p></div>
         <div class="lab-tf" role="group" aria-label="Khung thời gian"><button type="button" data-tf="D" class="on" aria-pressed="true">1 ngày</button><button type="button" data-tf="W" aria-pressed="false">1 tuần</button></div>
       </div>
-      <div class="lab-plot"><svg id="lab-svg" viewBox="0 0 720 400" tabindex="0" role="application" aria-label="Đồ thị nến HPG, bấm vào một cây nến để đọc"></svg></div>
+      <div class="lab-ctl">
+        <label for="lab-sym">Mã</label>
+        <input type="text" id="lab-sym" value="HPG" maxlength="10" spellcheck="false" aria-label="Mã cổ phiếu">
+        <span class="lab-inds" role="group" aria-label="Chỉ báo">
+          <button type="button" data-ind="ma20" aria-pressed="false">MA20</button><button type="button" data-ind="ma50" aria-pressed="false">MA50</button><button type="button" data-ind="bb" aria-pressed="false">Bollinger</button><button type="button" data-ind="rsi" aria-pressed="false">RSI</button>
+        </span>
+        <span class="lab-status is-wait" id="lab-stt">đang tải…</span>
+      </div>
+      <div class="lab-plot"><svg id="lab-svg" viewBox="0 0 720 400" tabindex="0" role="application" aria-label="Đồ thị nến, bấm vào một cây nến để đọc"></svg></div>
       <noscript><p class="lab-s">Bật JavaScript để xem đồ thị tương tác này.</p></noscript>
       <div class="lab-bar"><span class="lab-hint">Bấm vào một cây nến · hoặc dùng phím ← →</span><span class="lab-jumps"><button type="button" class="lab-jump" data-date="2026-07-28">Thân dài</button><button type="button" class="lab-jump" data-date="2026-07-23">Bóng dưới dài</button><button type="button" class="lab-jump" data-date="2026-07-09">Doji</button><button type="button" class="lab-jump" data-date="2026-07-20">Gãy kèm KL lớn</button></span></div>
       <div id="lab-read" class="lab-read"></div>
-      <figcaption>Dữ liệu giá và khối lượng thật của HPG (nguồn Yahoo Finance, kỳ 01/06/2026 – 07/09/2026). Mọi con số trong bảng đọc nến đều được tính trực tiếp từ bốn giá của phiên đó (ba phiên đầu tháng 9 thiếu dữ liệu khối lượng ở nguồn nên cột để trống). Đây là ví dụ học tập về cách đọc đồ thị — không phải khuyến nghị mua bán.</figcaption>
+      <figcaption>Giá và khối lượng lấy trực tiếp từ <b>dchart của VNDirect</b> mỗi lần bạn mở trang; nếu không có mạng, đồ thị lùi về bộ dữ liệu HPG 01/06–07/09/2026 nhúng sẵn trong file. Mọi con số trong bảng đọc nến được tính từ chính bốn giá của phiên đó. Bốn nút ví dụ chỉ khớp khi đang xem HPG. Đây là ví dụ học tập về cách đọc đồ thị — không phải khuyến nghị mua bán.</figcaption>
       </figure>
-      <script type="application/json" id="lab-data">{"bars":[["2026-06-01",24000,24150,23950,24050,9668300],["2026-06-02",24000,24050,23700,23700,25529600],["2026-06-03",23700,24150,23600,24150,20573500],["2026-06-04",24150,24150,23900,23950,10065300],["2026-06-05",23950,24050,23750,23750,13891200],["2026-06-08",23650,23750,23300,23300,22769900],["2026-06-09",23350,23550,23300,23550,12441700],["2026-06-10",23550,23700,23450,23600,7505500],["2026-06-11",23500,23550,23300,23300,10177700],["2026-06-12",23550,23550,23200,23200,13271400],["2026-06-15",23550,24350,23550,24350,30695200],["2026-06-16",24250,24350,24100,24200,14145800],["2026-06-17",24200,24300,24000,24000,19039000],["2026-06-18",24050,24150,23650,23650,18040500],["2026-06-19",23800,23900,23600,23600,20055700],["2026-06-22",23700,23850,23600,23600,10684400],["2026-06-23",23650,23700,23300,23300,29071800],["2026-06-24",23400,23600,23300,23500,12927300],["2026-06-25",23500,23600,23400,23400,7659100],["2026-06-26",23400,23500,23350,23500,15468600],["2026-06-29",23550,23650,23450,23650,14158200],["2026-06-30",23700,23700,23250,23300,30593200],["2026-07-01",23700,23700,23250,23300,30593200],["2026-07-02",23500,23650,23350,23400,13367500],["2026-07-03",23400,23500,23250,23250,15935100],["2026-07-06",23400,23600,23000,23100,21299300],["2026-07-07",23200,23250,23000,23100,13839600],["2026-07-08",23150,23400,23050,23200,12499500],["2026-07-09",23200,23250,23100,23200,11643400],["2026-07-10",23200,23250,22950,22950,11906800],["2026-07-13",22950,22950,22350,22400,32309000],["2026-07-14",22300,22500,22000,22500,22481900],["2026-07-15",22500,22600,22150,22400,21464500],["2026-07-16",22300,22400,21800,22200,22880600],["2026-07-17",22200,22350,21850,21850,17006300],["2026-07-20",21750,21750,20500,20600,53245200],["2026-07-21",20500,21150,20500,20800,27198700],["2026-07-22",20900,21050,20500,20700,43471900],["2026-07-23",20700,21000,20150,20800,36967600],["2026-07-24",20700,21000,20600,20800,17632000],["2026-07-27",20900,21000,20300,20350,18166800],["2026-07-28",20150,21000,20100,21000,29151700],["2026-07-29",21050,21650,20900,21650,36250000],["2026-07-30",21650,22050,21500,21800,29968000],["2026-07-31",21800,21850,21400,21700,24111500],["2026-08-03",21700,22650,21650,22550,44448000],["2026-08-04",22550,22600,22100,22150,22694000],["2026-08-05",22350,22600,21950,22000,27963700],["2026-08-06",22250,22300,21850,21850,14369400],["2026-08-07",21900,22300,21750,22000,13018100],["2026-08-10",22250,22300,21950,22100,16732700],["2026-08-11",22200,22250,22050,22050,13694600],["2026-08-12",22000,22350,21950,22100,15925100],["2026-08-13",22200,22250,21700,21700,25702700],["2026-08-14",21700,21800,21200,21250,27443600],["2026-08-17",21250,21450,21050,21200,18455500],["2026-08-18",21150,21400,21000,21000,16367500],["2026-08-19",21100,21200,20900,21200,15312500],["2026-08-20",21250,21450,21150,21150,15156400],["2026-08-21",21150,21750,21050,21700,25138400],["2026-08-24",22000,22300,21850,22250,28790200],["2026-08-25",22250,22300,21800,21800,25844100],["2026-08-26",21800,22100,21750,22050,19394800],["2026-08-27",22050,22400,22050,22200,19201900],["2026-08-28",22250,22350,22050,22100,17126700],["2026-08-31",22100,22100,22100,22100,0],["2026-09-01",22100,22100,22100,22100,0],["2026-09-02",22100,22100,22100,22100,0],["2026-09-03",22000,22000,21550,21600,26985600],["2026-09-04",21750,21800,21600,21700,13920900],["2026-09-07",21800,22150,21550,21550,20396876]],"zone":[20100,20500],"touch":6}</script>
+<script type="application/json" id="lab-data">{"bars":[["2026-06-01",24000,24150,23950,24050,9668300],["2026-06-02",24000,24050,23700,23700,25529600],["2026-06-03",23700,24150,23600,24150,20573500],["2026-06-04",24150,24150,23900,23950,10065300],["2026-06-05",23950,24050,23750,23750,13891200],["2026-06-08",23650,23750,23300,23300,22769900],["2026-06-09",23350,23550,23300,23550,12441700],["2026-06-10",23550,23700,23450,23600,7505500],["2026-06-11",23500,23550,23300,23300,10177700],["2026-06-12",23550,23550,23200,23200,13271400],["2026-06-15",23550,24350,23550,24350,30695200],["2026-06-16",24250,24350,24100,24200,14145800],["2026-06-17",24200,24300,24000,24000,19039000],["2026-06-18",24050,24150,23650,23650,18040500],["2026-06-19",23800,23900,23600,23600,20055700],["2026-06-22",23700,23850,23600,23600,10684400],["2026-06-23",23650,23700,23300,23300,29071800],["2026-06-24",23400,23600,23300,23500,12927300],["2026-06-25",23500,23600,23400,23400,7659100],["2026-06-26",23400,23500,23350,23500,15468600],["2026-06-29",23550,23650,23450,23650,14158200],["2026-06-30",23700,23700,23250,23300,30593200],["2026-07-01",23700,23700,23250,23300,30593200],["2026-07-02",23500,23650,23350,23400,13367500],["2026-07-03",23400,23500,23250,23250,15935100],["2026-07-06",23400,23600,23000,23100,21299300],["2026-07-07",23200,23250,23000,23100,13839600],["2026-07-08",23150,23400,23050,23200,12499500],["2026-07-09",23200,23250,23100,23200,11643400],["2026-07-10",23200,23250,22950,22950,11906800],["2026-07-13",22950,22950,22350,22400,32309000],["2026-07-14",22300,22500,22000,22500,22481900],["2026-07-15",22500,22600,22150,22400,21464500],["2026-07-16",22300,22400,21800,22200,22880600],["2026-07-17",22200,22350,21850,21850,17006300],["2026-07-20",21750,21750,20500,20600,53245200],["2026-07-21",20500,21150,20500,20800,27198700],["2026-07-22",20900,21050,20500,20700,43471900],["2026-07-23",20700,21000,20150,20800,36967600],["2026-07-24",20700,21000,20600,20800,17632000],["2026-07-27",20900,21000,20300,20350,18166800],["2026-07-28",20150,21000,20100,21000,29151700],["2026-07-29",21050,21650,20900,21650,36250000],["2026-07-30",21650,22050,21500,21800,29968000],["2026-07-31",21800,21850,21400,21700,24111500],["2026-08-03",21700,22650,21650,22550,44448000],["2026-08-04",22550,22600,22100,22150,22694000],["2026-08-05",22350,22600,21950,22000,27963700],["2026-08-06",22250,22300,21850,21850,14369400],["2026-08-07",21900,22300,21750,22000,13018100],["2026-08-10",22250,22300,21950,22100,16732700],["2026-08-11",22200,22250,22050,22050,13694600],["2026-08-12",22000,22350,21950,22100,15925100],["2026-08-13",22200,22250,21700,21700,25702700],["2026-08-14",21700,21800,21200,21250,27443600],["2026-08-17",21250,21450,21050,21200,18455500],["2026-08-18",21150,21400,21000,21000,16367500],["2026-08-19",21100,21200,20900,21200,15312500],["2026-08-20",21250,21450,21150,21150,15156400],["2026-08-21",21150,21750,21050,21700,25138400],["2026-08-24",22000,22300,21850,22250,28790200],["2026-08-25",22250,22300,21800,21800,25844100],["2026-08-26",21800,22100,21750,22050,19394800],["2026-08-27",22050,22400,22050,22200,19201900],["2026-08-28",22250,22350,22050,22100,17126700],["2026-08-31",22100,22100,22100,22100,0],["2026-09-01",22100,22100,22100,22100,0],["2026-09-02",22100,22100,22100,22100,0],["2026-09-03",22000,22000,21550,21600,26985600],["2026-09-04",21750,21800,21600,21700,13920900],["2026-09-07",21800,22150,21550,21550,20396876]],"zone":[20100,20500],"touch":6}</script>
       <p>Hãy thử bốn nút ví dụ ở trên theo thứ tự thời gian: <b>doji 09/07</b> (đám đông lưỡng lự), <b>cú gãy 20/07</b> (thân dài đi xuống kèm khối lượng gấp hơn hai lần — người bán thật sự quyết đoạn), <b>bóng dưới dài 23/07</b> (bị dìm xuống rồi có lực đỡ), rồi <b>thân dài 28/07</b> (đóng cửa đúng đỉnh phiên). Đó là một câu chuyện hoàn chỉnh: do dự → bán tháo → có người đỡ → người mua giành lại quyền kiểm soát.</p>
       <p class="warn"><b>Đọc xuôi thì dễ</b>Nhìn lại quá khứ, mọi tín hiệu đều rõ ràng. Ngay cạnh cây nến 23/07 còn có những cây bóng dưới dài khác <i>không</i> dẫn tới đảo chiều nào cả. Đó là lý do bạn cần điểm cắt lỗ (cấp 5), chứ không cần thêm mẫu nến.</p>
       <h3>Xu hướng: định nghĩa bằng cấu trúc, không bằng cảm giác</h3>
@@ -1560,289 +1094,90 @@ Ví dụ:  NAV 200.000.000đ,  rủi ro 1%  → chấp nhận mất 2.000.000đ
   </section>
 </div>
 
+<script src="assets/site.js"></script>
+<script src="assets/chart.js"></script>
+<script src="assets/market.js"></script>
 <script>
+/* Phòng thực hành đọc nến ở cấp 4 — dữ liệu sống từ VNDirect, lùi về dữ liệu nhúng khi mất mạng. */
 (function(){
-  var boxes = document.querySelectorAll('.mark input[data-level]');
-  var links = document.querySelectorAll('#toc a');
-  var KEY = 'ck-tien-do';
+  var host = document.getElementById('lab');
+  var tag = document.getElementById('lab-data');
+  if (!host || !tag || !window.CandleLab) return;
 
-  function load(){
-    try { return JSON.parse(localStorage.getItem(KEY) || '{}') || {}; }
-    catch(e){ return {}; }
-  }
-  function save(state){
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){}
-  }
-  function paint(state){
-    links.forEach(function(a){
-      var id = (a.getAttribute('href') || '').slice(1);
-      a.classList.toggle('done', !!state[id]);
-    });
-  }
+  var FALLBACK;
+  try { FALLBACK = JSON.parse(tag.textContent); } catch(e){ FALLBACK = { bars:[], zone:null }; }
 
-  var state = load();
-  boxes.forEach(function(box){
-    var id = box.getAttribute('data-level');
-    box.checked = !!state[id];
-    box.addEventListener('change', function(){
-      state[id] = box.checked;
-      if (!box.checked) { delete state[id]; }
-      save(state);
-      paint(state);
-    });
+  var nameEl = document.getElementById('lab-name');
+  var subEl = document.getElementById('lab-sub');
+  var symEl = document.getElementById('lab-sym');
+  var sttEl = document.getElementById('lab-stt');
+
+  function status(text, kind){
+    sttEl.textContent = text;
+    sttEl.className = 'lab-status' + (kind ? ' is-' + kind : '');
+  }
+  function dmy(s){ return s.slice(8,10) + '/' + s.slice(5,7) + '/' + s.slice(0,4); }
+
+  /* Gõ VNINDEX hay VN30 thì đơn vị là điểm, không phải nghìn đồng. */
+  var isIndex = false;
+
+  var lab = window.CandleLab.create({
+    host: host,
+    bars: FALLBACK.bars,
+    zone: FALLBACK.zone,
+    touch: FALLBACK.touch,
+    unit: 'phiên',
+    decimals: 0,
+    axis: function(p){ return isIndex ? p.toFixed(0) : (p/1000).toFixed(1); },
+    price: function(p){
+      return isIndex ? p.toLocaleString('vi-VN', { minimumFractionDigits:2, maximumFractionDigits:2 }) + ' điểm'
+                     : Math.round(p).toLocaleString('vi-VN') + 'đ';
+    }
   });
-  paint(state);
 
-  var figs = Array.prototype.slice.call(document.querySelectorAll('.fig'));
-  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (figs.length && !reduce && 'IntersectionObserver' in window) {
-    figs.forEach(function(f){ f.classList.add('anim'); });
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(e){
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.18 });
-    figs.forEach(function(f){ io.observe(f); });
-  }
-
-  (function(){
-    var host = document.getElementById('lab');
-    var tag = document.getElementById('lab-data');
-    if (!host || !tag) return;
-    var CFG, SVG = document.getElementById('lab-svg'), READ = document.getElementById('lab-read');
-    try { CFG = JSON.parse(tag.textContent); } catch(e){ return; }
-    var RAW = CFG.bars, tf = 'D', bars = RAW, sel = -1;
-    var NS = 'http://www.w3.org/2000/svg';
-    var W = 720, H = 400, L = 10, R = 664, PT = 26, PB = 258, VT = 288, VB = 348;
-
-    function vn(n){ return n.toLocaleString('vi-VN'); }
-    function dm(s){ return s.slice(8,10) + '/' + s.slice(5,7); }
-    function dmy(s){ return s.slice(8,10) + '/' + s.slice(5,7) + '/' + s.slice(0,4); }
-
-    function weekly(rows){
-      var out = [], cur = null;
-      for (var i=0;i<rows.length;i++){
-        var r = rows[i], d = new Date(r[0] + 'T00:00:00Z');
-        var wk = Math.floor((d.getTime()/86400000 + 3) / 7);
-        if (!cur || cur.wk !== wk){
-          cur = { wk:wk, k:1, b:[r[0], r[1], r[2], r[3], r[4], r[5]] };
-          out.push(cur);
-        } else {
-          var b = cur.b;
-          if (r[2] > b[2]) b[2] = r[2];
-          if (r[3] < b[3]) b[3] = r[3];
-          b[4] = r[4]; b[5] += r[5];
-          cur.k++;
-        }
-        cur.end = r[0];
+  var current = 'HPG';
+  function loadSymbol(sym){
+    current = sym;
+    isIndex = window.Market.isVnIndex(sym);
+    status('đang tải ' + sym + '…', 'wait');
+    window.Market.vnStock(sym, 200).then(function(bars){
+      if (current !== sym) return;
+      // chỉ giữ vùng hỗ trợ minh hoạ khi vẫn đang xem đúng HPG
+      var keepZone = sym === 'HPG' ? FALLBACK.zone : null;
+      lab.setBars(bars, { zone: keepZone, touch: FALLBACK.touch, intraday:false, liveLast:false });
+      nameEl.textContent = sym;
+      subEl.textContent = 'Khung ngày · ' + bars.length + ' phiên · tới ' + dmy(bars[bars.length-1][0]);
+      status('dữ liệu sống · VNDirect', 'live');
+    }).catch(function(err){
+      if (current !== sym) return;
+      if (sym === 'HPG'){
+        isIndex = false;
+        lab.setBars(FALLBACK.bars, { zone: FALLBACK.zone, touch: FALLBACK.touch });
+        nameEl.textContent = 'HPG · Hòa Phát';
+        subEl.textContent = 'HOSE · dữ liệu nhúng 01/06 – 07/09/2026';
+        status('không gọi được API — đang dùng dữ liệu nhúng', 'err');
+      } else {
+        status('không lấy được dữ liệu cho ' + sym, 'err');
       }
-      return out.map(function(o){ var b = o.b.slice(); b[6] = o.end; b[7] = o.k; return b; });
-    }
-
-    function el(n, a){
-      var e = document.createElementNS(NS, n);
-      for (var k in a) if (a[k] !== null && a[k] !== undefined) e.setAttribute(k, a[k]);
-      return e;
-    }
-
-    function draw(){
-      while (SVG.firstChild) SVG.removeChild(SVG.firstChild);
-      var n = bars.length, i;
-      var hi = -Infinity, lo = Infinity, vmax = 0;
-      for (i=0;i<n;i++){
-        if (bars[i][2] > hi) hi = bars[i][2];
-        if (bars[i][3] < lo) lo = bars[i][3];
-        if (bars[i][5] > vmax) vmax = bars[i][5];
-      }
-      var pad = (hi - lo) * 0.06 || 1;
-      hi += pad; lo -= pad;
-      var py = function(p){ return PB - (p - lo) * (PB - PT) / (hi - lo); };
-      var pitch = (R - L) / n;
-      var cx = function(i){ return L + pitch * (i + 0.5); };
-      var bw = Math.max(2, Math.min(13, pitch * 0.66));
-
-      // luoi gia
-      var rawStep = (hi - lo) / 6, mag = Math.pow(10, Math.floor(Math.log(rawStep)/Math.LN10));
-      var nm = rawStep / mag;
-      var step = (nm <= 1 ? 1 : nm <= 2 ? 2 : nm <= 2.5 ? 2.5 : nm <= 5 ? 5 : 10) * mag;
-      var start = Math.ceil(lo / step) * step;
-      for (var p = start; p <= hi; p += step){
-        SVG.appendChild(el('line', {x1:L, y1:py(p), x2:R, y2:py(p), stroke:'var(--line-soft)'}));
-        SVG.appendChild(el('text', {x:R+8, y:py(p)+4, class:'t-num', fill:'var(--muted)'})).textContent = (p/1000).toFixed(1);
-      }
-
-      // vung gia dang chu y
-      var z = CFG.zone;
-      if (z[0] > lo && z[1] < hi){
-        SVG.appendChild(el('rect', {x:L, y:py(z[1]), width:R-L, height:Math.max(2, py(z[0])-py(z[1])),
-          fill:'var(--accent)', 'fill-opacity':'.11', stroke:'var(--accent)', 'stroke-opacity':'.42',
-          'stroke-dasharray':'5 4'}));
-        var zt = el('text', {x:L+7, y:py(z[1])-6, class:'t-num', fill:'var(--accent-ink)', 'font-size':'9.5'});
-        zt.textContent = 'vùng ' + (z[0]/1000).toFixed(1) + ' – ' + (z[1]/1000).toFixed(1)
-          + ' · ' + CFG.touch + ' phiên chạm rồi bật lên';
-        SVG.appendChild(zt);
-      }
-
-      // nen + khoi luong
-      for (i=0;i<n;i++){
-        var b = bars[i], up = b[4] >= b[1], col = up ? 'var(--up)' : 'var(--down)';
-        var g = el('g', {'data-i':i, class:'cd', style:'cursor:pointer'});
-        g.appendChild(el('line', {x1:cx(i), y1:py(b[2]), x2:cx(i), y2:py(b[3]),
-          stroke:col, 'stroke-width':Math.max(1, bw*0.16)}));
-        var yo = py(b[1]), yc = py(b[4]);
-        g.appendChild(el('rect', {x:cx(i)-bw/2, y:Math.min(yo,yc), width:bw,
-          height:Math.max(Math.abs(yc-yo), 1.4), fill:col}));
-        if (vmax > 0 && b[5] > 0){
-          var vh = (b[5]/vmax) * (VB - VT);
-          g.appendChild(el('rect', {x:cx(i)-bw/2, y:VB-vh, width:bw, height:vh,
-            fill:col, 'fill-opacity':'.42'}));
-        }
-        g.appendChild(el('rect', {x:cx(i)-pitch/2, y:PT-2, width:pitch, height:VB-PT+4,
-          fill:'transparent'}));
-        SVG.appendChild(g);
-      }
-      SVG.appendChild(el('line', {x1:L, y1:VB, x2:R, y2:VB, stroke:'var(--line)'}));
-      var vl = el('text', {x:L, y:VT-6, class:'t-num', fill:'var(--muted)', 'font-size':'9.5'});
-      vl.textContent = 'KHỐI LƯỢNG'; SVG.appendChild(vl);
-
-      // nhan thoi gian
-      var every = Math.max(1, Math.round(n / 6));
-      for (i=0;i<n;i+=every){
-        var ax = cx(i), an = 'middle';
-        if (ax - 20 < L){ ax = L; an = 'start'; }
-        else if (ax + 20 > R){ ax = R; an = 'end'; }
-        var t = el('text', {x:ax, y:370, class:'t-num', fill:'var(--muted)', 'text-anchor':an});
-        t.textContent = dm(bars[i][0]); SVG.appendChild(t);
-      }
-
-      if (sel >= 0 && sel < n){
-        var s = bars[sel];
-        SVG.appendChild(el('line', {x1:cx(sel), y1:PT-2, x2:cx(sel), y2:VB,
-          stroke:'var(--ink)', 'stroke-opacity':'.32', 'stroke-dasharray':'3 3'}));
-        SVG.appendChild(el('rect', {x:cx(sel)-Math.max(bw,7)/2-3, y:py(s[2])-4,
-          width:Math.max(bw,7)+6, height:py(s[3])-py(s[2])+8, rx:3,
-          fill:'none', stroke:'var(--ink)', 'stroke-opacity':'.55'}));
-        SVG.appendChild(el('line', {x1:L, y1:py(s[4]), x2:R, y2:py(s[4]),
-          stroke:'var(--ink)', 'stroke-opacity':'.3', 'stroke-dasharray':'2 4'}));
-      }
-    }
-
-    function avgVol(i){
-      var a = 0, k = 0;
-      for (var j = Math.max(0, i-19); j <= i; j++){ if (bars[j][5] > 0){ a += bars[j][5]; k++; } }
-      return { avg: k ? a/k : 0, n: k };
-    }
-
-    function readout(){
-      if (sel < 0){ READ.innerHTML = '<p class="lab-empty">Chưa chọn cây nến nào — bấm vào đồ thị ở trên.</p>'; return; }
-      var b = bars[sel], o=b[1], h=b[2], l=b[3], c=b[4], v=b[5];
-      var rng = h - l, body = Math.abs(c-o);
-      var upSh = h - Math.max(o,c), dnSh = Math.min(o,c) - l;
-      var pb = rng ? body/rng*100 : 0, pu = rng ? upSh/rng*100 : 0, pd = rng ? dnSh/rng*100 : 0;
-      var prev = sel > 0 ? bars[sel-1][4] : o;
-      var chg = prev ? (c-prev)/prev*100 : 0;
-      var up = c >= o, col = up ? 'var(--up)' : 'var(--down)';
-      var av = avgVol(sel), vr = av.avg ? v/av.avg : 0;
-      var partial = (tf === 'W' && b[7] && b[7] < 5);
-
-      var why = [];
-      if (rng === 0) why.push('Phiên này giá không dao động — gần như không có giao dịch đáng kể.');
-      else if (pb > 70) why.push('<b>Thân dài (' + pb.toFixed(0) + '% biên độ)</b> — phe ' + (up?'mua':'bán') + ' kiểm soát gần như cả phiên, ít giằng co.');
-      else if (pb < 12) why.push('<b>Thân rất ngắn (' + pb.toFixed(0) + '%)</b> — mở và đóng gần bằng nhau: hai phe hoà nhau, đám đông lưỡng lự.');
-      else why.push('Thân vừa (' + pb.toFixed(0) + '% biên độ) — có xu hướng nhưng vẫn còn giằng co.');
-      if (pd > 45) why.push('<b>Bóng dưới dài (' + pd.toFixed(0) + '%)</b> — giá từng bị dìm xuống ' + vn(l) + 'đ rồi được mua ngược lên: có lực đỡ ở vùng đó.');
-      if (pu > 45) why.push('<b>Bóng trên dài (' + pu.toFixed(0) + '%)</b> — có lúc lên tới ' + vn(h) + 'đ nhưng bị bán ép về: có lực cản ở trên.');
-      var ky = tf === 'W' ? ' tuần' : ' phiên';
-      if (partial){
-        why.push('<b>Tuần này chưa kết thúc</b> — mới có ' + b[7] + ' phiên, nên không so khối lượng với các tuần trọn vẹn được.');
-      } else if (v > 0 && av.avg > 0 && av.n > 3){
-        if (vr >= 2) why.push('Khối lượng <b>gấp ' + vr.toFixed(1) + ' lần</b> trung bình ' + av.n + ky + ' gần nhất — nhiều người cùng hành động, tín hiệu đáng tin hơn.');
-        else if (vr <= 0.6) why.push('Khối lượng chỉ bằng ' + Math.round(vr*100) + '% trung bình ' + av.n + ky + ' gần nhất — ít người tham gia, đừng tin vội.');
-      }
-      why.push('Đặt câu hỏi cuối cùng: cây nến này nằm ở đâu trong xu hướng, và cách vùng giá quan trọng bao xa?');
-
-      var per = tf === 'W'
-        ? 'Tuần ' + dmy(b[0]) + (b[6] && b[6] !== b[0] ? ' – ' + dm(b[6]) : '')
-        : dmy(b[0]);
-      var cells = [['Mở', o], ['Cao', h], ['Thấp', l], ['Đóng', c]].map(function(x){
-        return '<div><dt>' + x[0] + '</dt><dd>' + vn(x[1]) + '</dd></div>';
-      }).join('');
-      cells += '<div><dt>Khối lượng</dt><dd>' + (v > 0 ? vn(v) : '—') + '</dd></div>';
-
-      READ.innerHTML =
-        '<div class="lab-r1"><span class="lab-date">' + per + '</span>' +
-        '<span class="lab-chg" style="color:' + col + '">' + (chg>=0?'+':'−') + Math.abs(chg).toFixed(2) + '%</span>' +
-        '<span class="lab-tag" style="color:' + col + ';border-color:' + col + '">' +
-        (up ? 'nến tăng' : 'nến giảm') + '</span></div>' +
-        '<dl class="lab-ohlc">' + cells + '</dl>' +
-        '<div class="lab-why">' + why.join(' ') + '</div>';
-    }
-
-    function pick(i){
-      if (i < 0 || i >= bars.length) return;
-      sel = i; draw(); readout();
-    }
-
-    SVG.addEventListener('click', function(e){
-      var g = e.target.closest ? e.target.closest('[data-i]') : null;
-      if (g) pick(+g.getAttribute('data-i'));
-    });
-    SVG.addEventListener('keydown', function(e){
-      if (e.key === 'ArrowRight'){ pick(sel < 0 ? 0 : sel+1); e.preventDefault(); }
-      else if (e.key === 'ArrowLeft'){ pick(sel < 0 ? bars.length-1 : sel-1); e.preventDefault(); }
-    });
-    host.querySelectorAll('[data-tf]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        tf = btn.getAttribute('data-tf');
-        host.querySelectorAll('[data-tf]').forEach(function(o){
-          var on = o === btn;
-          o.classList.toggle('on', on);
-          o.setAttribute('aria-pressed', on ? 'true' : 'false');
-        });
-        bars = tf === 'W' ? weekly(RAW) : RAW;
-        sel = bars.length - 1; draw(); readout();
-      });
-    });
-    host.querySelectorAll('.lab-jump').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var d = btn.getAttribute('data-date');
-        if (tf !== 'D'){
-          tf = 'D'; bars = RAW;
-          host.querySelectorAll('[data-tf]').forEach(function(o){
-            var on = o.getAttribute('data-tf') === 'D';
-            o.classList.toggle('on', on);
-            o.setAttribute('aria-pressed', on ? 'true' : 'false');
-          });
-        }
-        for (var i=0;i<bars.length;i++) if (bars[i][0] === d){ pick(i); break; }
-        SVG.focus({ preventScroll:true });
-      });
-    });
-
-    sel = RAW.length - 1;
-    draw(); readout();
-  })();
-
-  var sections = Array.prototype.slice.call(document.querySelectorAll('section[id]'));
-  function spy(){
-    var best = null, bestTop = -Infinity;
-    var mark = window.scrollY + window.innerHeight * 0.3;
-    sections.forEach(function(s){
-      var top = s.offsetTop;
-      if (top <= mark && top > bestTop) { bestTop = top; best = s.id; }
-    });
-    if (best === null && sections.length) best = sections[0].id;
-    links.forEach(function(a){
-      a.classList.toggle('on', a.getAttribute('href') === '#' + best);
     });
   }
-  var ticking = false;
-  window.addEventListener('scroll', function(){
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(function(){ spy(); ticking = false; });
-  }, { passive: true });
-  spy();
+
+  var timer = null;
+  symEl.addEventListener('input', function(){
+    var v = (symEl.value || '').trim().toUpperCase();
+    clearTimeout(timer);
+    if (v.length < 3) return;
+    timer = setTimeout(function(){ loadSymbol(v); }, 450);
+  });
+  symEl.addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){
+      e.preventDefault(); clearTimeout(timer);
+      var v = (symEl.value || '').trim().toUpperCase();
+      if (v) loadSymbol(v);
+    }
+  });
+
+  loadSymbol('HPG');
 })();
 </script>
 </body>

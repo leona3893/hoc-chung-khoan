@@ -1,0 +1,43 @@
+name: Cập nhật dữ liệu phân tích
+
+on:
+  schedule:
+    # 09:30 UTC = 16:30 giờ Việt Nam, thứ Hai → thứ Sáu (sau phiên ATC 14:45)
+    - cron: "30 9 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Tải dữ liệu SSI và tính khuyến nghị
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python scripts/fetch_ssi.py
+
+      - name: Commit nếu có thay đổi
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "Không có dữ liệu mới."
+            exit 0
+          fi
+          DATE=$(python -c "import json;print(json.load(open('data/analysis.json',encoding='utf-8'))['dataDate'])")
+          git commit -m "Dữ liệu phân tích phiên $DATE"
+          git push

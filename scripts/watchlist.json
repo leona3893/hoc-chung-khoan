@@ -1,0 +1,9 @@
+{
+  "_ghi_chu": "Danh sách mã được phân tích. 'groups' lấy tự động từ SSI (VN30, HNX30...). 'extra' là mã thêm tay. 'indices' là chỉ số dùng làm tham chiếu thị trường.",
+  "groups": ["VN30"],
+  "extra": ["DGC", "DBC", "PVS", "VND", "SSI"],
+  "indices": ["VNINDEX", "VN30", "HNXINDEX"],
+  "benchmark": "VNINDEX",
+  "history_days": 800,
+  "bars_keep": 260
+}

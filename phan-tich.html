@@ -1,0 +1,1133 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}
+:root[data-theme="dark"]{color-scheme:dark}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Phòng phân tích · Chứng khoán từ số 0</title>
+<meta name="description" content="Chấm điểm kỹ thuật và khuyến nghị cho VN30 từ dữ liệu SSI, kèm bảng theo dõi cổ phiếu và coin, đồ thị chỉ báo và nhật ký giao dịch giả lập.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%274%27 y=%2712%27 width=%276%27 height=%2712%27 fill=%27%23007A4D%27/%3E%3Crect x=%276%27 y=%276%27 width=%272%27 height=%2722%27 fill=%27%23007A4D%27/%3E%3Crect x=%2718%27 y=%278%27 width=%276%27 height=%2714%27 fill=%27%23D31510%27/%3E%3Crect x=%2720%27 y=%274%27 width=%272%27 height=%2724%27 fill=%27%23D31510%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,600&family=Source+Code+Pro:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+/* ---- trang công cụ: rộng hơn trang bài đọc ---- */
+main{ max-width:none }
+.num{ font-variant-numeric:tabular-nums }
+.c-muted{ color:var(--muted) }
+.lbl{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted) }
+
+/* ---- thẻ ---- */
+.card{ background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius); padding:16px 18px }
+.grid{ display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); margin-top:15px }
+.idx .sym{ display:flex; justify-content:space-between; align-items:baseline; gap:8px }
+.idx .sym b{ font-size:var(--fs-sm) }
+.idx .px{ font-family:var(--font-mono); font-size:1.5rem; font-weight:700; margin-top:6px; line-height:1.1 }
+.idx .chg{ font-family:var(--font-mono); font-size:var(--fs-sm); font-weight:700; margin-top:2px }
+.idx .meta{ display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:10px; font-size:var(--fs-xs); color:var(--muted) }
+.idx .meta b{ color:var(--ink-2) }
+.regime{ margin-top:15px; padding:14px 18px; border:1px solid var(--line-soft); border-left:4px solid var(--accent);
+  border-radius:var(--radius); background:var(--surface); font-size:var(--fs-sm) }
+.regime[data-r="Thuận lợi"]{ border-left-color:var(--up) }
+.regime[data-r="Bất lợi"]{ border-left-color:var(--down) }
+.regime[data-r="Trung tính"]{ border-left-color:var(--ref) }
+.breadth{ display:grid; grid-template-columns:repeat(auto-fit,minmax(125px,1fr)); gap:8px; margin:12px 0 0 }
+.breadth > div{ background:var(--surface-2); border-radius:var(--radius-ctl); padding:10px 12px }
+.breadth dt{ font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted) }
+.breadth dd{ margin:3px 0 0; font-family:var(--font-mono); font-weight:700; font-size:var(--fs-base) }
+.pbar{ height:6px; border-radius:3px; background:var(--line-soft); margin-top:6px; overflow:hidden }
+.pbar i{ display:block; height:100%; background:var(--up) }
+
+/* ---- nhãn khuyến nghị ---- */
+.tag{ display:inline-block; font-weight:700; font-size:11px; letter-spacing:.04em; border-radius:999px; padding:4px 10px; white-space:nowrap }
+.tag-buy{ color:var(--up); background:color-mix(in srgb, var(--up) 14%, transparent) }
+.tag-acc{ color:var(--floor); background:color-mix(in srgb, var(--floor) 14%, transparent) }
+.tag-hold{ color:var(--ink-2); background:var(--surface-2) }
+.tag-reduce{ color:var(--ref); background:color-mix(in srgb, var(--ref) 16%, transparent) }
+.tag-sell{ color:var(--down); background:color-mix(in srgb, var(--down) 13%, transparent) }
+.tag-t-up{ color:var(--up); background:color-mix(in srgb, var(--up) 14%, transparent) }
+.tag-t-down{ color:var(--down); background:color-mix(in srgb, var(--down) 13%, transparent) }
+.tag-t-flat{ color:var(--ink-2); background:var(--surface-2) }
+
+/* ---- thanh công cụ + bảng điểm ---- */
+.toolbar{ display:flex; flex-wrap:wrap; gap:8px 10px; align-items:center; margin:15px 0 12px }
+.toolbar input[type=search]{ font:inherit; font-size:var(--fs-sm); padding:0 12px; min-height:34px;
+  border:1px solid var(--line); border-radius:var(--radius-ctl); background:var(--surface); color:var(--ink); width:170px }
+.chips{ display:flex; flex-wrap:wrap; gap:4px }
+.chip{ font:700 var(--fs-sm)/1 var(--font-body); color:var(--ink); border:1px solid var(--line);
+  border-radius:var(--radius-ctl); min-height:32px; padding:0 12px; background:var(--surface); cursor:pointer }
+.chip:hover{ background:var(--surface-2) }
+.chip.on{ background:var(--ink); color:var(--surface); border-color:var(--ink) }
+table.screen{ border-collapse:collapse; width:100%; min-width:940px; font-size:var(--fs-sm) }
+table.screen th{ text-align:right; background:var(--surface-2); color:var(--ink-2); font-weight:700; font-size:13px;
+  padding:10px 12px; border-bottom:1px solid var(--line); white-space:nowrap; cursor:pointer; user-select:none }
+table.screen th:first-child, table.screen td:first-child, table.screen th.l, table.screen td.l{ text-align:left }
+table.screen th.sorted::after{ content:" ▾"; color:var(--accent-ink) }
+table.screen th.sorted.asc::after{ content:" ▴" }
+table.screen td{ text-align:right; padding:9px 12px; border-bottom:1px solid var(--line-soft); white-space:nowrap;
+  font-family:var(--font-mono); font-variant-numeric:tabular-nums }
+table.screen td.l{ font-family:var(--font-body) }
+table.screen tbody tr{ cursor:pointer }
+table.screen tbody tr:hover td{ background:var(--surface-2) }
+table.screen tbody tr.on td{ background:var(--accent-wash) }
+table.screen tr:last-child td{ border-bottom:0 }
+.sym-cell b{ font-family:var(--font-body); font-weight:800; font-size:var(--fs-base); color:var(--ink) }
+.sym-cell small{ display:block; font-family:var(--font-body); color:var(--muted); font-size:var(--fs-xs);
+  max-width:190px; overflow:hidden; text-overflow:ellipsis }
+.score{ display:inline-grid; grid-template-columns:34px 66px; gap:8px; align-items:center }
+.score i{ display:block; height:8px; border-radius:4px; background:var(--line-soft); position:relative; overflow:hidden }
+.score i::before{ content:""; position:absolute; left:50%; top:0; bottom:0; width:1px; background:var(--line) }
+.score i b{ position:absolute; top:0; bottom:0 }
+.empty{ padding:26px 18px; text-align:center; color:var(--muted); font-size:var(--fs-sm) }
+
+/* ---- chi tiết một mã ---- */
+.d-head{ display:flex; flex-wrap:wrap; gap:10px 20px; align-items:flex-end; justify-content:space-between; margin-top:15px }
+.d-head h3{ font-size:clamp(1.5rem,4vw,2rem); margin:0 }
+.d-head .nm{ color:var(--muted); font-size:var(--fs-sm); margin-top:4px }
+.d-head .px{ font-family:var(--font-mono); font-size:1.9rem; font-weight:700; line-height:1 }
+.d-head .chg{ font-family:var(--font-mono); font-weight:700; margin-top:4px }
+.two{ display:grid; gap:14px; margin-top:14px; grid-template-columns:1fr }
+@media(min-width:1000px){ .two{ grid-template-columns:minmax(0,1.55fr) minmax(0,1fr) } }
+.rec{ border-left:4px solid var(--line) }
+.rec[data-k="buy"]{ border-left-color:var(--up) } .rec[data-k="acc"]{ border-left-color:var(--floor) }
+.rec[data-k="hold"]{ border-left-color:var(--muted) } .rec[data-k="reduce"]{ border-left-color:var(--ref) }
+.rec[data-k="sell"]{ border-left-color:var(--down) }
+.rec-top{ display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px }
+.rec-top .tag{ font-size:13px; padding:6px 14px }
+.rec-top .sc{ font-size:var(--fs-sm); color:var(--muted) }
+.rec-top .sc b{ color:var(--ink); font-size:var(--fs-lg); font-family:var(--font-mono) }
+.rec-note{ margin-top:10px; font-size:var(--fs-sm); color:var(--ink-2) }
+.rec-mk{ margin-top:8px; font-size:var(--fs-sm); color:var(--ref); font-weight:700 }
+.reasons{ list-style:none; margin:10px 0 0; padding:0 }
+.reasons li{ display:grid; grid-template-columns:42px minmax(0,1fr); gap:10px; padding:7px 0;
+  border-top:1px solid var(--line-soft); font-size:var(--fs-sm); color:var(--ink-2) }
+.reasons li:first-child{ border-top:0 }
+.reasons .pt{ font-family:var(--font-mono); font-weight:700; text-align:right }
+.setups{ margin:12px 0 0; padding:0; list-style:none }
+.setups li{ padding:10px 14px; border-radius:var(--radius-ctl); background:var(--accent-wash);
+  color:var(--ink); font-size:var(--fs-sm); margin-top:6px }
+.setups li.bad{ background:color-mix(in srgb, var(--down) 12%, transparent) }
+.kv{ display:grid; grid-template-columns:repeat(auto-fit,minmax(128px,1fr)); gap:8px 16px; margin-top:10px }
+.kv dt{ font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--muted) }
+.kv dd{ margin:2px 0 0; font-family:var(--font-mono); font-weight:600; font-size:var(--fs-sm) }
+.lv{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px }
+.lv span{ font-family:var(--font-mono); font-size:var(--fs-xs); font-weight:700; border-radius:6px; padding:4px 8px }
+.lv .r{ color:var(--down); background:color-mix(in srgb, var(--down) 13%, transparent) }
+.lv .s{ color:var(--up); background:color-mix(in srgb, var(--up) 14%, transparent) }
+.lv small{ font-weight:400; opacity:.75 }
+
+/* ---- biểu đồ chỉ báo ---- */
+.chart-card{ padding:14px 14px 10px }
+.chart-top{ display:flex; flex-wrap:wrap; justify-content:space-between; gap:8px; align-items:center; margin-bottom:8px }
+.tf2{ display:flex; gap:4px }
+.tf2 button{ font:700 var(--fs-sm)/1 var(--font-body); color:var(--ink); border:1px solid var(--line);
+  border-radius:var(--radius-ctl); min-height:32px; padding:0 12px; background:var(--surface); cursor:pointer }
+.tf2 button:hover{ background:var(--surface-2) }
+.tf2 button.on{ background:var(--ink); color:var(--surface); border-color:var(--ink) }
+.keys{ display:flex; flex-wrap:wrap; gap:6px 14px; font-size:var(--fs-xs); font-weight:600; color:var(--muted) }
+.keys span{ display:inline-flex; align-items:center; gap:6px }
+.keys i{ width:14px; height:3px; border-radius:2px; display:inline-block }
+.plot svg{ display:block; width:100%; height:auto; touch-action:pan-y }
+.plot text{ font-family:var(--font-mono); font-size:10px; fill:var(--muted) }
+.plot .pane-lbl{ font-family:var(--font-body); font-weight:700; font-size:10px; letter-spacing:.06em; fill:var(--muted) }
+.hover{ margin-top:6px; min-height:22px; font-family:var(--font-mono); font-size:var(--fs-xs);
+  color:var(--ink-2); display:flex; flex-wrap:wrap; gap:4px 14px }
+.hover b{ color:var(--ink) }
+
+/* ---- bảng cách chấm điểm ---- */
+.rules{ border-collapse:collapse; width:100%; font-size:var(--fs-sm) }
+.rules th{ text-align:left; background:var(--surface-2); padding:8px 10px; font-size:13px;
+  font-weight:700; border-bottom:1px solid var(--line) }
+.rules td{ padding:8px 10px; border-bottom:1px solid var(--line-soft); color:var(--ink-2); vertical-align:top }
+.rules td:first-child{ color:var(--ink); font-weight:700; white-space:nowrap }
+.rules tr:last-child td{ border-bottom:0 }
+
+.err{ padding:16px 20px; border:2px solid var(--down); border-radius:var(--radius);
+  background:var(--surface); font-size:var(--fs-sm); margin-top:15px }
+.err code{ font-family:var(--font-mono); background:var(--surface-2); padding:1px 5px; border-radius:4px }
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Các trang">
+  <div class="wrap">
+    <a class="brand" href="index.html">Chứng khoán từ số 0</a>
+    <a class="nav" href="index.html">Cổ phiếu</a>
+    <a class="nav" href="coin.html">Coin</a>
+    <a class="nav" href="phan-tich.html" aria-current="page">Phòng phân tích</a>
+  </div>
+</nav>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Công cụ · Dữ liệu thật, tiền giả lập</p>
+    <h1>Phòng phân tích
+      <span class="h1-sub">Mỗi phiên, máy chấm điểm rổ VN30 bằng đúng bộ công cụ ở cấp 4 — MA20/50/200, RSI, MACD, khối lượng, sức mạnh tương đối và dòng tiền khối ngoại — rồi quy ra năm mức khuyến nghị, kèm lý do và điểm cắt lỗ. Bên dưới là bảng theo dõi cổ phiếu và coin theo giá đang chạy, cùng một cuốn nhật ký giao dịch giả lập.</span>
+    </h1>
+    <dl class="facts">
+      <div class="fact"><dt>Phiên dữ liệu</dt><dd id="f-date">—</dd></div>
+      <div class="fact"><dt>Thị trường</dt><dd id="f-regime">—</dd></div>
+      <div class="fact"><dt>Trên MA50</dt><dd id="f-breadth">—</dd></div>
+      <div class="fact"><dt>Mua / Tích lũy</dt><dd id="f-buy">—</dd></div>
+      <div class="fact"><dt>Tiền thật</dt><dd>Không. Đây là sổ giấy</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="wrap shell">
+  <nav class="rail" aria-label="Mục lục">
+    <p class="rail-title">Trong trang này</p>
+    <ol id="toc">
+      <li><a href="#boicanh"><span class="n">01</span><span>Bối cảnh thị trường</span></a></li>
+      <li><a href="#bangdiem"><span class="n">02</span><span>Bảng điểm &amp; khuyến nghị</span></a></li>
+      <li><a href="#chitiet"><span class="n">03</span><span>Đọc kỹ một mã</span></a></li>
+      <li><a href="#theodoi"><span class="n">04</span><span>Bảng theo dõi của bạn</span></a></li>
+      <li><a href="#nhatky"><span class="n">05</span><span>Nhật ký giao dịch</span></a></li>
+      <li><a href="#cachcham"><span class="n">06</span><span>Cách máy chấm điểm</span></a></li>
+      <li><a href="index.html"><span class="n">←</span><span>Bài học cổ phiếu</span></a></li>
+      <li><a href="coin.html"><span class="n">←</span><span>Bài học coin</span></a></li>
+    </ol>
+    <p class="rail-note">Điểm số và khuyến nghị được tính sẵn sau mỗi phiên từ dữ liệu SSI. Bảng theo dõi và nhật ký gọi API trực tiếp và chỉ ở lại trong trình duyệt của bạn.</p>
+  </nav>
+
+  <main>
+    <div id="error" class="err" hidden></div>
+
+    <!-- ================= 01 BỐI CẢNH ================= -->
+    <section class="level" id="boicanh">
+      <div class="level-head">
+        <span class="level-num">01</span>
+        <div>
+          <h2>Bối cảnh thị trường</h2>
+          <p class="level-meta">Trả lời “có nên giao dịch không” trước khi hỏi “mua mã nào”</p>
+        </div>
+      </div>
+      <p class="goal"><b>Vì sao đọc phần này trước:</b> trong một thị trường giảm, phần lớn cổ phiếu giảm theo bất kể đồ thị riêng của nó đẹp đến đâu. Chọn đúng mã trong sai bối cảnh vẫn là thua.</p>
+      <div class="grid" id="indices"></div>
+      <div class="regime" id="regime">Đang tải…</div>
+      <dl class="breadth" id="breadth"></dl>
+      <p class="lab-hint" style="margin-top:10px">Độ rộng đếm trên <span id="b-count">…</span> mã trong danh sách chấm điểm. Càng nhiều mã nằm trên MA50, sóng tăng càng có nền rộng; chỉ vài mã trụ kéo chỉ số là dấu hiệu yếu.</p>
+    </section>
+
+    <!-- ================= 02 BẢNG ĐIỂM ================= -->
+    <section class="level" id="bangdiem">
+      <div class="level-head">
+        <span class="level-num">02</span>
+        <div>
+          <h2>Bảng điểm &amp; khuyến nghị</h2>
+          <p class="level-meta">VN30 và vài mã theo dõi thêm, chấm lại sau mỗi phiên</p>
+        </div>
+      </div>
+      <p class="goal"><b>Cách dùng:</b> bấm vào một dòng để mở phần đọc kỹ bên dưới. Bấm tiêu đề cột để sắp xếp — thử sắp theo “3 tháng” để thấy mã nào đang thực sự mạnh hơn phần còn lại.</p>
+
+      <div class="toolbar">
+        <input type="search" id="q" placeholder="Tìm mã…" aria-label="Tìm mã">
+        <div class="chips" id="chips" role="group" aria-label="Lọc theo khuyến nghị">
+          <button type="button" class="chip on" data-f="">Tất cả</button>
+          <button type="button" class="chip" data-f="buy">Mua</button>
+          <button type="button" class="chip" data-f="acc">Tích lũy</button>
+          <button type="button" class="chip" data-f="hold">Theo dõi</button>
+          <button type="button" class="chip" data-f="reduce">Giảm</button>
+          <button type="button" class="chip" data-f="sell">Bán</button>
+        </div>
+        <span class="lab-status is-wait" id="sc-stt">đang tải…</span>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="screen" id="tbl">
+          <thead><tr>
+            <th class="l" data-k="symbol">Mã</th>
+            <th data-k="close">Giá</th>
+            <th data-k="chgPct">+/−</th>
+            <th data-k="ret.1m">1 tháng</th>
+            <th data-k="ret.3m">3 tháng</th>
+            <th data-k="volRatio">KL / TB20</th>
+            <th data-k="ind.rsi">RSI</th>
+            <th class="l" data-k="trend">Xu hướng</th>
+            <th data-k="foreign.net20">Khối ngoại 20p</th>
+            <th data-k="plan.rr">Lời/lỗ</th>
+            <th data-k="score" class="sorted">Điểm</th>
+            <th class="l" data-k="recKey">Khuyến nghị</th>
+          </tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <div class="empty" id="empty" hidden>Không có mã nào khớp bộ lọc.</div>
+      </div>
+      <p class="warn" style="margin-top:15px"><b>Đừng đọc cột cuối trước</b>Hãy che cột “Khuyến nghị” lại, tự nhìn giá – khối lượng – RSI và tự kết luận, rồi mới mở ra đối chiếu. Chỗ bạn và máy khác nhau chính là chỗ bạn học được nhiều nhất.</p>
+    </section>
+
+    <!-- ================= 03 CHI TIẾT ================= -->
+    <section class="level" id="chitiet">
+      <div class="level-head">
+        <span class="level-num">03</span>
+        <div>
+          <h2>Đọc kỹ một mã</h2>
+          <p class="level-meta">Đồ thị, kế hoạch giao dịch và toàn bộ lý do cho điểm số</p>
+        </div>
+      </div>
+
+      <div class="d-head">
+        <div><h3 id="d-sym">—</h3><p class="nm" id="d-name"></p></div>
+        <div style="text-align:right"><div class="px num" id="d-px"></div><div class="chg" id="d-chg"></div></div>
+      </div>
+
+      <div class="two">
+        <div>
+          <div class="card chart-card">
+            <div class="chart-top">
+              <div class="keys">
+                <span><i style="background:var(--accent)"></i>MA20</span>
+                <span><i style="background:var(--ref)"></i>MA50</span>
+                <span><i style="background:var(--ceil)"></i>MA200</span>
+                <span><i style="background:var(--line);height:1px"></i>Bollinger</span>
+                <span><i style="background:var(--up)"></i>Hỗ trợ</span>
+                <span><i style="background:var(--down)"></i>Kháng cự</span>
+              </div>
+              <div class="tf2" id="tf">
+                <button type="button" data-n="63">3 tháng</button>
+                <button type="button" data-n="126" class="on">6 tháng</button>
+                <button type="button" data-n="260">1 năm</button>
+              </div>
+            </div>
+            <div class="plot"><svg id="chart" viewBox="0 0 900 560" role="img" aria-label="Đồ thị nến kèm khối lượng, RSI và MACD"></svg></div>
+            <div class="hover" id="hover"></div>
+          </div>
+        </div>
+        <div>
+          <div class="card rec" id="rec">
+            <div class="rec-top"><span class="tag" id="r-tag"></span><span class="sc">Điểm <b id="r-score"></b> trên thang ±100</span></div>
+            <p class="rec-note" id="r-note"></p>
+            <p class="rec-mk" id="r-mk" hidden></p>
+            <dl class="stat">
+              <div><dt>Vùng mua</dt><dd id="p-entry"></dd></div>
+              <div><dt>Cắt lỗ</dt><dd id="p-stop"></dd></div>
+              <div><dt>Mục tiêu</dt><dd id="p-target"></dd></div>
+              <div><dt>Lời / lỗ</dt><dd id="p-rr"></dd></div>
+            </dl>
+            <ul class="setups" id="setups"></ul>
+          </div>
+          <div class="card" style="margin-top:12px">
+            <p class="lbl">Vì sao có điểm này</p>
+            <ul class="reasons" id="reasons"></ul>
+          </div>
+          <div class="card" style="margin-top:12px">
+            <p class="lbl">Mức giá quan trọng</p>
+            <div class="lv" id="levels"></div>
+            <p class="lbl" style="margin-top:14px">Chỉ báo phiên gần nhất</p>
+            <dl class="kv" id="kv"></dl>
+          </div>
+        </div>
+      </div>
+      <p class="aside" style="margin-top:15px"><b>Bài tập</b>Trước khi đọc cột bên phải, hãy nhìn riêng đồ thị và trả lời ba câu: giá đang ở trên hay dưới MA50? Khối lượng đang vào ở phiên tăng hay phiên giảm? Nếu mua hôm nay thì đặt cắt lỗ ở đâu là hợp lý? Sau đó mới so với những gì máy viết.</p>
+    </section>
+
+    <!-- ================= 04 BẢNG THEO DÕI ================= -->
+    <section class="level" id="theodoi">
+      <div class="level-head">
+        <span class="level-num">04</span>
+        <div>
+          <h2>Bảng theo dõi của bạn</h2>
+          <p class="level-meta">Cổ phiếu VN và coin trong cùng một bảng, giá gọi trực tiếp</p>
+        </div>
+      </div>
+      <p class="goal"><b>Khác gì bảng điểm ở trên:</b> phần 02 chỉ chấm những mã đã được tính sẵn sau phiên. Bảng này thêm được mã bất kỳ, kể cả coin, và lấy giá ngay lúc bạn mở trang — nhưng không có điểm số, vì chấm điểm cần cả chuỗi lịch sử. Bấm một dòng: mã nào có trong bảng điểm sẽ mở ở phần 03, mã còn lại hiện đồ thị nhanh ngay dưới đây.</p>
+
+      <div class="lab-ctl">
+        <label for="wl-sym">Thêm mã</label>
+        <input type="text" id="wl-sym" placeholder="HPG hoặc BTC" maxlength="12" spellcheck="false" aria-label="Mã cần thêm">
+        <select id="wl-market" aria-label="Thị trường">
+          <option value="vn">Cổ phiếu VN</option>
+          <option value="crypto">Coin</option>
+        </select>
+        <button type="button" class="jn-primary" id="wl-add">Thêm</button>
+        <button type="button" class="jn-ghost" id="wl-reload">Làm mới</button>
+        <span class="lab-status is-wait" id="wl-stt">đang tải…</span>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="wl" id="wl-table">
+          <thead><tr><th>Mã</th><th>Giá</th><th>Thay đổi</th><th>Cao / thấp</th><th>Khối lượng</th><th>30 nến gần nhất</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="lab-hint" style="margin-top:10px">Cổ phiếu VN: thay đổi so với phiên liền trước, số liệu cập nhật sau khi sàn đóng cửa khớp lệnh. Coin: thay đổi trong 24 giờ, cập nhật liên tục. Dữ liệu được nhớ tạm 60 giây; bấm “Làm mới” để gọi lại.</p>
+
+      <figure class="fig lab" id="lab" hidden>
+        <div class="lab-head">
+          <div><p class="lab-t" id="lab-name">—</p><p class="lab-s" id="lab-sub">đang tải dữ liệu…</p></div>
+          <div class="lab-tf" id="lab-tfs" role="group" aria-label="Khung thời gian"></div>
+        </div>
+        <div class="lab-ctl">
+          <span class="lab-inds" role="group" aria-label="Chỉ báo">
+            <button type="button" data-ind="ma20" class="on" aria-pressed="true">MA20</button><button type="button" data-ind="ma50" class="on" aria-pressed="true">MA50</button><button type="button" data-ind="ma200" aria-pressed="false">MA200</button><button type="button" data-ind="bb" aria-pressed="false">Bollinger</button><button type="button" data-ind="rsi" aria-pressed="false">RSI</button>
+          </span>
+          <span class="lab-status is-wait" id="lab-stt">đang tải…</span>
+        </div>
+        <div class="lab-plot"><svg id="lab-svg" viewBox="0 0 720 400" tabindex="0" role="application" aria-label="Đồ thị nến, bấm vào một cây nến để đọc"></svg></div>
+        <div class="lab-bar"><span class="lab-hint">Bấm vào một cây nến · hoặc dùng phím ← →</span></div>
+        <div id="lab-read" class="lab-read"></div>
+        <figcaption>Mã nào đã có trong bảng điểm hoặc là chỉ số thì lấy luôn chuỗi nến SSI đã tải sẵn cho trang này; mã Việt Nam còn lại lấy từ dchart của VNDirect (giá quy về đồng); coin lấy từ API công khai của Binance (giá tính bằng USDT, mốc thời gian theo giờ Việt Nam). Dữ liệu chỉ để học và có thể trễ hoặc gián đoạn — đừng dùng để đặt lệnh thật.</figcaption>
+      </figure>
+
+      <dl class="stat" id="fund" hidden>
+        <div><dt>Funding rate</dt><dd id="fund-rate">…<small id="fund-note">chỉ có với hợp đồng vĩnh cửu</small></dd></div>
+        <div><dt>Quy ra mỗi năm</dt><dd id="fund-year">…<small>nếu giữ nguyên mức này, 3 lần/ngày</small></dd></div>
+        <div><dt>Giá đánh dấu</dt><dd id="fund-mark">…<small>mark price — mức sàn dùng để tính thanh lý</small></dd></div>
+      </dl>
+    </section>
+
+    <!-- ================= 05 NHẬT KÝ ================= -->
+    <section class="level" id="nhatky">
+      <div class="level-head">
+        <span class="level-num">05</span>
+        <div>
+          <h2>Nhật ký giao dịch giả lập</h2>
+          <p class="level-meta">Giấy và bút, có máy tính bỏ túi đi kèm</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> tập đủ ba thói quen quyết định ở cấp 5 — luôn có điểm cắt lỗ, luôn biết mình mạo hiểm bao nhiêu, và luôn viết ra lý do <i>trước</i> khi vào lệnh. Lệnh đang mở được tính lãi/lỗ theo giá ở bảng theo dõi và bảng điểm.</p>
+
+      <p class="aside"><b>Đọc chỉ số nào trước</b>Bỏ qua tỷ lệ thắng. Con số đáng nhìn là <b>R trung bình</b>: mỗi đơn vị rủi ro bạn bỏ ra thu về bao nhiêu. Thắng 40% số lệnh mà R trung bình dương vẫn tốt hơn thắng 70% mà mỗi lần thua lại xoá sạch năm lần thắng.</p>
+
+      <div id="journal"></div>
+
+      <p class="warn"><b>Đây không phải tài khoản thật</b>Nhật ký lưu trong <code>localStorage</code> của chính trình duyệt này. Xoá dữ liệu duyệt web, đổi máy hoặc mở bằng chế độ ẩn danh là mất — hãy bấm “Xuất JSON” định kỳ nếu bạn muốn giữ lại. Không có lệnh nào được gửi tới sàn nào cả.</p>
+    </section>
+
+    <!-- ================= 06 CÁCH CHẤM ĐIỂM ================= -->
+    <section class="level" id="cachcham">
+      <div class="level-head">
+        <span class="level-num">06</span>
+        <div>
+          <h2>Cách máy chấm điểm</h2>
+          <p class="level-meta">Minh bạch để bạn tự kiểm tra — và tự sửa luật nếu không đồng ý</p>
+        </div>
+      </div>
+
+      <h3>Bảy thành phần, tổng từ −100 đến +100</h3>
+      <div class="tbl-wrap" style="margin-top:10px">
+        <table class="rules">
+          <tr><th>Thành phần</th><th>Điểm</th><th>Cách tính</th></tr>
+          <tr><td>Cấu trúc xu hướng</td><td>±30</td><td>Giá so với MA20, MA50, MA200 và độ dốc MA50 so với 10 phiên trước. Trọng số lớn nhất — xu hướng quyết định phần lớn kết quả.</td></tr>
+          <tr><td>Động lượng</td><td>±20</td><td>MACD so với đường tín hiệu, histogram đang mở rộng hay thu hẹp; RSI 14 trong khoảng 55–70 là đẹp nhất, trên 80 bị trừ vì quá mua, dưới 30 chưa phải tín hiệu mua.</td></tr>
+          <tr><td>Khối lượng</td><td>±15</td><td>Trong 10 phiên gần nhất, đếm phiên tăng và phiên giảm có khối lượng vượt 130% trung bình 20 phiên. Tiền lớn vào bên nào, bên đó được điểm.</td></tr>
+          <tr><td>Sức mạnh tương đối</td><td>±15</td><td>Mức tăng 3 tháng của mã trừ mức tăng của VN-Index trong cùng kỳ.</td></tr>
+          <tr><td>Khối ngoại</td><td>±10</td><td>Mua bán ròng 20 phiên chia cho tổng giá trị khớp lệnh 20 phiên.</td></tr>
+          <tr><td>Vị trí 52 tuần</td><td>±10</td><td>Giá nằm ở đâu trong biên đáy–đỉnh một năm. Gần đỉnh là mạnh, gần đáy là yếu.</td></tr>
+          <tr><td>Phanh rủi ro</td><td>−25…0</td><td>Trừ điểm khi giá vừa rơi sâu khỏi đỉnh 10 phiên, có phiên giảm sàn trong 3 phiên gần nhất, hoặc giá đã vượt quá xa MA20. Chặn trường hợp chỉ báo còn đẹp nhưng giá đang sụp.</td></tr>
+        </table>
+      </div>
+
+      <h3>Từ điểm sang khuyến nghị</h3>
+      <ul>
+        <li><span class="tag tag-buy">MUA</span> từ 45 trở lên · <span class="tag tag-acc">TÍCH LŨY</span> 20–44 · <span class="tag tag-hold">THEO DÕI</span> −20 đến 19 · <span class="tag tag-reduce">GIẢM TỶ TRỌNG</span> −45 đến −21 · <span class="tag tag-sell">BÁN / ĐỨNG NGOÀI</span> từ −45 trở xuống.</li>
+        <li>Nếu VN-Index nằm dưới MA50, mọi mã bị chặn tối đa ở mức TÍCH LŨY — bối cảnh xấu thì không giải ngân mạnh dù đồ thị mã đẹp.</li>
+        <li>Nếu mã vừa giảm sàn hoặc rơi hơn 12% khỏi đỉnh 10 phiên, điểm bị chặn ở mức THEO DÕI, bất kể các thành phần khác cộng được bao nhiêu.</li>
+      </ul>
+
+      <h3>Kế hoạch giao dịch được tính thế nào</h3>
+      <ul>
+        <li><b>Hỗ trợ và kháng cự:</b> đỉnh, đáy xoay trong 140 phiên gần nhất, mỗi bên 5 phiên; các mức cách nhau dưới 2% được gom thành một vùng. Số lần chạm càng nhiều, vùng càng đáng tin.</li>
+        <li><b>Cắt lỗ:</b> dưới hỗ trợ gần nhất 3%, hoặc 2×ATR dưới giá — chọn mức xa hơn, nhưng không bao giờ quá 3,5×ATR và không quá 10% so với giá hiện tại.</li>
+        <li><b>Mục tiêu:</b> kháng cự gần nhất; nếu kháng cự đó chỉ cách dưới 4% thì lấy mức kế tiếp.</li>
+        <li><b>Vùng mua:</b> từ MA20 hoặc hỗ trợ gần nhất lên tới giá hiện tại — ưu tiên mua khi giá lùi về, không mua đuổi.</li>
+      </ul>
+
+      <h3>Một vòng lặp 15 phút mỗi ngày</h3>
+      <ol class="steps">
+        <li><b>Đọc phần 01 trước.</b> Bối cảnh xấu thì cả trang còn lại chỉ để học, không để giải ngân.</li>
+        <li><b>Lướt bảng điểm, che cột khuyến nghị.</b> Tự chọn ra 2–3 mã đáng xem, rồi mới so với máy.</li>
+        <li><b>Mở phần 03 cho một mã.</b> Rê chuột dọc đồ thị, đọc kỹ vài phiên gần nhất, tự hỏi mình có nhìn ra điều đó trước khi trang nói không.</li>
+        <li><b>Nếu thấy cơ hội, ghi lệnh giả lập</b> — có giá vào, cắt lỗ, chốt lời và một câu lý do. Không viết nổi một câu lý do thì đó chính là câu trả lời.</li>
+        <li><b>Cuối tuần đọc lại nhật ký.</b> Không nhìn lãi lỗ trước; nhìn các câu lý do. Lý do nào lặp lại ở những lệnh thua?</li>
+      </ol>
+
+      <p class="warn"><b>Giới hạn của công cụ này</b>Đây là bộ lọc kỹ thuật thuần tuý chạy theo luật cố định: nó không đọc báo cáo tài chính, không biết tin tức, không biết chu kỳ ngành, không biết doanh nghiệp vừa phát hành thêm cổ phiếu hay mất một hợp đồng lớn. Nó dùng để thu hẹp danh sách và kỷ luật hoá điểm vào ra, không thay thế việc bạn tự hiểu doanh nghiệp ở cấp 2–3 và quản trị vốn ở cấp 5. Không bao giờ mua chỉ vì máy ghi MUA.</p>
+
+      <p class="warn"><b>Bẫy của công cụ đẹp</b>Một cái bảng chạy real-time làm người ta giao dịch nhiều hơn, chứ không làm người ta giao dịch tốt hơn. Nếu bạn thấy mình mở trang này mười lần một ngày, hãy đóng nó lại và chỉ mở sau 15h — đó là cách dùng đúng của một công cụ học.</p>
+
+      <p class="disclaimer">Điểm số và khuyến nghị trên trang là kết quả tính toán tự động từ dữ liệu giá công khai của SSI iBoard, phục vụ mục đích học tập. Bảng theo dõi lấy số liệu từ API công khai của VNDirect và Binance. Không nguồn nào có bảo đảm về độ chính xác, độ trễ hay tính liên tục, và giá chưa điều chỉnh sự kiện quyền. Trang này không phải công ty chứng khoán, không nhận lệnh, không giữ tiền, và không đưa ra khuyến nghị đầu tư theo nghĩa pháp lý. Mọi quyết định và rủi ro kèm theo là của riêng bạn — hãy đối chiếu lại với bảng điện trước khi đặt bất kỳ lệnh nào.</p>
+    </section>
+
+  </main>
+</div>
+
+<script src="assets/site.js"></script>
+<script src="assets/chart.js"></script>
+<script src="assets/market.js"></script>
+<script src="assets/journal.js"></script>
+<script>
+/* ============================================================
+   Phần A — bảng điểm và khuyến nghị, đọc data/analysis.json
+   ============================================================ */
+(function(){
+  'use strict';
+  var DATA = null, ROWS = [], sel = null, series = null, range = 126;
+  var sortKey = 'score', sortAsc = false, filter = '', query = '';
+  var $ = function(id){ return document.getElementById(id); };
+  var NS = 'http://www.w3.org/2000/svg';
+
+  function vn(n, d){ if (n == null || isNaN(n)) return '—'; return Number(n).toLocaleString('vi-VN', { minimumFractionDigits: d||0, maximumFractionDigits: d||0 }); }
+  function sgn(n, d, suf){ if (n == null || isNaN(n)) return '—'; return (n > 0 ? '+' : '') + vn(n, d) + (suf||''); }
+  function cls(n){ return n > 0 ? 'c-up' : n < 0 ? 'c-down' : 'c-ref'; }
+  function ty(v){ if (v == null) return '—'; var t = v/1e9; return (t > 0 ? '+' : '') + vn(t, Math.abs(t) < 10 ? 1 : 0) + ' tỷ'; }
+  function dmy(s){ return s ? s.slice(8,10)+'/'+s.slice(5,7)+'/'+s.slice(0,4) : '—'; }
+  function get(o, path){ return path.split('.').reduce(function(a,k){ return a == null ? null : a[k]; }, o); }
+  function el(tag, attrs, text){ var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; }
+  function trendCls(t){ return t === 'Tăng' ? 'tag-t-up' : t === 'Giảm' ? 'tag-t-down' : 'tag-t-flat'; }
+  function status(node, text, kind){ if (node){ node.textContent = text; node.className = 'lab-status' + (kind ? ' is-' + kind : ''); } }
+
+  /* Dùng chung với phần B:
+     ScoredPrices  — giá đóng cửa phiên gần nhất, để nhật ký tính lãi/lỗ
+     ScoredSymbols — mã có điểm, bấm ở bảng theo dõi sẽ mở tại phần 03
+     LocalBars     — mã có sẵn data/bars/<mã>.json, khỏi gọi API bên ngoài */
+  window.ScoredPrices = {};
+  window.ScoredSymbols = {};
+  window.LocalBars = {};
+
+  fetch('data/analysis.json', { cache: 'no-cache' }).then(function(r){
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }).then(function(d){
+    DATA = d; ROWS = d.symbols.slice();
+    ROWS.forEach(function(r){
+      window.ScoredPrices['vn:' + r.symbol] = r.close;
+      window.ScoredSymbols[r.symbol] = true;
+      window.LocalBars[r.symbol] = true;
+    });
+    Object.keys(d.market.indices || {}).forEach(function(k){ window.LocalBars[k] = true; });
+    renderFacts(); renderMarket(); renderTable();
+    status($('sc-stt'), ROWS.length + ' mã · phiên ' + dmy(d.dataDate) + ' · tính lúc ' + d.updatedAt, 'live');
+    var h = (location.hash || '').replace('#','').toUpperCase();
+    var first = ROWS.filter(function(r){ return r.symbol === h; })[0] || ROWS[0];
+    if (first) select(first.symbol, true);
+    window.dispatchEvent(new CustomEvent('scored-ready'));
+  }).catch(function(e){
+    status($('sc-stt'), 'không tải được dữ liệu', 'err');
+    var er = $('error'); er.hidden = false;
+    er.innerHTML = '<b>Không tải được bảng điểm</b> (' + e.message + '). Nếu bạn mở file trực tiếp từ ổ đĩa, trình duyệt sẽ chặn việc đọc <code>data/analysis.json</code>. ' +
+      'Hãy xem qua GitHub Pages, hoặc chạy <code>python -m http.server</code> trong thư mục dự án rồi mở <code>http://localhost:8000/phan-tich.html</code>. ' +
+      'Nếu thư mục <code>data/</code> chưa có, chạy <code>python scripts/fetch_ssi.py</code> trước. Bảng theo dõi và nhật ký bên dưới vẫn chạy bình thường.';
+    $('chitiet').hidden = true;
+  });
+
+  function renderFacts(){
+    var m = DATA.market, b = m.breadth;
+    $('f-date').textContent = dmy(DATA.dataDate);
+    $('f-regime').textContent = m.regime;
+    $('f-breadth').textContent = b.aboveMa50 + '/' + b.count + ' mã (' + Math.round(b.aboveMa50 / b.count * 100) + '%)';
+    $('f-buy').textContent = b.buy + ' mã · giảm/bán ' + b.sell + ' mã';
+    $('b-count').textContent = b.count;
+  }
+
+  function renderMarket(){
+    var m = DATA.market, host = $('indices'); host.innerHTML = '';
+    var names = { VNINDEX: 'VN-Index · HOSE', VN30: 'VN30', HNXINDEX: 'HNX-Index' };
+    Object.keys(m.indices).forEach(function(k){
+      var x = m.indices[k];
+      var c = document.createElement('div'); c.className = 'card idx';
+      c.innerHTML = '<div class="sym"><b>' + (names[k] || k) + '</b><span class="tag ' + trendCls(x.trend) + '">' + x.trend + '</span></div>' +
+        '<div class="px num">' + vn(x.close, 2) + '</div>' +
+        '<div class="chg ' + cls(x.chg) + '">' + sgn(x.chg, 2) + ' (' + sgn(x.chgPct, 2, '%') + ')</div>' +
+        '<div class="meta"><span>1 tuần <b class="' + cls(x.ret['1w']) + '">' + sgn(x.ret['1w'],1,'%') + '</b></span>' +
+        '<span>1 tháng <b class="' + cls(x.ret['1m']) + '">' + sgn(x.ret['1m'],1,'%') + '</b></span>' +
+        '<span>3 tháng <b class="' + cls(x.ret['3m']) + '">' + sgn(x.ret['3m'],1,'%') + '</b></span>' +
+        '<span>RSI <b>' + vn(x.ind.rsi,0) + '</b></span><span>MA50 <b>' + vn(x.ind.ma50,0) + '</b></span>' +
+        '<span>MA200 <b>' + vn(x.ind.ma200,0) + '</b></span></div>';
+      host.appendChild(c);
+    });
+    var rg = $('regime'); rg.setAttribute('data-r', m.regime);
+    rg.innerHTML = '<b>Bối cảnh: ' + m.regime + '.</b> ' + m.regimeNote;
+    var b = m.breadth, br = $('breadth'); br.innerHTML = '';
+    [['Trên MA20', b.aboveMa20], ['Trên MA50', b.aboveMa50], ['Trên MA200', b.aboveMa200],
+     ['Tăng hôm nay', b.up], ['Giảm hôm nay', b.down]].forEach(function(p){
+      var d = document.createElement('div');
+      d.innerHTML = '<dt>' + p[0] + '</dt><dd>' + p[1] + '/' + b.count + '</dd>' +
+        '<div class="pbar"><i style="width:' + (p[1]/b.count*100) + '%"></i></div>';
+      br.appendChild(d);
+    });
+  }
+
+  function renderTable(){
+    var rows = ROWS.filter(function(r){
+      if (filter && r.recKey !== filter) return false;
+      if (query && r.symbol.indexOf(query) < 0 && (r.name||'').toUpperCase().indexOf(query) < 0) return false;
+      return true;
+    });
+    rows.sort(function(a, b){
+      var x = get(a, sortKey), y = get(b, sortKey);
+      if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1;
+      if (typeof x === 'string') return sortAsc ? x.localeCompare(y) : y.localeCompare(x);
+      return sortAsc ? x - y : y - x;
+    });
+    var tb = $('rows'); tb.innerHTML = '';
+    $('empty').hidden = rows.length > 0;
+    rows.forEach(function(r){
+      var tr = document.createElement('tr'); tr.setAttribute('data-s', r.symbol); tr.tabIndex = 0;
+      if (sel === r.symbol) tr.className = 'on';
+      var s = r.score, w = Math.abs(s)/2, left = s >= 0 ? 50 : 50 - w;
+      tr.innerHTML =
+        '<td class="l sym-cell"><b>' + r.symbol + '</b><small>' + (r.industry || r.name || '') + '</small></td>' +
+        '<td>' + vn(r.close) + '</td>' +
+        '<td class="' + cls(r.chgPct) + '">' + sgn(r.chgPct, 2, '%') + '</td>' +
+        '<td class="' + cls(r.ret['1m']) + '">' + sgn(r.ret['1m'], 1, '%') + '</td>' +
+        '<td class="' + cls(r.ret['3m']) + '">' + sgn(r.ret['3m'], 1, '%') + '</td>' +
+        '<td' + (r.volRatio >= 1.5 ? ' class="c-ref"' : '') + '>' + vn(r.volRatio, 2) + '×</td>' +
+        '<td' + (r.ind.rsi > 70 ? ' class="c-down"' : r.ind.rsi < 30 ? ' class="c-up"' : '') + '>' + vn(r.ind.rsi, 0) + '</td>' +
+        '<td class="l"><span class="tag ' + trendCls(r.trend) + '">' + r.trend + '</span></td>' +
+        '<td class="' + cls(r.foreign.net20) + '">' + ty(r.foreign.net20) + '</td>' +
+        '<td' + (r.plan.rr != null && r.plan.rr < 1.5 ? ' class="c-muted"' : '') + '>' + (r.plan.rr == null ? '—' : vn(r.plan.rr, 1) + ':1') + '</td>' +
+        '<td><span class="score"><span class="' + cls(s) + '">' + sgn(s) + '</span>' +
+          '<i><b style="left:' + left + '%;width:' + w + '%;background:var(--' + (s >= 0 ? 'up' : 'down') + ')"></b></i></span></td>' +
+        '<td class="l"><span class="tag tag-' + r.recKey + '">' + r.rec + '</span></td>';
+      tb.appendChild(tr);
+    });
+  }
+
+  $('rows').addEventListener('click', function(e){ var tr = e.target.closest('tr'); if (tr) select(tr.getAttribute('data-s')); });
+  $('rows').addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' '){ var tr = e.target.closest('tr'); if (tr){ e.preventDefault(); select(tr.getAttribute('data-s')); } }
+  });
+  $('q').addEventListener('input', function(){ query = this.value.trim().toUpperCase(); renderTable(); });
+  $('chips').addEventListener('click', function(e){
+    var b = e.target.closest('.chip'); if (!b) return;
+    filter = b.getAttribute('data-f');
+    Array.prototype.forEach.call(this.children, function(c){ c.classList.toggle('on', c === b); });
+    renderTable();
+  });
+  $('tbl').querySelector('thead').addEventListener('click', function(e){
+    var th = e.target.closest('th'); if (!th) return;
+    var k = th.getAttribute('data-k');
+    if (k === sortKey) sortAsc = !sortAsc; else { sortKey = k; sortAsc = (k === 'symbol' || k === 'trend' || k === 'recKey'); }
+    Array.prototype.forEach.call(this.querySelectorAll('th'), function(h){ h.classList.remove('sorted','asc'); });
+    th.classList.add('sorted'); if (sortAsc) th.classList.add('asc');
+    renderTable();
+  });
+
+  function select(sym, quiet){
+    var r = ROWS.filter(function(x){ return x.symbol === sym; })[0]; if (!r) return;
+    sel = sym;
+    Array.prototype.forEach.call($('rows').children, function(tr){ tr.classList.toggle('on', tr.getAttribute('data-s') === sym); });
+    if (history.replaceState) history.replaceState(null, '', '#' + sym);
+    $('d-sym').textContent = r.symbol;
+    $('d-name').textContent = [r.name, r.exchange, r.industry].filter(Boolean).join(' · ');
+    $('d-px').textContent = vn(r.close);
+    $('d-chg').className = 'chg ' + cls(r.chg);
+    $('d-chg').textContent = sgn(r.chg) + ' (' + sgn(r.chgPct, 2, '%') + ') · phiên ' + dmy(r.date);
+
+    var rec = $('rec'); rec.setAttribute('data-k', r.recKey);
+    var tag = $('r-tag'); tag.className = 'tag tag-' + r.recKey; tag.textContent = r.rec;
+    $('r-score').textContent = sgn(r.score);
+    $('r-note').textContent = r.recNote;
+    $('r-mk').hidden = !r.marketNote; $('r-mk').textContent = r.marketNote || '';
+
+    var p = r.plan;
+    $('p-entry').textContent = vn(p.entryLo) + ' – ' + vn(p.entryHi);
+    $('p-stop').innerHTML = vn(p.stop) + '<small>' + sgn(p.riskPct, 1, '%') + ' so với giá hiện tại</small>';
+    $('p-target').innerHTML = vn(p.target) + '<small>' + sgn(p.rewardPct, 1, '%') + ' so với giá hiện tại</small>';
+    $('p-rr').innerHTML = (p.rr == null ? '—' : vn(p.rr, 1) + ':1') +
+      '<small>' + (p.rr == null ? '' : p.rr >= 2 ? 'tỷ lệ tốt' : p.rr >= 1.5 ? 'chấp nhận được' : 'chưa đủ hấp dẫn') + '</small>';
+
+    var su = $('setups'); su.innerHTML = '';
+    r.setups.forEach(function(s){
+      var li = document.createElement('li');
+      if (/death|bbup|bblo/.test(s.key)) li.className = 'bad';
+      li.textContent = s.text; su.appendChild(li);
+    });
+    var re = $('reasons'); re.innerHTML = '';
+    r.reasons.forEach(function(x){
+      var li = document.createElement('li');
+      li.innerHTML = '<span class="pt ' + cls(x.pts) + '">' + sgn(x.pts) + '</span><span>' + x.text + '</span>';
+      re.appendChild(li);
+    });
+
+    var lv = $('levels'); lv.innerHTML = '';
+    r.levels.resistance.slice().reverse().forEach(function(x){
+      lv.insertAdjacentHTML('beforeend', '<span class="r">Kháng cự ' + vn(x.price) + ' <small>chạm ' + x.touches + '×</small></span>');
+    });
+    r.levels.support.forEach(function(x){
+      lv.insertAdjacentHTML('beforeend', '<span class="s">Hỗ trợ ' + vn(x.price) + ' <small>chạm ' + x.touches + '×</small></span>');
+    });
+    if (!r.levels.resistance.length && !r.levels.support.length) lv.textContent = 'Chưa xác định được vùng rõ ràng.';
+
+    var i = r.ind, kv = $('kv'); kv.innerHTML = '';
+    [['MA20', vn(i.ma20)], ['MA50', vn(i.ma50)], ['MA200', vn(i.ma200)], ['RSI 14', vn(i.rsi, 1)],
+     ['MACD hist.', sgn(i.macdHist)], ['ATR 14', vn(i.atr)],
+     ['Bollinger', vn(i.bbLo) + ' – ' + vn(i.bbUp)], ['Đáy–đỉnh 52T', vn(i.lo52) + ' – ' + vn(i.hi52)],
+     ['KL phiên', vn(r.vol)], ['KL TB20', vn(r.volAvg20)],
+     ['Ngoại 5 phiên', ty(r.foreign.net5)], ['Ngoại 20 phiên', ty(r.foreign.net20)],
+     ['Từ đầu năm', sgn(r.ret.ytd, 1, '%')], ['1 tuần', sgn(r.ret['1w'], 1, '%')]
+    ].forEach(function(x){ kv.insertAdjacentHTML('beforeend', '<div><dt>' + x[0] + '</dt><dd>' + x[1] + '</dd></div>'); });
+
+    series = null; $('chart').innerHTML = ''; $('hover').textContent = 'Đang tải biểu đồ…';
+    fetch('data/bars/' + sym + '.json', { cache: 'no-cache' }).then(function(x){ return x.json(); }).then(function(s){
+      if (sel !== sym) return; series = s; drawChart();
+    }).catch(function(){ $('hover').textContent = 'Không tải được dữ liệu nến của mã này.'; });
+    if (!quiet) $('chitiet').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  window.selectScored = function(sym){ select(sym); };
+
+  $('tf').addEventListener('click', function(e){
+    var b = e.target.closest('button'); if (!b) return;
+    range = +b.getAttribute('data-n');
+    Array.prototype.forEach.call(this.children, function(c){ c.classList.toggle('on', c === b); });
+    drawChart();
+  });
+
+  /* ---------- vẽ đồ thị: giá + khối lượng + RSI + MACD ---------- */
+  var W = 900, H = 560, L = 8, R = 838, PT = 14, PB = 300, VT = 316, VB = 372, RT = 392, RB = 452, MT = 472, MB = 545;
+  var geom = null;
+
+  function drawChart(){
+    if (!series) return;
+    var svg = $('chart'); svg.innerHTML = '';
+    var all = series.bars, n = Math.min(range, all.length), off = all.length - n;
+    var bars = all.slice(off);
+    var pick = function(k){ return (series[k] || []).slice(off); };
+    var ma20 = pick('ma20'), ma50 = pick('ma50'), ma200 = pick('ma200'), bbU = pick('bbUp'), bbL = pick('bbLo');
+    var rsi = pick('rsi'), mac = pick('macd'), sig = pick('macdSig'), hist = pick('macdHist'), vavg = pick('volAvg20');
+
+    var lo = Infinity, hi = -Infinity;
+    bars.forEach(function(b, i){
+      lo = Math.min(lo, b[3]); hi = Math.max(hi, b[2]);
+      [ma20[i], ma50[i], ma200[i]].forEach(function(v){ if (v != null){ lo = Math.min(lo, v); hi = Math.max(hi, v); } });
+    });
+    var pad = (hi - lo) * 0.06; lo -= pad; hi += pad;
+    var step = (R - L) / n, bw = Math.max(1.5, step * 0.62);
+    var X = function(i){ return L + step * (i + 0.5); };
+    var Y = function(v){ return PB - (v - lo) / (hi - lo) * (PB - PT); };
+    geom = { step: step, bars: bars, X: X, off: off };
+
+    var g = el('g');
+    for (var t = 0; t <= 5; t++){
+      var v = lo + (hi - lo) * t / 5, y = Y(v);
+      g.appendChild(el('line', { x1: L, x2: R, y1: y, y2: y, stroke: 'var(--line-soft)', 'stroke-width': 1 }));
+      g.appendChild(el('text', { x: R + 6, y: y + 3.5 }, vn(v, v < 100 ? 1 : 0)));
+    }
+    var path = function(arr, yfn){
+      var d = '', on = false;
+      arr.forEach(function(v, i){ if (v == null){ on = false; return; } d += (on ? 'L' : 'M') + X(i).toFixed(1) + ' ' + yfn(v).toFixed(1); on = true; });
+      return d;
+    };
+    if (bbU.some(function(v){ return v != null; })){
+      g.appendChild(el('path', { d: path(bbU, Y), fill: 'none', stroke: 'var(--line)', 'stroke-width': 1, 'stroke-dasharray': '3 3' }));
+      g.appendChild(el('path', { d: path(bbL, Y), fill: 'none', stroke: 'var(--line)', 'stroke-width': 1, 'stroke-dasharray': '3 3' }));
+    }
+    var lv = series.levels || {};
+    (lv.support || []).forEach(function(s){ if (s.price > lo && s.price < hi) g.appendChild(el('line', { x1: L, x2: R, y1: Y(s.price), y2: Y(s.price), stroke: 'var(--up)', 'stroke-width': 1, 'stroke-dasharray': '6 4', opacity: .7 })); });
+    (lv.resistance || []).forEach(function(s){ if (s.price > lo && s.price < hi) g.appendChild(el('line', { x1: L, x2: R, y1: Y(s.price), y2: Y(s.price), stroke: 'var(--down)', 'stroke-width': 1, 'stroke-dasharray': '6 4', opacity: .7 })); });
+    bars.forEach(function(b, i){
+      var up = b[4] >= b[1], col = up ? 'var(--up)' : 'var(--down)', x = X(i);
+      g.appendChild(el('line', { x1: x, x2: x, y1: Y(b[2]), y2: Y(b[3]), stroke: col, 'stroke-width': 1 }));
+      var y1 = Y(Math.max(b[1], b[4])), h = Math.max(1, Math.abs(Y(b[1]) - Y(b[4])));
+      g.appendChild(el('rect', { x: x - bw/2, y: y1, width: bw, height: h, fill: up ? 'var(--surface)' : col, stroke: col, 'stroke-width': 1 }));
+    });
+    g.appendChild(el('path', { d: path(ma200, Y), fill: 'none', stroke: 'var(--ceil)', 'stroke-width': 1.4 }));
+    g.appendChild(el('path', { d: path(ma50, Y), fill: 'none', stroke: 'var(--ref)', 'stroke-width': 1.4 }));
+    g.appendChild(el('path', { d: path(ma20, Y), fill: 'none', stroke: 'var(--accent)', 'stroke-width': 1.4 }));
+    var last = bars[bars.length - 1];
+    g.appendChild(el('line', { x1: L, x2: R, y1: Y(last[4]), y2: Y(last[4]), stroke: 'var(--ink)', 'stroke-width': 1, 'stroke-dasharray': '2 3', opacity: .6 }));
+
+    var vmax = 0; bars.forEach(function(b){ vmax = Math.max(vmax, b[5]); });
+    var VY = function(v){ return VB - v / (vmax || 1) * (VB - VT); };
+    g.appendChild(el('text', { x: L, y: VT - 3, 'class': 'pane-lbl' }, 'KHỐI LƯỢNG'));
+    bars.forEach(function(b, i){
+      var up = b[4] >= b[1];
+      g.appendChild(el('rect', { x: X(i) - bw/2, y: VY(b[5]), width: bw, height: VB - VY(b[5]), fill: up ? 'var(--up)' : 'var(--down)', opacity: .55 }));
+    });
+    g.appendChild(el('path', { d: path(vavg, VY), fill: 'none', stroke: 'var(--ink-2)', 'stroke-width': 1 }));
+
+    var RY = function(v){ return RB - v / 100 * (RB - RT); };
+    g.appendChild(el('text', { x: L, y: RT - 3, 'class': 'pane-lbl' }, 'RSI 14'));
+    g.appendChild(el('rect', { x: L, y: RY(70), width: R - L, height: RY(30) - RY(70), fill: 'var(--surface-2)' }));
+    [30, 50, 70].forEach(function(v){
+      g.appendChild(el('line', { x1: L, x2: R, y1: RY(v), y2: RY(v), stroke: 'var(--line-soft)', 'stroke-width': 1, 'stroke-dasharray': v === 50 ? '2 3' : '' }));
+      g.appendChild(el('text', { x: R + 6, y: RY(v) + 3.5 }, v));
+    });
+    g.appendChild(el('path', { d: path(rsi, RY), fill: 'none', stroke: 'var(--ceil)', 'stroke-width': 1.4 }));
+
+    var mmax = 0; [mac, sig, hist].forEach(function(a){ a.forEach(function(v){ if (v != null) mmax = Math.max(mmax, Math.abs(v)); }); });
+    var MY = function(v){ return (MT + MB) / 2 - v / (mmax || 1) * (MB - MT) / 2; };
+    g.appendChild(el('text', { x: L, y: MT - 3, 'class': 'pane-lbl' }, 'MACD 12·26·9'));
+    g.appendChild(el('line', { x1: L, x2: R, y1: MY(0), y2: MY(0), stroke: 'var(--line)', 'stroke-width': 1 }));
+    hist.forEach(function(v, i){
+      if (v == null) return;
+      var y0 = MY(0), y1 = MY(v);
+      g.appendChild(el('rect', { x: X(i) - bw/2, y: Math.min(y0, y1), width: bw, height: Math.max(1, Math.abs(y1 - y0)), fill: v >= 0 ? 'var(--up)' : 'var(--down)', opacity: .5 }));
+    });
+    g.appendChild(el('path', { d: path(sig, MY), fill: 'none', stroke: 'var(--ref)', 'stroke-width': 1.2 }));
+    g.appendChild(el('path', { d: path(mac, MY), fill: 'none', stroke: 'var(--accent)', 'stroke-width': 1.2 }));
+
+    var prevM = '';
+    bars.forEach(function(b, i){
+      var m = b[0].slice(0, 7);
+      if (m !== prevM){
+        prevM = m;
+        if (i > 0 || n < 40){
+          g.appendChild(el('line', { x1: X(i), x2: X(i), y1: PT, y2: MB, stroke: 'var(--line-soft)', 'stroke-width': 1 }));
+          g.appendChild(el('text', { x: X(i) + 3, y: H - 4 }, b[0].slice(5, 7) + '/' + b[0].slice(2, 4)));
+        }
+      }
+    });
+
+    svg.appendChild(g);
+    var cross = el('g', { style: 'pointer-events:none' });
+    cross.appendChild(el('line', { id: 'cx', y1: PT, y2: MB, stroke: 'var(--ink)', 'stroke-width': 1, opacity: 0, 'stroke-dasharray': '3 3' }));
+    svg.appendChild(cross);
+    svg.appendChild(el('rect', { x: L, y: PT, width: R - L, height: MB - PT, fill: 'transparent' }));
+    showBar(bars.length - 1);
+  }
+
+  function showBar(i){
+    if (!geom || !series) return;
+    var b = geom.bars[i]; if (!b) return;
+    var j = geom.off + i, prev = geom.bars[i - 1] || null;
+    var chg = prev ? (b[4] / prev[4] - 1) * 100 : null;
+    var f = (series.foreign || []).filter(function(x){ return x.date === b[0]; })[0];
+    $('hover').innerHTML = '<b>' + dmy(b[0]) + '</b>' +
+      '<span>Mở <b>' + vn(b[1]) + '</b></span><span>Cao <b>' + vn(b[2]) + '</b></span><span>Thấp <b>' + vn(b[3]) + '</b></span>' +
+      '<span>Đóng <b class="' + cls(chg) + '">' + vn(b[4]) + ' (' + sgn(chg, 2, '%') + ')</b></span>' +
+      '<span>KL <b>' + vn(b[5]) + '</b></span>' +
+      '<span>MA20 <b>' + vn(series.ma20[j]) + '</b></span><span>MA50 <b>' + vn(series.ma50[j]) + '</b></span>' +
+      '<span>RSI <b>' + vn(series.rsi[j], 1) + '</b></span>' +
+      (f ? '<span>Ngoại <b class="' + cls(f.net) + '">' + ty(f.net) + '</b></span>' : '');
+    var cx = document.getElementById('cx');
+    if (cx){ cx.setAttribute('x1', geom.X(i)); cx.setAttribute('x2', geom.X(i)); cx.setAttribute('opacity', .5); }
+  }
+
+  $('chart').addEventListener('mousemove', function(e){
+    if (!geom) return;
+    var r = this.getBoundingClientRect(), x = (e.clientX - r.left) / r.width * W;
+    var i = Math.floor((x - L) / geom.step);
+    if (i >= 0 && i < geom.bars.length) showBar(i);
+  });
+  $('chart').addEventListener('mouseleave', function(){ if (geom) showBar(geom.bars.length - 1); });
+  $('chart').addEventListener('touchmove', function(e){
+    if (!geom || !e.touches[0]) return;
+    var r = this.getBoundingClientRect(), x = (e.touches[0].clientX - r.left) / r.width * W;
+    var i = Math.floor((x - L) / geom.step);
+    if (i >= 0 && i < geom.bars.length) showBar(i);
+  }, { passive: true });
+
+  window.addEventListener('hashchange', function(){
+    var h = location.hash.replace('#','').toUpperCase();
+    if (h && h !== sel && window.ScoredSymbols[h]) select(h);
+  });
+})();
+
+/* ============================================================
+   Phần B — bảng theo dõi trực tiếp, đồ thị nhanh và nhật ký
+   ============================================================ */
+(function(){
+  'use strict';
+  if (!window.CandleLab || !window.Market || !window.Journal) return;
+
+  var WL_KEY = 'ck-watchlist-v1';
+  var DEFAULT_WL = [
+    { market:'vn', symbol:'VNINDEX' },
+    { market:'vn', symbol:'HPG' },
+    { market:'vn', symbol:'FPT' },
+    { market:'crypto', symbol:'BTCUSDT' },
+    { market:'crypto', symbol:'ETHUSDT' }
+  ];
+  function loadWl(){
+    try {
+      var a = JSON.parse(localStorage.getItem(WL_KEY) || 'null');
+      return Array.isArray(a) && a.length ? a : DEFAULT_WL.slice();
+    } catch(e){ return DEFAULT_WL.slice(); }
+  }
+  function saveWl(){ try { localStorage.setItem(WL_KEY, JSON.stringify(wl)); } catch(e){} }
+
+  var wl = loadWl();
+  var prices = {};           // "vn:HPG" -> giá mới nhất, dùng cho nhật ký
+  var spark = {};            // "vn:HPG" -> mảng giá đóng cửa 30 nến
+  var active = null;         // mã đang hiện trên đồ thị nhanh
+  var journal = null;
+
+  function key(m, s){ return m + ':' + s; }
+  function fmt(n, d){ return window.CandleLab.fmtPrice(n, d); }
+  function vnPrice(p){ return Math.round(p).toLocaleString('vi-VN') + 'đ'; }
+  function idxPrice(p){ return fmt(p, 2) + ' điểm'; }
+  function vnFmt(sym){ return window.Market.isVnIndex(sym) ? idxPrice : vnPrice; }
+  function status(node, text, kind){ node.textContent = text; node.className = 'lab-status' + (kind ? ' is-' + kind : ''); }
+  /* mã đã được chấm điểm ở phần 02 thì mở ở đó, thay vì vẽ lại đồ thị nhanh */
+  function isScored(it){ return it.market === 'vn' && window.ScoredSymbols && window.ScoredSymbols[it.symbol]; }
+  /* mã đã có data/bars/<mã>.json thì đọc file đó, khỏi gọi VNDirect — nhanh hơn,
+     số liệu khớp với bảng điểm, và tránh bị chặn khi bắn nhiều lệnh cùng lúc */
+  function hasLocal(it){ return it.market === 'vn' && window.LocalBars && window.LocalBars[it.symbol]; }
+  var localCache = {};
+  function localBars(sym){
+    if (localCache[sym]) return localCache[sym];
+    localCache[sym] = fetch('data/bars/' + sym + '.json', { cache: 'no-cache' })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(d){ return d.bars || []; })
+      .catch(function(e){ delete localCache[sym]; throw e; });
+    return localCache[sym];
+  }
+
+  var tbody = document.querySelector('#wl-table tbody');
+  var wlStt = document.getElementById('wl-stt');
+
+  function sparkline(vals){
+    if (!vals || vals.length < 2) return '';
+    var hi = Math.max.apply(null, vals), lo = Math.min.apply(null, vals);
+    var rng = hi - lo || 1, w = 76, h = 22, n = vals.length;
+    var d = vals.map(function(v, i){
+      return (i ? 'L' : 'M') + (i * (w-2) / (n-1) + 1).toFixed(1) + ' ' + (h - 2 - (v - lo) / rng * (h - 4)).toFixed(1);
+    }).join('');
+    var col = vals[n-1] >= vals[0] ? 'var(--up)' : 'var(--down)';
+    return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" aria-hidden="true">' +
+      '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+  }
+
+  var wlRows = {};
+  function renderWl(){
+    tbody.innerHTML = wl.map(function(it){
+      var k = key(it.market, it.symbol), r = wlRows[k];
+      var on = active && active.market === it.market && active.symbol === it.symbol;
+      var scored = isScored(it);
+      if (!r || r.error){
+        var sub0 = '<span class="sub">' + (scored ? 'có trong bảng điểm ↑' : it.market === 'vn' ? 'cổ phiếu VN' : 'coin') + '</span>';
+        return '<tr class="' + (on ? 'on' : '') + '" data-k="' + k + '"><td class="sym">' + it.symbol + sub0 + '</td>' +
+          '<td colspan="5" style="text-align:left;color:var(--muted)">không lấy được dữ liệu</td>' +
+          '<td><button type="button" class="x" data-del="' + k + '" aria-label="Bỏ ' + it.symbol + '">×</button></td></tr>';
+      }
+      var vf = vnFmt(it.symbol);
+      var p = it.market === 'vn' ? vf(r.price) : fmt(r.price) + ' $';
+      var cc = r.changePct > 0 ? 'c-up' : r.changePct < 0 ? 'c-down' : '';
+      var sign = r.changePct > 0 ? '+' : r.changePct < 0 ? '−' : '';
+      var hl = it.market === 'vn' ? vf(r.high) + ' / ' + vf(r.low) : fmt(r.high) + ' $ / ' + fmt(r.low) + ' $';
+      var vol = it.market === 'vn' ? window.CandleLab.fmtVol(r.volume) + ' cp'
+                                   : window.CandleLab.fmtVol(r.quoteVolume) + ' $';
+      var sub = scored ? '<span class="sub">có trong bảng điểm ↑</span>'
+        : '<span class="sub">' + (it.market === 'vn' ? (r.date ? 'phiên ' + r.date.slice(8,10) + '/' + r.date.slice(5,7) : 'cổ phiếu VN') : '24 giờ') + '</span>';
+      return '<tr class="' + (on ? 'on' : '') + '" data-k="' + k + '">' +
+        '<td class="sym">' + it.symbol + sub + '</td>' +
+        '<td>' + p + '</td>' +
+        '<td class="' + cc + '">' + sign + Math.abs(r.changePct).toFixed(2) + '%</td>' +
+        '<td>' + hl + '</td>' +
+        '<td>' + vol + '</td>' +
+        '<td>' + sparkline(spark[k]) + '</td>' +
+        '<td><button type="button" class="x" data-del="' + k + '" aria-label="Bỏ ' + it.symbol + '">×</button></td></tr>';
+    }).join('');
+  }
+
+  /* dựng một dòng bảng từ chuỗi nến: dùng chung cho dữ liệu local và VNDirect */
+  function rowFromBars(sym, bars){
+    var n = bars.length, last = bars[n-1], prev = n > 1 ? bars[n-2] : last;
+    return { symbol: sym, price: last[4], prevClose: prev[4],
+      changePct: prev[4] ? (last[4] - prev[4]) / prev[4] * 100 : 0,
+      high: last[2], low: last[3], volume: last[5], date: last[0] };
+  }
+
+  function refreshWl(){
+    status(wlStt, 'đang tải bảng…', 'wait');
+    var vnLocal = [], vnRemote = [], cxSyms = [];
+    wl.forEach(function(i){
+      if (i.market === 'crypto') cxSyms.push(i.symbol);
+      else if (hasLocal(i)) vnLocal.push(i.symbol);
+      else vnRemote.push(i.symbol);
+    });
+
+    var jobs = [];
+    vnLocal.forEach(function(s){
+      var k = key('vn', s);
+      jobs.push(localBars(s).then(function(bars){
+        if (!bars.length) throw new Error('không có nến');
+        wlRows[k] = rowFromBars(s, bars);
+        prices[k] = wlRows[k].price;
+        spark[k] = bars.slice(-30).map(function(b){ return b[4]; });
+      }).catch(function(){ wlRows[k] = { symbol: s, error: true }; }));
+    });
+    if (vnRemote.length) jobs.push(window.Market.vnQuotes(vnRemote).then(function(list){
+      list.forEach(function(q){ wlRows[key('vn', q.symbol)] = q; if (!q.error) prices[key('vn', q.symbol)] = q.price; });
+    }).catch(function(){}));
+    if (cxSyms.length) jobs.push(window.Market.cryptoTickers(cxSyms).then(function(map){
+      for (var s in map){ wlRows[key('crypto', s)] = map[s]; prices[key('crypto', s)] = map[s].price; }
+    }).catch(function(){}));
+
+    wl.forEach(function(it){
+      var k = key(it.market, it.symbol);
+      if (spark[k] || (it.market === 'vn' && hasLocal(it))) return;
+      var p = it.market === 'vn' ? window.Market.vnStock(it.symbol, 60)
+                                 : window.Market.cryptoKlines(it.symbol, '1d', 30);
+      jobs.push(p.then(function(bars){ spark[k] = bars.slice(-30).map(function(b){ return b[4]; }); }).catch(function(){}));
+    });
+
+    return Promise.all(jobs).then(function(){
+      renderWl();
+      var ok = wl.filter(function(i){ var r = wlRows[key(i.market,i.symbol)]; return r && !r.error; }).length;
+      status(wlStt, ok + '/' + wl.length + ' mã · cập nhật ' + new Date().toLocaleTimeString('vi-VN'), ok ? 'live' : 'err');
+      if (journal) journal.refresh();
+    });
+  }
+
+  document.getElementById('wl-add').addEventListener('click', addSym);
+  document.getElementById('wl-sym').addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){ e.preventDefault(); addSym(); }
+  });
+  function addSym(){
+    var input = document.getElementById('wl-sym');
+    var market = document.getElementById('wl-market').value;
+    var s = (input.value || '').trim().toUpperCase();
+    if (!s) return;
+    if (market === 'crypto' && !/USDT$|USDC$|BTC$/.test(s)) s += 'USDT';
+    if (wl.some(function(i){ return i.market === market && i.symbol === s; })){ input.value = ''; return; }
+    wl.push({ market:market, symbol:s });
+    saveWl(); input.value = '';
+    refreshWl();
+  }
+  document.getElementById('wl-reload').addEventListener('click', function(){ spark = {}; refreshWl(); });
+
+  tbody.addEventListener('click', function(e){
+    var del = e.target.closest ? e.target.closest('[data-del]') : null;
+    if (del){
+      var dk = del.getAttribute('data-del');
+      wl = wl.filter(function(i){ return key(i.market,i.symbol) !== dk; });
+      saveWl(); renderWl();
+      e.stopPropagation();
+      return;
+    }
+    var tr = e.target.closest ? e.target.closest('tr[data-k]') : null;
+    if (!tr) return;
+    var parts = tr.getAttribute('data-k').split(':');
+    var item = { market:parts[0], symbol:parts[1] };
+    if (isScored(item) && window.selectScored){
+      active = null; renderWl();
+      document.getElementById('lab').hidden = true;
+      document.getElementById('fund').hidden = true;
+      window.selectScored(item.symbol);
+      return;
+    }
+    select(item);
+  });
+
+  /* ---------- đồ thị nhanh cho mã ngoài bảng điểm ---------- */
+  var nameEl = document.getElementById('lab-name');
+  var subEl = document.getElementById('lab-sub');
+  var sttEl = document.getElementById('lab-stt');
+  var tfBox = document.getElementById('lab-tfs');
+  var fundBox = document.getElementById('fund');
+  var labBox = document.getElementById('lab');
+
+  var CRYPTO_TF = [['15m','15 phút'],['1h','1 giờ'],['4h','4 giờ'],['1d','1 ngày'],['1w','1 tuần']];
+  var VN_TF = [['D','1 ngày'],['W','1 tuần']];
+  var lab = null, labTf = 'D', reqId = 0;
+
+  function buildTfs(list, current){
+    tfBox.innerHTML = list.map(function(t){
+      var on = t[0] === current;
+      return '<button type="button" data-tf="' + t[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + t[1] + '</button>';
+    }).join('');
+  }
+  /* Engine gắn sự kiện thẳng vào các nút và thẻ svg đang có. Mỗi lần đổi mã ta tạo
+     engine mới, nên phải thay các nút đó bằng bản sao sạch để không chồng sự kiện cũ. */
+  function resetLabDom(){
+    ['#lab .lab-inds', '#lab-svg'].forEach(function(sel){
+      var node = document.querySelector(sel);
+      if (node) node.parentNode.replaceChild(node.cloneNode(true), node);
+    });
+  }
+
+  function select(item){
+    active = item;
+    renderWl();
+    labBox.hidden = false;
+    var isVn = item.market === 'vn';
+    var isIdx = isVn && window.Market.isVnIndex(item.symbol);
+    labTf = isVn ? 'D' : '1d';
+    buildTfs(isVn ? VN_TF : CRYPTO_TF, labTf);
+    fundBox.hidden = isVn;
+
+    resetLabDom();
+    lab = window.CandleLab.create({
+      host: labBox,
+      bars: [],
+      unit: isVn ? 'phiên' : 'nến',
+      tf: labTf,
+      intraday: false,
+      liveLast: !isVn,
+      decimals: isVn && !isIdx ? 0 : undefined,
+      axis: isVn ? (isIdx ? function(p){ return p.toFixed(0); } : function(p){ return (p/1000).toFixed(1); })
+                 : function(p){ return window.CandleLab.fmtPrice(p, p >= 1000 ? 0 : p >= 1 ? 1 : 4); },
+      price: isVn ? vnFmt(item.symbol) : function(p){ return window.CandleLab.fmtPrice(p) + ' $'; },
+      volFmt: isVn ? undefined : window.CandleLab.fmtVol,
+      onTf: isVn ? null : function(k){ loadChart(item, k); }
+    });
+    loadChart(item, labTf);
+    if (!isVn) funding(item.symbol);
+    labBox.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+
+  function loadChart(item, tfKey){
+    var id = ++reqId;
+    status(sttEl, 'đang tải ' + item.symbol + '…', 'wait');
+    nameEl.textContent = item.symbol;
+    var isVn = item.market === 'vn', local = hasLocal(item);
+    var p = isVn ? (local ? localBars(item.symbol) : window.Market.vnStock(item.symbol, 260))
+                 : window.Market.cryptoKlines(item.symbol, tfKey, tfKey === '15m' ? 120 : 180);
+    p.then(function(bars){
+      if (id !== reqId) return;
+      if (isVn){
+        lab.setBars(bars, { intraday:false, liveLast:false });
+        subEl.textContent = (local ? 'SSI' : 'VNDirect') + ' · ' + bars.length + ' phiên · tới ' +
+          bars[bars.length-1][0].slice(8,10) + '/' + bars[bars.length-1][0].slice(5,7);
+      } else {
+        lab.setBars(bars, { intraday: /m$|h$/.test(tfKey), liveLast:true });
+        subEl.textContent = 'Binance · ' + bars.length + ' nến · khung ' + tfKey;
+      }
+      status(sttEl, 'xong · ' + new Date().toLocaleTimeString('vi-VN'), 'live');
+    }).catch(function(err){
+      if (id !== reqId) return;
+      status(sttEl, 'lỗi: ' + err.message, 'err');
+      subEl.textContent = 'Không lấy được dữ liệu cho ' + item.symbol + '.';
+    });
+  }
+
+  function funding(symbol){
+    var rate = document.getElementById('fund-rate'), year = document.getElementById('fund-year'),
+        mark = document.getElementById('fund-mark'), note = document.getElementById('fund-note');
+    window.Market.cryptoFunding(symbol).then(function(f){
+      var pct = f.rate * 100;
+      rate.firstChild.nodeValue = (pct >= 0 ? '+' : '') + pct.toFixed(4) + '%';
+      note.textContent = pct >= 0 ? 'phe mua đang trả phí cho phe bán' : 'phe bán đang trả phí cho phe mua';
+      year.firstChild.nodeValue = (pct * 3 * 365 >= 0 ? '+' : '') + (pct * 3 * 365).toFixed(1) + '%';
+      mark.firstChild.nodeValue = window.CandleLab.fmtPrice(f.markPrice) + ' $';
+    }).catch(function(){
+      rate.firstChild.nodeValue = '—'; year.firstChild.nodeValue = '—'; mark.firstChild.nodeValue = '—';
+      note.textContent = 'mã này không có hợp đồng vĩnh cửu trên Binance';
+    });
+  }
+
+  /* ---------- nhật ký ---------- */
+  journal = window.Journal.mount(document.getElementById('journal'), {
+    getPrice: function(symbol, market){
+      var k = key(market, symbol);
+      if (prices[k] != null) return prices[k];
+      // chưa có trong bảng theo dõi nhưng đã được chấm điểm: dùng giá đóng cửa phiên gần nhất
+      if (window.ScoredPrices && window.ScoredPrices[k] != null) return window.ScoredPrices[k];
+      return null;
+    },
+    unitHint: { vn: 'đ', crypto: '$' }
+  });
+
+  /* Chờ bảng điểm nạp xong rồi mới tải bảng theo dõi: lúc đó mới biết mã nào đã có
+     sẵn nến trong data/bars và khỏi phải gọi ra ngoài. Nếu bảng điểm hỏng hoặc quá
+     chậm thì vẫn chạy sau 4 giây, chỉ là mọi mã đều phải lấy từ API bên ngoài. */
+  var started = false;
+  function start(){ if (started) return; started = true; refreshWl(); }
+  window.addEventListener('scored-ready', function(){
+    if (started){ renderWl(); if (journal) journal.refresh(); }
+    else start();
+  });
+  setTimeout(start, 4000);
+})();
+</script>
+</body>
+</html>
