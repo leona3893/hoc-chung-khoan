@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}
+:root[data-theme="dark"]{color-scheme:dark}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Phòng theo dõi thị trường · Chứng khoán từ số 0</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%274%27 y=%2712%27 width=%276%27 height=%2712%27 fill=%27%23007A4D%27/%3E%3Crect x=%276%27 y=%276%27 width=%272%27 height=%2722%27 fill=%27%23007A4D%27/%3E%3Crect x=%2718%27 y=%278%27 width=%276%27 height=%2714%27 fill=%27%23D31510%27/%3E%3Crect x=%2720%27 y=%274%27 width=%272%27 height=%2724%27 fill=%27%23D31510%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,600&family=Source+Code+Pro:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<nav class="topnav" aria-label="Các trang">
+  <div class="wrap">
+    <a class="brand" href="index.html">Chứng khoán từ số 0</a>
+    <a class="nav" href="index.html">Cổ phiếu</a>
+    <a class="nav" href="coin.html">Coin</a>
+    <a class="nav" href="theo-doi.html" aria-current="page">Phòng theo dõi</a>
+  </div>
+</nav>
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Công cụ · Dữ liệu thật, tiền giả lập</p>
+    <h1>Phòng theo dõi thị trường
+      <span class="h1-sub">Chỗ để đem lý thuyết ra đối chiếu với giá đang chạy: một bảng theo dõi cổ phiếu Việt Nam và coin, một đồ thị đầy đủ chỉ báo, và một cuốn nhật ký giao dịch giả lập tự tính hộ bạn rủi ro, tỷ lệ lãi/lỗ và số R.</span>
+    </h1>
+    <dl class="facts">
+      <div class="fact"><dt>Cổ phiếu VN</dt><dd>VNDirect · khung ngày</dd></div>
+      <div class="fact"><dt>Coin</dt><dd>Binance · 15 phút → 1 tuần</dd></div>
+      <div class="fact"><dt>Nhật ký</dt><dd>Lưu trong trình duyệt của bạn</dd></div>
+      <div class="fact"><dt>Tiền thật</dt><dd>Không. Đây là sổ giấy</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="wrap shell">
+  <nav class="rail" aria-label="Mục lục">
+    <p class="rail-title">Trong trang này</p>
+    <ol id="toc">
+      <li><a href="#bang"><span class="n">01</span><span>Bảng theo dõi</span></a></li>
+      <li><a href="#chart"><span class="n">02</span><span>Đồ thị &amp; chỉ báo</span></a></li>
+      <li><a href="#nhatky"><span class="n">03</span><span>Nhật ký giao dịch</span></a></li>
+      <li><a href="#cach"><span class="n">04</span><span>Cách dùng phòng này</span></a></li>
+      <li><a href="index.html"><span class="n">←</span><span>Bài học cổ phiếu</span></a></li>
+      <li><a href="coin.html"><span class="n">←</span><span>Bài học coin</span></a></li>
+    </ol>
+    <p class="rail-note">Mọi dữ liệu trên trang này lấy trực tiếp từ API công khai và chỉ ở lại trong trình duyệt của bạn. Không có máy chủ nào của trang này nhìn thấy danh mục hay nhật ký của bạn.</p>
+  </nav>
+
+  <main>
+
+    <!-- ================= BẢNG THEO DÕI ================= -->
+    <section class="level" id="bang">
+      <div class="level-head">
+        <span class="level-num">01</span>
+        <div>
+          <h2>Bảng theo dõi</h2>
+          <p class="level-meta">Cổ phiếu VN và coin trong cùng một bảng</p>
+        </div>
+      </div>
+      <p class="goal"><b>Cách dùng:</b> thêm mã bạn quan tâm, bấm vào một dòng để nạp mã đó lên đồ thị bên dưới. Danh sách được nhớ trong trình duyệt này.</p>
+
+      <div class="lab-ctl">
+        <label for="wl-sym">Thêm mã</label>
+        <input type="text" id="wl-sym" placeholder="HPG hoặc BTC" maxlength="12" spellcheck="false" aria-label="Mã cần thêm">
+        <select id="wl-market" aria-label="Thị trường">
+          <option value="vn">Cổ phiếu VN</option>
+          <option value="crypto">Coin</option>
+        </select>
+        <button type="button" class="jn-primary" id="wl-add">Thêm</button>
+        <button type="button" class="jn-ghost" id="wl-reload">Làm mới</button>
+        <span class="lab-status is-wait" id="wl-stt">đang tải…</span>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="wl" id="wl-table">
+          <thead><tr><th>Mã</th><th>Giá</th><th>Thay đổi</th><th>Cao / thấp</th><th>Khối lượng</th><th>30 nến gần nhất</th><th></th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="lab-hint" style="margin-top:10px">Cổ phiếu VN: thay đổi so với phiên liền trước, số liệu cập nhật sau khi sàn đóng cửa khớp lệnh. Coin: thay đổi trong 24 giờ, cập nhật liên tục. Bấm “Làm mới” để gọi lại API (dữ liệu được nhớ tạm 60 giây).</p>
+    </section>
+
+    <!-- ================= ĐỒ THỊ ================= -->
+    <section class="level" id="chart">
+      <div class="level-head">
+        <span class="level-num">02</span>
+        <div>
+          <h2>Đồ thị &amp; chỉ báo</h2>
+          <p class="level-meta">Cùng engine với phòng thực hành ở hai trang bài học</p>
+        </div>
+      </div>
+      <p class="goal"><b>Cách dùng:</b> bấm một cây nến để trang tự đọc nó cho bạn — tỷ lệ thân–bóng, khối lượng so với trung bình, vị trí so với MA, Bollinger và RSI. Mục đích là để bạn <i>kiểm chứng</i> cách đọc của mình, không phải để trang này bảo bạn mua hay bán.</p>
+
+      <figure class="fig lab" id="lab">
+      <div class="lab-head">
+        <div><p class="lab-t" id="lab-name">HPG</p><p class="lab-s" id="lab-sub">đang tải dữ liệu…</p></div>
+        <div class="lab-tf" id="lab-tfs" role="group" aria-label="Khung thời gian"></div>
+      </div>
+      <div class="lab-ctl">
+        <span class="lab-inds" role="group" aria-label="Chỉ báo">
+          <button type="button" data-ind="ma20" class="on" aria-pressed="true">MA20</button><button type="button" data-ind="ma50" class="on" aria-pressed="true">MA50</button><button type="button" data-ind="ma200" aria-pressed="false">MA200</button><button type="button" data-ind="bb" aria-pressed="false">Bollinger</button><button type="button" data-ind="rsi" aria-pressed="false">RSI</button>
+        </span>
+        <span class="lab-status is-wait" id="lab-stt">đang tải…</span>
+      </div>
+      <div class="lab-plot"><svg id="lab-svg" viewBox="0 0 720 400" tabindex="0" role="application" aria-label="Đồ thị nến, bấm vào một cây nến để đọc"></svg></div>
+      <noscript><p class="lab-s">Bật JavaScript để dùng trang này.</p></noscript>
+      <div class="lab-bar"><span class="lab-hint">Bấm vào một cây nến · hoặc dùng phím ← →</span></div>
+      <div id="lab-read" class="lab-read"></div>
+      <figcaption>Cổ phiếu Việt Nam lấy từ dchart của VNDirect (giá quy về đồng); coin lấy từ API công khai của Binance (giá tính bằng USDT, mốc thời gian theo giờ Việt Nam). Dữ liệu chỉ để học và có thể trễ hoặc gián đoạn — đừng dùng để đặt lệnh thật.</figcaption>
+      </figure>
+
+      <dl class="stat" id="fund" hidden>
+        <div><dt>Funding rate</dt><dd id="fund-rate">…<small id="fund-note">chỉ có với hợp đồng vĩnh cửu</small></dd></div>
+        <div><dt>Quy ra mỗi năm</dt><dd id="fund-year">…<small>nếu giữ nguyên mức này, 3 lần/ngày</small></dd></div>
+        <div><dt>Giá đánh dấu</dt><dd id="fund-mark">…<small>mark price — mức sàn dùng để tính thanh lý</small></dd></div>
+      </dl>
+    </section>
+
+    <!-- ================= NHẬT KÝ ================= -->
+    <section class="level" id="nhatky">
+      <div class="level-head">
+        <span class="level-num">03</span>
+        <div>
+          <h2>Nhật ký giao dịch giả lập</h2>
+          <p class="level-meta">Giấy và bút, có máy tính bỏ túi đi kèm</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> tập đủ ba thói quen quyết định ở cấp 5 — luôn có điểm cắt lỗ, luôn biết mình mạo hiểm bao nhiêu, và luôn viết ra lý do <i>trước</i> khi vào lệnh. Lệnh đang mở được tính lãi/lỗ theo giá thật ở bảng theo dõi.</p>
+
+      <p class="aside"><b>Đọc chỉ số nào trước</b>Bỏ qua tỷ lệ thắng. Con số đáng nhìn là <b>R trung bình</b>: mỗi đơn vị rủi ro bạn bỏ ra thu về bao nhiêu. Thắng 40% số lệnh mà R trung bình dương vẫn tốt hơn thắng 70% mà mỗi lần thua lại xoá sạch năm lần thắng.</p>
+
+      <div id="journal"></div>
+
+      <p class="warn"><b>Đây không phải tài khoản thật</b>Nhật ký lưu trong <code>localStorage</code> của chính trình duyệt này. Xoá dữ liệu duyệt web, đổi máy hoặc mở bằng chế độ ẩn danh là mất — hãy bấm “Xuất JSON” định kỳ nếu bạn muốn giữ lại. Không có lệnh nào được gửi tới sàn nào cả.</p>
+    </section>
+
+    <!-- ================= CÁCH DÙNG ================= -->
+    <section class="level" id="cach">
+      <div class="level-head">
+        <span class="level-num">04</span>
+        <div>
+          <h2>Cách dùng phòng này để học, thay vì để nghiện nhìn giá</h2>
+          <p class="level-meta">Một vòng lặp 15 phút mỗi ngày</p>
+        </div>
+      </div>
+      <ol class="steps">
+        <li><b>Mở bảng theo dõi, không mở nhật ký.</b> Nhìn 5–7 mã, mỗi mã một câu: hôm nay nó làm gì? Chưa cần kết luận gì.</li>
+        <li><b>Chọn một mã, mở đồ thị.</b> Bấm vào cây nến hôm nay, đọc phần giải thích, rồi tự hỏi: mình có đọc ra điều đó trước khi trang nói không?</li>
+        <li><b>Nếu thấy một cơ hội, ghi lệnh giả lập</b> — có giá vào, cắt lỗ, chốt lời và một câu lý do. Nếu không viết nổi một câu lý do, đó chính là câu trả lời.</li>
+        <li><b>Cuối tuần, đọc lại nhật ký.</b> Không nhìn lãi lỗ trước; nhìn vào các câu lý do. Lý do nào lặp lại ở những lệnh thua?</li>
+        <li><b>Mỗi tháng, đếm số lệnh không có cắt lỗ.</b> Con số đó phải bằng 0 trước khi bạn nghĩ đến việc tăng vốn thật.</li>
+      </ol>
+      <p class="warn"><b>Bẫy của công cụ đẹp</b>Một cái bảng chạy real-time làm người ta giao dịch nhiều hơn, chứ không làm người ta giao dịch tốt hơn. Nếu bạn thấy mình mở trang này mười lần một ngày, hãy đóng nó lại và chỉ mở sau 15h — đó là cách dùng đúng của một công cụ học.</p>
+
+      <p class="disclaimer">Toàn bộ số liệu trên trang lấy từ API công khai của VNDirect và Binance, không có bảo đảm nào về độ chính xác, độ trễ hay tính liên tục, và có thể ngừng hoạt động bất cứ lúc nào. Trang này không phải công ty chứng khoán, không nhận lệnh, không giữ tiền, và không đưa ra khuyến nghị đầu tư. Nhật ký giao dịch là công cụ ghi chép cá nhân lưu trên máy bạn. Mọi quyết định đầu tư và rủi ro kèm theo là của riêng bạn.</p>
+    </section>
+
+  </main>
+</div>
+
+<script src="assets/site.js"></script>
+<script src="assets/chart.js"></script>
+<script src="assets/market.js"></script>
+<script src="assets/journal.js"></script>
+<script>
+(function(){
+  if (!window.CandleLab || !window.Market || !window.Journal) return;
+
+  /* ============ trạng thái chung ============ */
+  var WL_KEY = 'ck-watchlist-v1';
+  var DEFAULT_WL = [
+    { market:'vn', symbol:'VNINDEX' },
+    { market:'vn', symbol:'HPG' },
+    { market:'vn', symbol:'FPT' },
+    { market:'vn', symbol:'VCB' },
+    { market:'crypto', symbol:'BTCUSDT' },
+    { market:'crypto', symbol:'ETHUSDT' }
+  ];
+  function loadWl(){
+    try {
+      var a = JSON.parse(localStorage.getItem(WL_KEY) || 'null');
+      return Array.isArray(a) && a.length ? a : DEFAULT_WL.slice();
+    } catch(e){ return DEFAULT_WL.slice(); }
+  }
+  function saveWl(){ try { localStorage.setItem(WL_KEY, JSON.stringify(wl)); } catch(e){} }
+
+  var wl = loadWl();
+  var prices = {};           // "vn:HPG" -> giá mới nhất, dùng cho nhật ký
+  var spark = {};            // "vn:HPG" -> mảng giá đóng cửa 30 nến
+  var active = wl[0] || DEFAULT_WL[0];
+
+  function key(m, s){ return m + ':' + s; }
+  function fmt(n, d){ return window.CandleLab.fmtPrice(n, d); }
+  function vnPrice(p){ return Math.round(p).toLocaleString('vi-VN') + 'đ'; }
+  function idxPrice(p){ return fmt(p, 2) + ' điểm'; }
+  /* chỉ số thị trường tính bằng điểm, cổ phiếu tính bằng đồng */
+  function vnFmt(sym){ return window.Market.isVnIndex(sym) ? idxPrice : vnPrice; }
+
+  /* ============ bảng theo dõi ============ */
+  var tbody = document.querySelector('#wl-table tbody');
+  var wlStt = document.getElementById('wl-stt');
+
+  function status(el, text, kind){
+    el.textContent = text;
+    el.className = 'lab-status' + (kind ? ' is-' + kind : '');
+  }
+
+  function sparkline(vals){
+    if (!vals || vals.length < 2) return '';
+    var hi = Math.max.apply(null, vals), lo = Math.min.apply(null, vals);
+    var rng = hi - lo || 1, w = 76, h = 22, n = vals.length;
+    var d = vals.map(function(v, i){
+      return (i ? 'L' : 'M') + (i * (w-2) / (n-1) + 1).toFixed(1) + ' ' + (h - 2 - (v - lo) / rng * (h - 4)).toFixed(1);
+    }).join('');
+    var col = vals[n-1] >= vals[0] ? 'var(--up)' : 'var(--down)';
+    return '<svg class="spark" viewBox="0 0 ' + w + ' ' + h + '" aria-hidden="true">' +
+      '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="1.5" stroke-linejoin="round"/></svg>';
+  }
+
+  function renderWl(rows){
+    tbody.innerHTML = wl.map(function(it){
+      var k = key(it.market, it.symbol), r = rows[k];
+      var on = active && active.market === it.market && active.symbol === it.symbol;
+      if (!r || r.error){
+        return '<tr class="' + (on ? 'on' : '') + '" data-k="' + k + '"><td class="sym">' + it.symbol +
+          '<span class="sub">' + (it.market === 'vn' ? 'cổ phiếu VN' : 'coin') + '</span></td>' +
+          '<td colspan="5" style="text-align:left;color:var(--muted)">không lấy được dữ liệu</td>' +
+          '<td><button type="button" class="x" data-del="' + k + '" aria-label="Bỏ ' + it.symbol + '">×</button></td></tr>';
+      }
+      var vf = vnFmt(it.symbol);
+      var p = it.market === 'vn' ? vf(r.price) : fmt(r.price) + ' $';
+      var cc = r.changePct > 0 ? 'c-up' : r.changePct < 0 ? 'c-down' : '';
+      var sign = r.changePct > 0 ? '+' : r.changePct < 0 ? '−' : '';
+      var hl = it.market === 'vn'
+        ? vf(r.high) + ' / ' + vf(r.low)
+        : fmt(r.high) + ' $ / ' + fmt(r.low) + ' $';
+      var vol = it.market === 'vn'
+        ? window.CandleLab.fmtVol(r.volume) + ' cp'
+        : window.CandleLab.fmtVol(r.quoteVolume) + ' $';
+      return '<tr class="' + (on ? 'on' : '') + '" data-k="' + k + '">' +
+        '<td class="sym">' + it.symbol + '<span class="sub">' + (it.market === 'vn' ? (r.date ? 'phiên ' + r.date.slice(8,10) + '/' + r.date.slice(5,7) : 'cổ phiếu VN') : '24 giờ') + '</span></td>' +
+        '<td>' + p + '</td>' +
+        '<td class="' + cc + '">' + sign + Math.abs(r.changePct).toFixed(2) + '%</td>' +
+        '<td>' + hl + '</td>' +
+        '<td>' + vol + '</td>' +
+        '<td>' + sparkline(spark[k]) + '</td>' +
+        '<td><button type="button" class="x" data-del="' + k + '" aria-label="Bỏ ' + it.symbol + '">×</button></td></tr>';
+    }).join('');
+  }
+
+  var wlRows = {};
+  function refreshWl(){
+    status(wlStt, 'đang tải bảng…', 'wait');
+    var vnSyms = wl.filter(function(i){ return i.market === 'vn'; }).map(function(i){ return i.symbol; });
+    var cxSyms = wl.filter(function(i){ return i.market === 'crypto'; }).map(function(i){ return i.symbol; });
+
+    var jobs = [];
+    if (vnSyms.length) jobs.push(window.Market.vnQuotes(vnSyms).then(function(list){
+      list.forEach(function(q){ wlRows[key('vn', q.symbol)] = q; if (!q.error) prices[key('vn', q.symbol)] = q.price; });
+    }).catch(function(){}));
+    if (cxSyms.length) jobs.push(window.Market.cryptoTickers(cxSyms).then(function(map){
+      for (var s in map){ wlRows[key('crypto', s)] = map[s]; prices[key('crypto', s)] = map[s].price; }
+    }).catch(function(){}));
+
+    // đường giá thu nhỏ: 30 nến gần nhất
+    wl.forEach(function(it){
+      var k = key(it.market, it.symbol);
+      if (spark[k]) return;
+      var p = it.market === 'vn'
+        ? window.Market.vnStock(it.symbol, 60)
+        : window.Market.cryptoKlines(it.symbol, '1d', 30);
+      jobs.push(p.then(function(bars){
+        spark[k] = bars.slice(-30).map(function(b){ return b[4]; });
+      }).catch(function(){}));
+    });
+
+    return Promise.all(jobs).then(function(){
+      renderWl(wlRows);
+      var ok = wl.filter(function(i){ var r = wlRows[key(i.market,i.symbol)]; return r && !r.error; }).length;
+      status(wlStt, ok + '/' + wl.length + ' mã · cập nhật ' + new Date().toLocaleTimeString('vi-VN'), ok ? 'live' : 'err');
+      if (journal) journal.refresh();
+    });
+  }
+
+  document.getElementById('wl-add').addEventListener('click', addSym);
+  document.getElementById('wl-sym').addEventListener('keydown', function(e){
+    if (e.key === 'Enter'){ e.preventDefault(); addSym(); }
+  });
+  function addSym(){
+    var input = document.getElementById('wl-sym');
+    var market = document.getElementById('wl-market').value;
+    var s = (input.value || '').trim().toUpperCase();
+    if (!s) return;
+    if (market === 'crypto' && !/USDT$|USDC$|BTC$/.test(s)) s += 'USDT';
+    if (wl.some(function(i){ return i.market === market && i.symbol === s; })){ input.value = ''; return; }
+    wl.push({ market:market, symbol:s });
+    saveWl(); input.value = '';
+    refreshWl();
+  }
+  document.getElementById('wl-reload').addEventListener('click', function(){
+    spark = {}; refreshWl();
+  });
+  tbody.addEventListener('click', function(e){
+    var del = e.target.closest ? e.target.closest('[data-del]') : null;
+    if (del){
+      var dk = del.getAttribute('data-del');
+      wl = wl.filter(function(i){ return key(i.market,i.symbol) !== dk; });
+      saveWl(); renderWl(wlRows);
+      e.stopPropagation();
+      return;
+    }
+    var tr = e.target.closest ? e.target.closest('tr[data-k]') : null;
+    if (!tr) return;
+    var parts = tr.getAttribute('data-k').split(':');
+    select({ market:parts[0], symbol:parts[1] });
+  });
+
+  /* ============ đồ thị ============ */
+  var nameEl = document.getElementById('lab-name');
+  var subEl = document.getElementById('lab-sub');
+  var sttEl = document.getElementById('lab-stt');
+  var tfBox = document.getElementById('lab-tfs');
+  var fundBox = document.getElementById('fund');
+
+  var CRYPTO_TF = [['15m','15 phút'],['1h','1 giờ'],['4h','4 giờ'],['1d','1 ngày'],['1w','1 tuần']];
+  var VN_TF = [['D','1 ngày'],['W','1 tuần']];
+  var lab = null, labTf = 'D', reqId = 0;
+
+  function buildTfs(list, current){
+    tfBox.innerHTML = list.map(function(t){
+      var on = t[0] === current;
+      return '<button type="button" data-tf="' + t[0] + '"' + (on ? ' class="on" aria-pressed="true"' : ' aria-pressed="false"') + '>' + t[1] + '</button>';
+    }).join('');
+  }
+
+  /* Engine gắn sự kiện thẳng vào các nút và thẻ svg đang có. Mỗi lần đổi mã ta tạo
+     engine mới, nên phải thay các nút đó bằng bản sao sạch để không chồng sự kiện cũ. */
+  function resetLabDom(){
+    ['#lab .lab-inds', '#lab-svg'].forEach(function(sel){
+      var node = document.querySelector(sel);
+      if (node) node.parentNode.replaceChild(node.cloneNode(true), node);
+    });
+  }
+
+  function makeLab(cfg){
+    resetLabDom();
+    return window.CandleLab.create(cfg);
+  }
+
+  function select(item){
+    active = item;
+    renderWl(wlRows);
+    var isVn = item.market === 'vn';
+    var isIdx = isVn && window.Market.isVnIndex(item.symbol);
+    labTf = isVn ? 'D' : '1d';
+    buildTfs(isVn ? VN_TF : CRYPTO_TF, labTf);
+    fundBox.hidden = isVn;
+
+    lab = makeLab({
+      host: document.getElementById('lab'),
+      bars: [],
+      unit: isVn ? 'phiên' : 'nến',
+      tf: labTf,
+      intraday: false,
+      liveLast: !isVn,
+      decimals: isVn && !isIdx ? 0 : undefined,
+      axis: isVn
+        ? (isIdx ? function(p){ return p.toFixed(0); } : function(p){ return (p/1000).toFixed(1); })
+        : function(p){ return window.CandleLab.fmtPrice(p, p >= 1000 ? 0 : p >= 1 ? 1 : 4); },
+      price: isVn ? vnFmt(item.symbol) : function(p){ return window.CandleLab.fmtPrice(p) + ' $'; },
+      volFmt: isVn ? undefined : window.CandleLab.fmtVol,
+      onTf: isVn ? null : function(k){ loadChart(item, k); }
+    });
+    // với cổ phiếu VN, engine tự gộp nến tuần từ dữ liệu ngày
+    loadChart(item, labTf);
+    if (!isVn) funding(item.symbol);
+  }
+
+  function loadChart(item, tfKey){
+    var id = ++reqId;
+    status(sttEl, 'đang tải ' + item.symbol + '…', 'wait');
+    nameEl.textContent = item.symbol;
+    var isVn = item.market === 'vn';
+    var p = isVn ? window.Market.vnStock(item.symbol, 260)
+                 : window.Market.cryptoKlines(item.symbol, tfKey, tfKey === '15m' ? 120 : 180);
+    p.then(function(bars){
+      if (id !== reqId) return;
+      if (isVn){
+        lab.setBars(bars, { intraday:false, liveLast:false });
+        subEl.textContent = 'VNDirect · ' + bars.length + ' phiên · tới ' +
+          bars[bars.length-1][0].slice(8,10) + '/' + bars[bars.length-1][0].slice(5,7);
+        prices[key('vn', item.symbol)] = bars[bars.length-1][4];
+      } else {
+        var lbl = (CRYPTO_TF.filter(function(t){ return t[0] === tfKey; })[0] || ['','1 ngày'])[1];
+        lab.setBars(bars, { intraday: /m$|h$/.test(tfKey), liveLast:true, derive:false });
+        subEl.textContent = 'Binance · khung ' + lbl + ' · ' + bars.length + ' nến · giờ Việt Nam';
+        prices[key('crypto', item.symbol)] = bars[bars.length-1][4];
+      }
+      status(sttEl, 'dữ liệu sống · ' + (isVn ? 'VNDirect' : 'Binance'), 'live');
+      if (journal) journal.refresh();
+    }).catch(function(){
+      if (id !== reqId) return;
+      status(sttEl, 'không lấy được dữ liệu cho ' + item.symbol, 'err');
+    });
+  }
+
+  function funding(sym){
+    var rateEl = document.getElementById('fund-rate');
+    var noteEl = document.getElementById('fund-note');
+    var yearEl = document.getElementById('fund-year');
+    var markEl = document.getElementById('fund-mark');
+    window.Market.cryptoFunding(sym).then(function(f){
+      var pct = f.rate * 100;
+      rateEl.childNodes[0].nodeValue = (pct >= 0 ? '+' : '−') + Math.abs(pct).toFixed(4) + '%';
+      rateEl.style.color = pct > 0.02 ? 'var(--down)' : pct < -0.02 ? 'var(--up)' : 'var(--ink)';
+      noteEl.textContent = Math.abs(pct) < 0.005 ? 'gần 0 — hai phe khá cân bằng'
+        : pct > 0 ? 'dương — phe mua đang trả phí để giữ vị thế' : 'âm — phe bán đang trả phí để giữ vị thế';
+      yearEl.childNodes[0].nodeValue = (pct * 3 * 365 >= 0 ? '+' : '−') + Math.abs(pct * 3 * 365).toFixed(1) + '%';
+      markEl.childNodes[0].nodeValue = window.CandleLab.fmtPrice(f.markPrice) + ' $';
+    }).catch(function(){
+      rateEl.childNodes[0].nodeValue = '—';
+      noteEl.textContent = 'không có dữ liệu hợp đồng vĩnh cửu cho mã này';
+      yearEl.childNodes[0].nodeValue = '—';
+      markEl.childNodes[0].nodeValue = '—';
+    });
+  }
+
+  /* ============ nhật ký ============ */
+  var journal = window.Journal.mount(document.getElementById('journal'), {
+    unitHint: { vn:'đ', crypto:' $' },
+    getPrice: function(symbol, market){
+      var k = key(market, symbol);
+      if (prices[k] !== undefined) return prices[k];
+      // thử tìm ở thị trường còn lại phòng khi ghi nhầm
+      var alt = key(market === 'vn' ? 'crypto' : 'vn', symbol);
+      return prices[alt] !== undefined ? prices[alt] : null;
+    }
+  });
+
+  /* ============ khởi động ============ */
+  select(active);
+  refreshWl();
+  setInterval(function(){
+    if (document.hidden) return;
+    refreshWl();
+  }, 60000);
+})();
+</script>
+</body>
+</html>
