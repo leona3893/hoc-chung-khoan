@@ -9,3 +9,7 @@ desktop.ini
 
 # Claude Code
 .claude/
+
+# Cache backtest (tự tạo lại được, không cần commit)
+data/cache/
+scripts/__pycache__/

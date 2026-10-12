@@ -1,0 +1,50 @@
+name: Kiểm chứng bộ luật (backtest)
+
+on:
+  schedule:
+    # 10:00 UTC = 17:00 giờ Việt Nam, thứ Bảy — chạy lại sau khi tuần đã đóng
+    - cron: "0 10 * * 6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backtest
+  cancel-in-progress: false
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Cache lịch sử giá và ma trận điểm: lần sau chỉ phải chấm những phiên mới.
+      - uses: actions/cache@v4
+        with:
+          path: data/cache
+          key: backtest-cache-${{ github.run_id }}
+          restore-keys: backtest-cache-
+
+      - name: Chạy backtest
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python scripts/backtest.py --refresh
+
+      - name: Commit nếu có thay đổi
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/backtest.json
+          if git diff --cached --quiet; then
+            echo "Kết quả backtest không đổi."
+            exit 0
+          fi
+          TO=$(python -c "import json;print(json.load(open('data/backtest.json',encoding='utf-8'))['period']['to'])")
+          git commit -m "Backtest bộ luật, dữ liệu tới $TO"
+          git push

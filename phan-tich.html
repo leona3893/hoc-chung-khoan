@@ -152,6 +152,35 @@ table.screen tr:last-child td{ border-bottom:0 }
 .err{ padding:16px 20px; border:2px solid var(--down); border-radius:var(--radius);
   background:var(--surface); font-size:var(--fs-sm); margin-top:15px }
 .err code{ font-family:var(--font-mono); background:var(--surface-2); padding:1px 5px; border-radius:4px }
+
+/* ---- tín hiệu ---- */
+.sig{ display:flex; flex-direction:column; gap:8px; margin-top:4px }
+.sig-item{ display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 12px; align-items:start;
+  background:var(--surface); border:1px solid var(--line-soft); border-left:4px solid var(--line);
+  border-radius:var(--radius); padding:12px 16px }
+.sig-item[data-side="buy"]{ border-left-color:var(--up) }
+.sig-item[data-side="sell"]{ border-left-color:var(--down) }
+.sig-item[data-side="info"]{ border-left-color:var(--accent) }
+.sig-item[data-lvl="1"]{ background:color-mix(in srgb, var(--accent-wash) 45%, var(--surface)) }
+.sig-lv{ font-weight:800; font-size:11px; letter-spacing:.04em; border-radius:999px; padding:4px 9px;
+  white-space:nowrap; align-self:center }
+.sig-lv[data-lvl="1"]{ color:var(--down); background:color-mix(in srgb, var(--down) 13%, transparent) }
+.sig-lv[data-lvl="2"]{ color:var(--ref); background:color-mix(in srgb, var(--ref) 16%, transparent) }
+.sig-lv[data-lvl="3"]{ color:var(--muted); background:var(--surface-2) }
+.sig-t{ font-weight:700; font-size:var(--fs-sm) }
+.sig-t a{ color:inherit; text-decoration:none; border-bottom:1px dashed var(--line) }
+.sig-t a:hover{ color:var(--accent-ink) }
+.sig-d{ grid-column:2; font-size:var(--fs-xs); color:var(--ink-2); line-height:1.6 }
+.sig-p{ grid-column:2; font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--muted) }
+.sig-p b{ color:var(--ink-2) }
+.sig-day{ margin:14px 0 6px; font-size:var(--fs-xs); font-weight:700; color:var(--muted) }
+
+/* ---- backtest ---- */
+#bt-svg{ display:block; width:100%; height:auto }
+#bt-table td:first-child{ white-space:normal; min-width:200px }
+#bt-table tr.on td{ background:var(--accent-wash) }
+#bt-table tr.bm td{ color:var(--muted) }
+#bt-years td{ padding:6px 10px }
 </style>
 </head>
 <body>
@@ -186,11 +215,13 @@ table.screen tr:last-child td{ border-bottom:0 }
     <p class="rail-title">Trong trang này</p>
     <ol id="toc">
       <li><a href="#boicanh"><span class="n">01</span><span>Bối cảnh thị trường</span></a></li>
-      <li><a href="#bangdiem"><span class="n">02</span><span>Bảng điểm &amp; khuyến nghị</span></a></li>
-      <li><a href="#chitiet"><span class="n">03</span><span>Đọc kỹ một mã</span></a></li>
-      <li><a href="#theodoi"><span class="n">04</span><span>Bảng theo dõi của bạn</span></a></li>
-      <li><a href="#nhatky"><span class="n">05</span><span>Nhật ký giao dịch</span></a></li>
-      <li><a href="#cachcham"><span class="n">06</span><span>Cách máy chấm điểm</span></a></li>
+      <li><a href="#tinhieu"><span class="n">02</span><span>Tín hiệu phiên này</span></a></li>
+      <li><a href="#bangdiem"><span class="n">03</span><span>Bảng điểm &amp; khuyến nghị</span></a></li>
+      <li><a href="#chitiet"><span class="n">04</span><span>Đọc kỹ một mã</span></a></li>
+      <li><a href="#theodoi"><span class="n">05</span><span>Bảng theo dõi của bạn</span></a></li>
+      <li><a href="#nhatky"><span class="n">06</span><span>Nhật ký giao dịch</span></a></li>
+      <li><a href="#kiemchung"><span class="n">07</span><span>Bộ luật này có ăn tiền không</span></a></li>
+      <li><a href="#cachcham"><span class="n">08</span><span>Cách máy chấm điểm</span></a></li>
       <li><a href="index.html"><span class="n">←</span><span>Bài học cổ phiếu</span></a></li>
       <li><a href="coin.html"><span class="n">←</span><span>Bài học coin</span></a></li>
     </ol>
@@ -216,10 +247,41 @@ table.screen tr:last-child td{ border-bottom:0 }
       <p class="lab-hint" style="margin-top:10px">Độ rộng đếm trên <span id="b-count">…</span> mã trong danh sách chấm điểm. Càng nhiều mã nằm trên MA50, sóng tăng càng có nền rộng; chỉ vài mã trụ kéo chỉ số là dấu hiệu yếu.</p>
     </section>
 
-    <!-- ================= 02 BẢNG ĐIỂM ================= -->
-    <section class="level" id="bangdiem">
+    <!-- ================= 02 TÍN HIỆU ================= -->
+    <section class="level" id="tinhieu">
       <div class="level-head">
         <span class="level-num">02</span>
+        <div>
+          <h2>Tín hiệu phiên này</h2>
+          <p class="level-meta">Chỉ những gì vừa <i>thay đổi</i> so với phiên trước — không phải cả bảng điểm</p>
+        </div>
+      </div>
+      <p class="goal"><b>Vì sao có mục này:</b> bảng điểm ở mục 03 cho biết trạng thái, nhưng cái đáng để bạn mở app lên xem là <i>sự thay đổi</i>: mã nào vừa đổi bậc khuyến nghị, mã nào vừa lùi về vùng mua, mã nào vừa mất điểm cắt lỗ của kế hoạch phiên trước. Bot chạy sau mỗi phiên và chỉ liệt kê đúng những thứ đó.</p>
+
+      <div class="toolbar">
+        <div class="chips" id="sig-chips" role="group" aria-label="Lọc tín hiệu">
+          <button type="button" class="chip on" data-f="">Tất cả</button>
+          <button type="button" class="chip" data-f="1">Cần xem ngay</button>
+          <button type="button" class="chip" data-f="buy">Phía mua</button>
+          <button type="button" class="chip" data-f="sell">Phía bán</button>
+        </div>
+        <span class="lab-status is-wait" id="sig-stt" style="margin-left:auto">đang tải…</span>
+      </div>
+
+      <div id="sig-list"></div>
+
+      <details id="sig-hist-box" hidden>
+        <summary class="lbl" style="cursor:pointer;margin-top:14px">Tín hiệu các phiên trước</summary>
+        <div id="sig-hist"></div>
+      </details>
+
+      <p class="warn" id="sig-warn" hidden><b>Tín hiệu không phải lệnh mua</b>Theo chính phần kiểm chứng ở mục 07, bộ luật đứng sau các tín hiệu này <b>không thắng được mua-và-giữ VN-Index</b> trong 5 năm qua. Hãy dùng chúng như một cái máy quét để thu hẹp danh sách phải xem, rồi tự quyết định — đừng dùng như lệnh.</p>
+    </section>
+
+    <!-- ================= 03 BẢNG ĐIỂM ================= -->
+    <section class="level" id="bangdiem">
+      <div class="level-head">
+        <span class="level-num">03</span>
         <div>
           <h2>Bảng điểm &amp; khuyến nghị</h2>
           <p class="level-meta">VN30 và vài mã theo dõi thêm, chấm lại sau mỗi phiên</p>
@@ -266,7 +328,7 @@ table.screen tr:last-child td{ border-bottom:0 }
     <!-- ================= 03 CHI TIẾT ================= -->
     <section class="level" id="chitiet">
       <div class="level-head">
-        <span class="level-num">03</span>
+        <span class="level-num">04</span>
         <div>
           <h2>Đọc kỹ một mã</h2>
           <p class="level-meta">Đồ thị, kế hoạch giao dịch và toàn bộ lý do cho điểm số</p>
@@ -331,7 +393,7 @@ table.screen tr:last-child td{ border-bottom:0 }
     <!-- ================= 04 BẢNG THEO DÕI ================= -->
     <section class="level" id="theodoi">
       <div class="level-head">
-        <span class="level-num">04</span>
+        <span class="level-num">05</span>
         <div>
           <h2>Bảng theo dõi của bạn</h2>
           <p class="level-meta">Cổ phiếu VN và coin trong cùng một bảng, giá gọi trực tiếp</p>
@@ -386,7 +448,7 @@ table.screen tr:last-child td{ border-bottom:0 }
     <!-- ================= 05 NHẬT KÝ ================= -->
     <section class="level" id="nhatky">
       <div class="level-head">
-        <span class="level-num">05</span>
+        <span class="level-num">06</span>
         <div>
           <h2>Nhật ký giao dịch giả lập</h2>
           <p class="level-meta">Giấy và bút, có máy tính bỏ túi đi kèm</p>
@@ -402,9 +464,62 @@ table.screen tr:last-child td{ border-bottom:0 }
     </section>
 
     <!-- ================= 06 CÁCH CHẤM ĐIỂM ================= -->
+    <!-- ================= 07 KIỂM CHỨNG ================= -->
+    <section class="level" id="kiemchung">
+      <div class="level-head">
+        <span class="level-num">07</span>
+        <div>
+          <h2>Bộ luật này có ăn tiền không</h2>
+          <p class="level-meta">Chạy lại đúng bộ luật trên 5 năm quá khứ, có phí, thuế, trượt giá và T+2</p>
+        </div>
+      </div>
+      <p class="goal"><b>Vì sao phải có mục này:</b> một bảng điểm trông thuyết phục không có nghĩa là nó kiếm được tiền. Phần dưới đây chạy lại chính bộ luật ở mục 08 trên dữ liệu quá khứ: điểm của ngày t chỉ dùng dữ liệu tới hết ngày t, lệnh khớp ở giá mở cửa phiên sau, trừ đủ chi phí. Nếu kết quả tệ, bạn cần biết — đó là lý do nó nằm ngay trên trang này chứ không bị giấu đi.</p>
+
+      <div class="regime" id="bt-verdict">Đang tải kết quả backtest…</div>
+
+      <dl class="breadth" id="bt-cards"></dl>
+
+      <h3>Đường vốn</h3>
+      <div class="card" style="margin-top:10px">
+        <div class="toolbar" style="margin:0 0 10px">
+          <label class="lbl" for="bt-pick">Cách thoát lệnh</label>
+          <select id="bt-pick" style="font:inherit;font-size:var(--fs-sm);padding:0 10px;min-height:34px;border:1px solid var(--line);border-radius:var(--radius-ctl);background:var(--surface);color:var(--ink)"></select>
+          <span class="lab-hint" style="margin-left:auto">Đường xám là mua và giữ VN-Index cùng kỳ</span>
+        </div>
+        <svg id="bt-svg" viewBox="0 0 720 300" role="img" aria-label="Đường vốn của chiến lược so với mua và giữ"></svg>
+        <p class="lab-hint" id="bt-note" style="margin-top:8px"></p>
+      </div>
+
+      <h3>So sánh mọi cách vào và thoát lệnh đã thử</h3>
+      <div class="tbl-wrap" style="margin-top:10px">
+        <table class="tbl" id="bt-table"><tbody></tbody></table>
+      </div>
+
+      <div class="two" style="margin-top:14px">
+        <div class="card">
+          <p class="lbl">Lệnh kết thúc vì lý do gì</p>
+          <dl class="breadth" id="bt-reasons" style="margin-top:8px"></dl>
+          <p class="lab-hint" id="bt-rr" style="margin-top:10px"></p>
+        </div>
+        <div class="card">
+          <p class="lbl">Lãi lỗ theo năm</p>
+          <div class="tbl-wrap" style="margin-top:8px;border:0">
+            <table class="tbl" id="bt-years"><tbody></tbody></table>
+          </div>
+        </div>
+      </div>
+
+      <p class="aside" style="margin-top:15px"><b>Khác gì phòng backtest ở trang chiến lược</b><a href="chien-luoc.html#phong">Phòng backtest</a> bên đó cho bạn thử <i>năm chiến lược kinh điển trên một mã</i> với mô hình giản lược, để học cách một backtest hoạt động. Phần này làm việc khác: kiểm chứng <i>chính bộ luật chấm điểm của trang này</i> trên cả rổ 33 mã, có phí, thuế, trượt giá và T+2 — để trả lời câu duy nhất đáng hỏi: có nên tin bảng điểm ở mục 03 tới mức nào.</p>
+
+      <h3>Những điều phải trừ bớt khi đọc con số trên</h3>
+      <ul id="bt-caveats"></ul>
+
+      <p class="lab-hint" id="bt-meta"></p>
+    </section>
+
     <section class="level" id="cachcham">
       <div class="level-head">
-        <span class="level-num">06</span>
+        <span class="level-num">08</span>
         <div>
           <h2>Cách máy chấm điểm</h2>
           <p class="level-meta">Minh bạch để bạn tự kiểm tra — và tự sửa luật nếu không đồng ý</p>
@@ -1128,6 +1243,296 @@ table.screen tr:last-child td{ border-bottom:0 }
     else start();
   });
   setTimeout(start, 4000);
+})();
+</script>
+<script>
+/* ============================================================
+   Phần C — tín hiệu phiên này, đọc data/signals.json
+   ============================================================ */
+(function(){
+  'use strict';
+  var $ = function(id){ return document.getElementById(id); };
+  var LIST = $('sig-list'), STT = $('sig-stt');
+  if (!LIST) return;
+
+  var DATA = null, filter = '';
+  var LVL = { 1: 'Cần xem ngay', 2: 'Đáng biết', 3: 'Ghi nhận' };
+
+  function vn(n){ return n == null ? '—' : Math.round(n).toLocaleString('vi-VN'); }
+  function dmy(s){ return s ? s.slice(8,10)+'/'+s.slice(5,7)+'/'+s.slice(0,4) : '—'; }
+  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function status(text, kind){ STT.textContent = text; STT.className = 'lab-status' + (kind ? ' is-' + kind : ''); }
+
+  function planLine(s){
+    var p = s.plan || {};
+    if (s.side !== 'buy' || !p.stop) return '';
+    return '<p class="sig-p">mua <b>' + vn(p.entryLo) + '–' + vn(p.entryHi) + '</b>' +
+      ' · cắt lỗ <b>' + vn(p.stop) + '</b> · mục tiêu <b>' + vn(p.target) + '</b>' +
+      (p.rr ? ' · lời/lỗ <b>' + p.rr + ':1</b>' : '') + '</p>';
+  }
+
+  function card(s){
+    var sym = s.symbol;
+    var title = esc(s.title).replace(sym, '<a href="#' + sym + '" data-sym="' + sym + '">' + sym + '</a>');
+    return '<div class="sig-item" data-side="' + s.side + '" data-lvl="' + s.level + '">' +
+      '<span class="sig-lv" data-lvl="' + s.level + '">' + LVL[s.level] + '</span>' +
+      '<p class="sig-t">' + title + '</p>' +
+      (s.detail ? '<p class="sig-d">' + esc(s.detail) + '</p>' : '') +
+      planLine(s) + '</div>';
+  }
+
+  function match(s){
+    if (!filter) return true;
+    if (filter === '1') return s.level === 1;
+    return s.side === filter;
+  }
+
+  function render(){
+    if (!DATA) return;
+    var sigs = (DATA.latest || []).filter(match);
+    if (!sigs.length){
+      var all = (DATA.latest || []).length;
+      LIST.innerHTML = '<div class="empty">' + (all
+        ? 'Không có tín hiệu nào khớp bộ lọc này.'
+        : 'Phiên ' + dmy(DATA.dataDate) + ' không có tín hiệu mới — bảng điểm giữ nguyên bậc so với phiên trước. '
+          + 'Đó là trạng thái bình thường: phần lớn các phiên không có gì phải làm.') + '</div>';
+    } else {
+      LIST.innerHTML = '<div class="sig">' + sigs.map(card).join('') + '</div>';
+    }
+
+    var hist = (DATA.history || []).filter(function(h){ return h.date !== DATA.dataDate; });
+    if (hist.length){
+      $('sig-hist-box').hidden = false;
+      var byDay = {}, order = [];
+      hist.forEach(function(h){
+        if (!byDay[h.date]){ byDay[h.date] = []; order.push(h.date); }
+        byDay[h.date].push(h);
+      });
+      $('sig-hist').innerHTML = order.slice(0, 12).map(function(d){
+        return '<p class="sig-day">Phiên ' + dmy(d) + '</p><div class="sig">' +
+          byDay[d].filter(match).map(card).join('') + '</div>';
+      }).join('');
+    }
+  }
+
+  $('sig-chips').addEventListener('click', function(e){
+    var b = e.target.closest('[data-f]');
+    if (!b) return;
+    filter = b.getAttribute('data-f');
+    $('sig-chips').querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('on', c === b); });
+    render();
+  });
+
+  LIST.addEventListener('click', function(e){
+    var a = e.target.closest('[data-sym]');
+    if (a && window.selectScored) window.selectScored(a.getAttribute('data-sym'));
+  });
+
+  fetch('data/signals.json', { cache: 'no-cache' }).then(function(r){
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }).then(function(d){
+    DATA = d;
+    var c = d.counts || {};
+    status((c.total || 0) + ' tín hiệu · phiên ' + dmy(d.dataDate) + ' · quét lúc ' + d.updatedAt,
+      c.level1 ? 'err' : 'live');
+    $('sig-warn').hidden = false;
+    render();
+  }).catch(function(){
+    status('chưa có dữ liệu tín hiệu', 'wait');
+    LIST.innerHTML = '<div class="empty">Chưa có <code>data/signals.json</code>. Chạy <code>python scripts/fetch_ssi.py</code> ' +
+      'rồi <code>python scripts/signals.py</code> để tạo. Bot so bảng điểm phiên mới với phiên trước, nên phải chạy ít nhất hai phiên mới có tín hiệu.</div>';
+  });
+})();
+
+/* ============================================================
+   Phần D — kiểm chứng bộ luật, đọc data/backtest.json
+   ============================================================ */
+(function(){
+  'use strict';
+  var $ = function(id){ return document.getElementById(id); };
+  var NS = 'http://www.w3.org/2000/svg';
+  if (!$('bt-verdict')) return;
+
+  var BT = null, pick = null;
+
+  function vn(n, d){ if (n == null || isNaN(n)) return '—'; return Number(n).toLocaleString('vi-VN', { minimumFractionDigits:d||0, maximumFractionDigits:d||0 }); }
+  function pc(n, d){ return n == null ? '—' : (n > 0 ? '+' : '') + vn(n, d == null ? 1 : d) + '%'; }
+  function cls(n){ return n > 0 ? 'c-up' : n < 0 ? 'c-down' : ''; }
+  function el(tag, attrs, text){ var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; }
+  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function strat(){ return BT.variants.filter(function(v){ return v.name !== 'benchmark'; }); }
+  function bm(){ return BT.variants.filter(function(v){ return v.name === 'benchmark'; })[0] || null; }
+  function cur(){ return BT.variants.filter(function(v){ return v.name === pick; })[0]; }
+
+  /* Kết luận được tính từ số liệu, không viết sẵn */
+  function verdict(){
+    var b = bm(), best = strat().reduce(function(a, v){
+      return (a === null || (v.totalRetPct || -1e9) > (a.totalRetPct || -1e9)) ? v : a; }, null);
+    var node = $('bt-verdict');
+    var years = BT.period ? (best.years || 0) : 0;
+    var txt, r;
+    if (!b){
+      txt = 'Chưa so sánh được với mua và giữ.';
+      r = 'Trung tính';
+    } else if (best.totalRetPct > b.totalRetPct) {
+      r = 'Thuận lợi';
+      txt = '<b>Trong kỳ kiểm chứng, cách tốt nhất (' + esc(best.label) + ') lãi ' + pc(best.totalRetPct, 2) +
+        ' so với mua và giữ VN-Index ' + pc(b.totalRetPct, 2) + '</b>, với mức sụt vốn sâu nhất ' +
+        pc(best.maxDdPct, 1) + ' thay vì ' + pc(b.maxDdPct, 1) + '. Vẫn phải nhớ đây là quá khứ, và rổ cổ phiếu ' +
+        'là VN30 hiện tại nên có thiên lệch người sống sót.';
+    } else {
+      r = 'Bất lợi';
+      txt = '<b>Bộ luật này không thắng được mua và giữ.</b> Trong ' + vn(years, 1) + ' năm, cách tốt nhất ' +
+        '(' + esc(best.label) + ') lãi ' + pc(best.totalRetPct, 2) + ', còn mua và giữ VN-Index lãi ' +
+        pc(b.totalRetPct, 2) + '. Điểm sáng duy nhất là sụt vốn nhẹ hơn: ' + pc(best.maxDdPct, 1) +
+        ' thay vì ' + pc(b.maxDdPct, 1) + '. Kết luận thực tế: dùng bảng điểm như một bộ lọc để thu hẹp danh sách ' +
+        'và để kỷ luật hoá điểm vào ra, <b>đừng dùng nó như một cỗ máy sinh lời</b>, và đừng tự động hoá việc đặt lệnh theo nó.';
+    }
+    node.setAttribute('data-r', r);
+    node.innerHTML = txt;
+  }
+
+  function cards(){
+    var v = cur(), b = bm();
+    var rows = [
+      ['Lãi cả kỳ', pc(v.totalRetPct, 2), cls(v.totalRetPct)],
+      ['Lãi mỗi năm', pc(v.cagrPct, 2), cls(v.cagrPct)],
+      ['Sụt vốn sâu nhất', pc(v.maxDdPct, 1), 'c-down'],
+      ['Số lệnh', vn(v.trades) + ' lệnh', ''],
+      ['Tỷ lệ thắng', v.winRatePct == null ? '—' : vn(v.winRatePct, 1) + '%', ''],
+      ['R trung bình', v.avgR == null ? '—' : (v.avgR > 0 ? '+' : '') + vn(v.avgR, 3) + 'R', cls(v.avgR)],
+      ['Hệ số lợi nhuận', v.profitFactor == null ? '—' : vn(v.profitFactor, 2), cls((v.profitFactor || 1) - 1)],
+      ['Giữ trung bình', v.avgHoldDays == null ? '—' : vn(v.avgHoldDays, 1) + ' phiên', ''],
+    ];
+    if (b) rows.push(['Mua và giữ cùng kỳ', pc(b.totalRetPct, 2), cls(b.totalRetPct)]);
+    $('bt-cards').innerHTML = rows.map(function(r){
+      return '<div><dt>' + r[0] + '</dt><dd class="' + r[2] + '">' + r[1] + '</dd></div>';
+    }).join('');
+  }
+
+  function table(){
+    var b = bm();
+    var head = '<tr><th>Cách vào và thoát lệnh</th><th>Lệnh</th><th>Thắng</th><th>R tb</th>' +
+      '<th>Hệ số LN</th><th>Lãi cả kỳ</th><th>Mỗi năm</th><th>Sụt sâu nhất</th></tr>';
+    var body = strat().map(function(v){
+      return '<tr class="' + (v.name === pick ? 'on' : '') + '" data-v="' + v.name + '" style="cursor:pointer">' +
+        '<td>' + esc(v.label) + '</td>' +
+        '<td class="num">' + vn(v.trades) + '</td>' +
+        '<td class="num">' + (v.winRatePct == null ? '—' : vn(v.winRatePct, 1) + '%') + '</td>' +
+        '<td class="num ' + cls(v.avgR) + '">' + (v.avgR == null ? '—' : (v.avgR > 0 ? '+' : '') + vn(v.avgR, 3)) + '</td>' +
+        '<td class="num">' + (v.profitFactor == null ? '—' : vn(v.profitFactor, 2)) + '</td>' +
+        '<td class="num ' + cls(v.totalRetPct) + '">' + pc(v.totalRetPct, 2) + '</td>' +
+        '<td class="num ' + cls(v.cagrPct) + '">' + pc(v.cagrPct, 2) + '</td>' +
+        '<td class="num c-down">' + pc(v.maxDdPct, 1) + '</td></tr>';
+    }).join('');
+    var bmRow = b ? '<tr class="bm"><td>' + esc(b.label) + ' (không giao dịch)</td><td class="num">—</td>' +
+      '<td class="num">—</td><td class="num">—</td><td class="num">—</td>' +
+      '<td class="num ' + cls(b.totalRetPct) + '">' + pc(b.totalRetPct, 2) + '</td>' +
+      '<td class="num ' + cls(b.cagrPct) + '">' + pc(b.cagrPct, 2) + '</td>' +
+      '<td class="num c-down">' + pc(b.maxDdPct, 1) + '</td></tr>' : '';
+    $('bt-table').innerHTML = '<tbody>' + head + body + bmRow + '</tbody>';
+  }
+
+  function curve(){
+    var SVG = $('bt-svg');
+    while (SVG.firstChild) SVG.removeChild(SVG.firstChild);
+    var v = cur(), b = bm();
+    var W = 720, H = 300, L = 46, R = 710, T = 14, B = 258;
+    var series = [{ pts: v.curve, color: 'var(--accent)', w: 2 }];
+    if (b) series.unshift({ pts: b.curve, color: 'var(--muted)', w: 1.4 });
+
+    var base = v.startValue || 100;
+    var vals = [], dates = [];
+    series.forEach(function(s){ s.pts.forEach(function(p){ vals.push(p.v / base * 100 - 100); dates.push(p.d); }); });
+    var hi = Math.max.apply(null, vals), lo = Math.min.apply(null, vals);
+    var pad = (hi - lo) * 0.08 || 1;
+    hi += pad; lo -= pad;
+    dates.sort();
+    var d0 = dates[0], d1 = dates[dates.length - 1];
+    var t0 = new Date(d0).getTime(), t1 = new Date(d1).getTime();
+    var x = function(d){ return L + (new Date(d).getTime() - t0) / (t1 - t0) * (R - L); };
+    var y = function(p){ return B - (p - lo) / (hi - lo) * (B - T); };
+
+    // lưới
+    var step = (hi - lo) / 5, mag = Math.pow(10, Math.floor(Math.log(step) / Math.LN10));
+    step = Math.ceil(step / mag) * mag;
+    for (var g = Math.ceil(lo / step) * step; g <= hi; g += step){
+      SVG.appendChild(el('line', { x1: L, y1: y(g), x2: R, y2: y(g), stroke: g === 0 ? 'var(--line)' : 'var(--line-soft)' }));
+      SVG.appendChild(el('text', { x: L - 6, y: y(g) + 4, 'text-anchor': 'end', class: 't-num',
+        fill: 'var(--muted)', 'font-size': '10' }, (g > 0 ? '+' : '') + Math.round(g) + '%'));
+    }
+    series.forEach(function(s){
+      var d = s.pts.map(function(p, i){
+        return (i ? 'L' : 'M') + x(p.d).toFixed(1) + ' ' + y(p.v / base * 100 - 100).toFixed(1);
+      }).join('');
+      SVG.appendChild(el('path', { d: d, fill: 'none', stroke: s.color, 'stroke-width': s.w, 'stroke-linejoin': 'round' }));
+    });
+    [d0, dates[Math.floor(dates.length / 2)], d1].forEach(function(d, i){
+      SVG.appendChild(el('text', { x: x(d), y: 278, 'text-anchor': i === 0 ? 'start' : i === 2 ? 'end' : 'middle',
+        class: 't-num', fill: 'var(--muted)', 'font-size': '10' }, d.slice(5,7) + '/' + d.slice(0,4)));
+    });
+    $('bt-note').textContent = 'Vốn khởi điểm ' + vn(BT.rules.capital / 1e6) + ' triệu, rủi ro ' +
+      BT.rules.riskPct + '% mỗi lệnh, tối đa ' + BT.rules.maxPositions + ' vị thế. Phí mua/bán ' +
+      (BT.cost.feeBuy * 100).toFixed(2) + '% + thuế bán ' + (BT.cost.taxSell * 100).toFixed(1) +
+      '% + trượt giá ' + (BT.cost.slip * 100).toFixed(2) + '% mỗi chiều.';
+  }
+
+  function details(){
+    var v = cur();
+    var names = { stop: 'Chạm cắt lỗ', trail: 'Cắt lỗ dời', target: 'Đạt mục tiêu',
+                  rule: 'Luật hạ bậc', ma20: 'Mất MA20', time: 'Hết thời gian giữ', open: 'Còn mở cuối kỳ' };
+    var rs = v.byReason || {};
+    $('bt-reasons').innerHTML = Object.keys(rs).map(function(k){
+      return '<div><dt>' + (names[k] || k) + '</dt><dd>' + vn(rs[k]) + '</dd></div>';
+    }).join('') || '<div><dt>—</dt><dd>—</dd></div>';
+    $('bt-rr').innerHTML = (v.avgWinR != null && v.avgLossR != null)
+      ? 'Lệnh thắng trung bình được <b>' + vn(v.avgWinR, 2) + 'R</b>, lệnh lỗ trung bình mất <b>' +
+        vn(Math.abs(v.avgLossR), 2) + 'R</b>. ' +
+        (v.avgWinR < Math.abs(v.avgLossR)
+          ? 'Thắng nhỏ hơn thua, nên tỷ lệ thắng cao vẫn không cứu được tổng — đây chính là chỗ bộ luật bị rò rỉ.'
+          : 'Thắng lớn hơn thua, đúng hướng mà một hệ thống theo xu hướng cần.')
+      : '';
+    var ys = v.perYear || {};
+    $('bt-years').innerHTML = '<tbody><tr><th>Năm</th><th>Lệnh</th><th>Tổng R</th><th>Lãi lỗ</th></tr>' +
+      Object.keys(ys).sort().map(function(y){
+        var a = ys[y];
+        return '<tr><td>' + y + '</td><td class="num">' + vn(a.trades) + '</td>' +
+          '<td class="num ' + cls(a.r) + '">' + (a.r > 0 ? '+' : '') + vn(a.r, 2) + '</td>' +
+          '<td class="num ' + cls(a.pnl) + '">' + (a.pnl > 0 ? '+' : '') + vn(a.pnl / 1e6, 2) + ' tr</td></tr>';
+      }).join('') + '</tbody>';
+  }
+
+  function paint(){ cards(); table(); curve(); details(); }
+
+  $('bt-table').addEventListener('click', function(e){
+    var tr = e.target.closest('[data-v]');
+    if (!tr) return;
+    pick = tr.getAttribute('data-v');
+    $('bt-pick').value = pick;
+    paint();
+  });
+  $('bt-pick').addEventListener('change', function(){ pick = $('bt-pick').value; paint(); });
+
+  fetch('data/backtest.json', { cache: 'no-cache' }).then(function(r){
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  }).then(function(d){
+    BT = d;
+    pick = d.best || strat()[0].name;
+    $('bt-pick').innerHTML = strat().map(function(v){
+      return '<option value="' + v.name + '"' + (v.name === pick ? ' selected' : '') + '>' + esc(v.label) + '</option>';
+    }).join('');
+    verdict(); paint();
+    $('bt-caveats').innerHTML = (d.caveats || []).map(function(c){ return '<li>' + esc(c) + '</li>'; }).join('');
+    $('bt-meta').textContent = 'Kỳ kiểm chứng ' + d.period.from + ' → ' + d.period.to + ' (' +
+      vn(d.period.sessions) + ' phiên, ' + d.universe.length + ' mã). Tính lúc ' + d.updatedAt +
+      '. Chạy lại bằng: python scripts/backtest.py';
+  }).catch(function(){
+    $('bt-verdict').setAttribute('data-r', 'Trung tính');
+    $('bt-verdict').innerHTML = 'Chưa có <code>data/backtest.json</code>. Chạy <code>python scripts/backtest.py</code> ' +
+      '(khoảng 3 phút cho 33 mã, 5 năm) để tự kiểm chứng bộ luật trước khi tin vào bảng điểm.';
+  });
 })();
 </script>
 </body>

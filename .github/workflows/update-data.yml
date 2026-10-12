@@ -29,6 +29,16 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: python scripts/fetch_ssi.py
 
+      - name: Quét tín hiệu và gửi Telegram
+        env:
+          PYTHONIOENCODING: utf-8
+          # Hai secret này là tuỳ chọn. Không có thì bot chỉ ghi data/signals.json
+          # cho trang web đọc, không gửi tin. Bot không đặt lệnh nên ở đây
+          # không có và không được đặt bất kỳ khoá API giao dịch nào.
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scripts/signals.py
+
       - name: Commit nếu có thay đổi
         run: |
           git config user.name "github-actions[bot]"
