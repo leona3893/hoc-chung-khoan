@@ -2,12 +2,13 @@
 
 Tài liệu tự học đầu tư, dạng trang HTML tĩnh — vừa để đọc, vừa là công cụ theo dõi thị trường bằng dữ liệu thật.
 
-## Ba trang
+## Bốn trang
 
 | Trang | Nội dung |
 | --- | --- |
 | [`index.html`](index.html) | **Cổ phiếu** — 8 cấp độ từ bản chất cổ phiếu đến hệ thống giao dịch riêng, theo luật chơi HOSE/HNX/UPCoM, kèm 17 hình minh hoạ SVG |
 | [`coin.html`](coin.html) | **Coin** — 8 phần về thị trường crypto: khác cổ phiếu ở đâu, sàn và ví, đòn bẩy và funding, chu kỳ, pháp lý ở VN |
+| [`chien-luoc.html`](chien-luoc.html) | **Chiến lược** — chiến lược là gì, các trường phái và khung thời gian, năm chiến lược tiêu biểu, các bẫy khi backtest, kèm phòng backtest chạy trên giá thật (VNDirect/Binance) có tính phí, thuế, T+2 và so với mua & giữ, chạy được cả rổ VN30 |
 | [`phan-tich.html`](phan-tich.html) | **Phòng phân tích** — chấm điểm kỹ thuật và khuyến nghị cho VN30, bảng theo dõi cổ phiếu + coin, đồ thị chỉ báo, nhật ký giao dịch giả lập |
 
 ## Dữ liệu
@@ -36,6 +37,7 @@ Khi không có mạng, phần thực hành ở hai trang bài học lùi về b�
 ```
 index.html      bài học cổ phiếu
 coin.html       bài học coin
+chien-luoc.html bài học chiến lược + phòng backtest
 phan-tich.html  phòng phân tích
 assets/
   site.css      toàn bộ giao diện

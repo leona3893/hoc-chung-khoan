@@ -1,0 +1,1060 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark}}
+:root[data-theme="dark"]{color-scheme:dark}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+<title>Chiến lược · Chứng khoán từ số 0</title>
+<meta name="description" content="Chiến lược đầu tư là gì, các trường phái và khung thời gian giao dịch, kèm phòng backtest chạy năm chiến lược trên giá thật của cổ phiếu VN và coin.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect x=%274%27 y=%2712%27 width=%276%27 height=%2712%27 fill=%27%23007A4D%27/%3E%3Crect x=%276%27 y=%276%27 width=%272%27 height=%2722%27 fill=%27%23007A4D%27/%3E%3Crect x=%2718%27 y=%278%27 width=%276%27 height=%2714%27 fill=%27%23D31510%27/%3E%3Crect x=%2720%27 y=%274%27 width=%272%27 height=%2724%27 fill=%27%23D31510%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&family=Source+Serif+4:ital,opsz,wght@1,8..60,400;1,8..60,600&family=Source+Code+Pro:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+/* ---- màu riêng cho đồ thị backtest (đã kiểm tra tách biệt cho người mù màu, cả hai nền) ---- */
+:root{ --s-strat:#1F5FD0; --s-bh:#B0740E }
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]){ --s-strat:#4A86E8; --s-bh:#B5801C } }
+:root[data-theme="dark"]{ --s-strat:#4A86E8; --s-bh:#B5801C }
+
+.num{ font-variant-numeric:tabular-nums }
+.lbl{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted) }
+.card{ background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius); padding:16px 18px }
+
+table.rules{ border-collapse:collapse; width:100%; font-size:var(--fs-sm) }
+table.rules th, table.rules td{ text-align:left; vertical-align:top; padding:10px 12px; border-bottom:1px solid var(--line-soft) }
+table.rules th{ background:var(--surface-2); color:var(--ink-2); font-weight:700; font-size:13px; white-space:nowrap }
+table.rules tr:last-child td{ border-bottom:0 }
+table.rules td:first-child{ font-weight:700; white-space:nowrap }
+
+/* ---- thẻ chiến lược ---- */
+.strats{ display:grid; gap:12px; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); margin-top:15px }
+.strats .card h4{ margin:0 0 4px; font-size:var(--fs-base) }
+.strats .card .kind{ font-size:var(--fs-xs); color:var(--muted); font-weight:700; letter-spacing:.04em; text-transform:uppercase }
+.strats .card p{ margin:8px 0 0; font-size:var(--fs-sm) }
+.strats .card .rule{ font-family:var(--font-mono); font-size:13px; background:var(--surface-2); border-radius:6px; padding:8px 10px; margin-top:10px; line-height:1.5 }
+.strats .card .when{ font-size:var(--fs-xs); color:var(--ink-2); margin-top:10px }
+.strats .card .when b{ color:var(--up) } .strats .card .when i{ font-style:normal; font-weight:700; color:var(--down) }
+
+/* ---- bảng điều khiển backtest ---- */
+.bt-ctl{ display:grid; gap:12px 14px; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); margin-top:15px }
+.bt-ctl label{ display:flex; flex-direction:column; gap:5px; font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted) }
+.bt-ctl input, .bt-ctl select{ font:inherit; font-size:var(--fs-sm); text-transform:none; letter-spacing:0; font-weight:400;
+  min-height:36px; padding:0 10px; border:1px solid var(--line); border-radius:6px; background:var(--surface); color:var(--ink); width:100% }
+.bt-ctl input:focus-visible, .bt-ctl select:focus-visible, .chip:focus-visible, .btn:focus-visible{ outline:2px solid var(--floor); outline-offset:2px }
+.bt-params{ display:contents }
+.chips{ display:flex; flex-wrap:wrap; gap:4px }
+.chip{ font:700 var(--fs-sm)/1 var(--font-body); color:var(--ink); border:1px solid var(--line);
+  border-radius:6px; min-height:34px; padding:0 12px; background:var(--surface); cursor:pointer }
+.chip:hover{ background:var(--surface-2) }
+.chip.on{ background:var(--ink); color:var(--surface); border-color:var(--ink) }
+.bt-row{ display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; margin-top:14px }
+.btn{ font:700 var(--fs-sm)/1 var(--font-body); min-height:38px; padding:0 18px; border-radius:6px; cursor:pointer;
+  border:1px solid var(--ink); background:var(--ink); color:var(--surface) }
+.btn.ghost{ background:var(--surface); color:var(--ink); border-color:var(--line) }
+.btn.ghost:hover{ background:var(--surface-2) }
+.btn[disabled]{ opacity:.5; cursor:progress }
+.bt-desc{ margin-top:12px; font-size:var(--fs-sm); color:var(--ink-2) }
+
+/* ---- kết quả ---- */
+.kpis{ display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); margin-top:15px }
+.kpi{ background:var(--surface); border:1px solid var(--line-soft); border-radius:var(--radius); padding:12px 14px }
+.kpi dt{ font-size:11px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; color:var(--muted) }
+.kpi dd{ margin:4px 0 0; font-family:var(--font-mono); font-size:1.25rem; font-weight:700; line-height:1.15 }
+.kpi .vs{ display:block; margin-top:3px; font-family:var(--font-mono); font-size:var(--fs-xs); font-weight:400; color:var(--muted) }
+.c-up{ color:var(--up) } .c-down{ color:var(--down) }
+.verdict{ margin-top:15px; padding:12px 16px; border:1px solid var(--line-soft); border-left:4px solid var(--muted);
+  border-radius:var(--radius); background:var(--surface); font-size:var(--fs-sm) }
+.verdict.win{ border-left-color:var(--up) } .verdict.lose{ border-left-color:var(--down) }
+
+.chart-card{ margin-top:15px; padding:12px 14px 10px }
+.legend2{ display:flex; flex-wrap:wrap; gap:6px 16px; font-size:var(--fs-xs); color:var(--ink-2) }
+.legend2 span{ display:inline-flex; align-items:center; gap:6px }
+.legend2 i{ display:inline-block; width:16px; height:2px; border-radius:1px }
+.legend2 .tri{ width:0; height:0; border-radius:0; background:none!important; border-left:5px solid transparent; border-right:5px solid transparent }
+.legend2 .tri.u{ border-bottom:8px solid var(--up) } .legend2 .tri.d{ border-top:8px solid var(--down) }
+.plot svg{ display:block; width:100%; height:auto; touch-action:pan-y }
+.readout{ min-height:22px; margin-top:6px; font-family:var(--font-mono); font-size:var(--fs-xs); color:var(--ink-2); display:flex; flex-wrap:wrap; gap:4px 14px }
+.readout b{ color:var(--ink) }
+
+table.trades{ border-collapse:collapse; width:100%; min-width:720px; font-size:var(--fs-sm) }
+table.trades th{ text-align:right; background:var(--surface-2); color:var(--ink-2); font-weight:700; font-size:13px; padding:9px 12px; border-bottom:1px solid var(--line); white-space:nowrap }
+table.trades td{ text-align:right; padding:8px 12px; border-bottom:1px solid var(--line-soft); white-space:nowrap; font-family:var(--font-mono); font-variant-numeric:tabular-nums }
+table.trades th.l, table.trades td.l{ text-align:left; font-family:var(--font-body) }
+table.trades tr:last-child td{ border-bottom:0 }
+table.trades tbody tr.click{ cursor:pointer }
+table.trades tbody tr.click:hover td{ background:var(--surface-2) }
+.tbl-cap{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; margin:20px 0 8px }
+.tbl-cap h3{ margin:0 }
+.scroll-y{ max-height:420px; overflow:auto }
+.err{ padding:10px 14px; border:1px solid var(--down); border-radius:var(--radius); color:var(--down); font-size:var(--fs-sm); margin-top:15px }
+</style>
+</head>
+<body>
+<nav class="topnav" aria-label="Các trang">
+  <div class="wrap">
+    <a class="brand" href="index.html">Chứng khoán từ số 0</a>
+    <a class="nav" href="index.html">Cổ phiếu</a>
+    <a class="nav" href="coin.html">Coin</a>
+    <a class="nav" href="chien-luoc.html" aria-current="page">Chiến lược</a>
+    <a class="nav" href="phan-tich.html">Phòng phân tích</a>
+  </div>
+</nav>
+
+<header class="masthead">
+  <div class="wrap">
+    <p class="eyebrow">Bài học + công cụ · Kiểm tra luật chơi bằng dữ liệu quá khứ</p>
+    <h1>Chiến lược giao dịch
+      <span class="h1-sub">Chiến lược là một bộ luật viết sẵn trả lời bốn câu hỏi: mua gì, khi nào vào, khi nào ra, vào bao nhiêu. Trang này đi qua các trường phái và khung thời gian phổ biến, năm chiến lược tiêu biểu, những cái bẫy khi kiểm tra chúng, rồi cho bạn tự chạy thử từng luật trên giá thật của cổ phiếu VN và coin.</span>
+    </h1>
+    <dl class="facts">
+      <div class="fact"><dt>Chiến lược chạy thử</dt><dd>5</dd></div>
+      <div class="fact"><dt>Dữ liệu</dt><dd>VNDirect · Binance</dd></div>
+      <div class="fact"><dt>Có tính phí, thuế</dt><dd>Có</dd></div>
+      <div class="fact"><dt>Có tính T+2</dt><dd>Có, với cổ phiếu</dd></div>
+      <div class="fact"><dt>Tiền thật</dt><dd>Không</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="wrap shell">
+  <nav class="rail" aria-label="Mục lục">
+    <p class="rail-title">Trong trang này</p>
+    <ol id="toc">
+      <li><a href="#lagi"><span class="n">01</span><span>Chiến lược là gì</span></a></li>
+      <li><a href="#bando"><span class="n">02</span><span>Bản đồ các cách trade</span></a></li>
+      <li><a href="#namcach"><span class="n">03</span><span>Năm chiến lược tiêu biểu</span></a></li>
+      <li><a href="#batay"><span class="n">04</span><span>Backtest và các bẫy</span></a></li>
+      <li><a href="#phong"><span class="n">05</span><span>Phòng backtest</span></a></li>
+      <li><a href="#doc"><span class="n">06</span><span>Đọc kết quả thế nào</span></a></li>
+      <li><a href="phan-tich.html"><span class="n">→</span><span>Phòng phân tích</span></a></li>
+    </ol>
+    <p class="rail-note">Phần backtest gọi thẳng API công khai của VNDirect và Binance từ trình duyệt. Nếu không gọi được, cổ phiếu trong rổ chấm điểm lùi về dữ liệu 1 năm có sẵn trong trang.</p>
+  </nav>
+
+  <main>
+
+    <!-- ================= 01 ================= -->
+    <section class="level" id="lagi">
+      <div class="level-head">
+        <span class="level-num">01</span>
+        <div>
+          <h2>Chiến lược là gì</h2>
+          <p class="level-meta">Luật viết ra trước, rồi mới bỏ tiền vào</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> hiểu vì sao người giao dịch lâu năm nói “không có chiến lược thì không có giao dịch, chỉ có đánh bạc”, và một chiến lược đầy đủ phải có những phần nào.</p>
+
+      <p>Mua vì nghe bạn rủ, vì đọc một tin hay, vì “cảm giác sắp lên” thì không phải chiến lược. Đến lúc giá giảm 10%, bạn sẽ không có luật nào để biết nên giữ hay bán, và cảm xúc sẽ quyết định thay. Một chiến lược là bộ luật trả lời đủ <b>bốn câu hỏi</b>, và phải viết ra trước khi vào lệnh:</p>
+
+      <div class="tbl-wrap">
+        <table class="rules">
+          <tr><th>Câu hỏi</th><th>Ví dụ câu trả lời</th></tr>
+          <tr><td>1. Mua cái gì?</td><td>Chỉ cổ phiếu trong VN30; hoặc chỉ ngân hàng có ROE trên 15%; hoặc chỉ BTC và ETH.</td></tr>
+          <tr><td>2. Khi nào vào?</td><td>Khi MA20 cắt lên MA50; khi P/E thấp hơn trung bình 5 năm; ngày 5 hằng tháng.</td></tr>
+          <tr><td>3. Khi nào ra?</td><td>Chốt lời khi chạm kháng cự; <b>cắt lỗ khi giảm 7% so với giá mua</b>; khi MA20 cắt xuống MA50.</td></tr>
+          <tr><td>4. Vào bao nhiêu?</td><td>Mỗi lệnh tối đa 20% vốn; mỗi lệnh chỉ chấp nhận mất tối đa 1% tổng vốn nếu chạm cắt lỗ.</td></tr>
+        </table>
+      </div>
+
+      <p>Luật rõ ràng tới mức có thể đưa cho người khác làm theo mà ra cùng kết quả thì mới gọi là chiến lược. Khi đã rõ tới mức đó, bạn có thể làm một việc rất mạnh: <b>lấy dữ liệu quá khứ chạy thử</b> xem bộ luật đó lời hay lỗ. Việc này gọi là <b>backtest</b>, và là phần thực hành ở mục 05.</p>
+
+      <p class="aside"><b>Câu hỏi thứ ba quan trọng nhất</b>Người mới dành 90% thời gian tìm điểm mua. Người có kinh nghiệm biết rằng điểm ra, nhất là điểm cắt lỗ, quyết định phần lớn kết quả. Một chiến lược chỉ thắng 40% số lệnh vẫn có lãi nếu mỗi lần lỗ chỉ mất 5% còn mỗi lần lời được 15%.</p>
+    </section>
+
+    <!-- ================= 02 ================= -->
+    <section class="level" id="bando">
+      <div class="level-head">
+        <span class="level-num">02</span>
+        <div>
+          <h2>Bản đồ các cách trade</h2>
+          <p class="level-meta">Hai trục: dựa vào gì để quyết định, và giữ hàng bao lâu</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> biết mình đang đứng ở ô nào trên bản đồ. Nhiều người thua vì trộn lẫn: mua theo phân tích kỹ thuật ngắn hạn, lỗ thì quay sang nói “công ty tốt, giữ dài hạn”.</p>
+
+      <h3>Trục 1 — dựa vào thông tin gì</h3>
+      <div class="tbl-wrap">
+        <table class="rules">
+          <tr><th>Trường phái</th><th>Nhìn vào</th><th>Ví dụ luật</th></tr>
+          <tr><td>Phân tích cơ bản</td><td>Doanh nghiệp: lợi nhuận, nợ, dòng tiền, P/E, P/B, ROE, ngành</td><td>Mua công ty có ROE trên 15% ba năm liền, P/E thấp hơn trung bình ngành</td></tr>
+          <tr><td>Phân tích kỹ thuật</td><td>Giá và khối lượng trên đồ thị</td><td>Mua khi giá vượt đỉnh 20 phiên kèm khối lượng gấp rưỡi trung bình</td></tr>
+          <tr><td>Định lượng (quant)</td><td>Mô hình thống kê trên nhiều mã, máy tự chạy</td><td>Mỗi tháng mua 10 mã có mức tăng 6 tháng mạnh nhất rổ</td></tr>
+          <tr><td>Dòng tiền, sự kiện</td><td>Khối ngoại, tin vĩ mô, chốt quyền, cơ cấu ETF</td><td>Mua trước kỳ cơ cấu ETF những mã dự kiến được thêm vào rổ</td></tr>
+        </table>
+      </div>
+
+      <h3>Trục 2 — giữ hàng bao lâu</h3>
+      <div class="tbl-wrap">
+        <table class="rules">
+          <tr><th>Kiểu</th><th>Thời gian giữ</th><th>Đặc điểm</th></tr>
+          <tr><td>Scalping</td><td>Vài giây – vài phút</td><td>Ăn chênh lệch rất nhỏ, cần ngồi canh liên tục, phí giao dịch ăn mòn rất nhanh. Phổ biến ở coin.</td></tr>
+          <tr><td>Day trading</td><td>Trong ngày</td><td>Với cổ phiếu VN gần như không làm được vì hàng mua hôm nay khoảng T+2 mới về để bán. Coin thì được.</td></tr>
+          <tr><td>Swing trading</td><td>Vài ngày – vài tuần</td><td>Bắt từng nhịp sóng, chủ yếu dùng phân tích kỹ thuật. Đây là kiểu phòng phân tích đang hướng tới.</td></tr>
+          <tr><td>Position</td><td>Vài tuần – vài tháng</td><td>Theo xu hướng lớn, kết hợp cơ bản và kỹ thuật.</td></tr>
+          <tr><td>Đầu tư dài hạn</td><td>Nhiều năm</td><td>Chủ yếu phân tích cơ bản, ít nhìn bảng giá, ăn tăng trưởng của doanh nghiệp và cổ tức.</td></tr>
+        </table>
+      </div>
+
+      <p class="warn"><b>Khung càng ngắn, càng khó thắng</b>Giữ càng ngắn thì càng nhiều lệnh, càng nhiều phí và thuế, và càng phải cạnh tranh với tổ chức có máy nhanh hơn. Đa số người mới làm tốt nhất ở khung swing trở lên, hoặc đơn giản là đầu tư định kỳ.</p>
+    </section>
+
+    <!-- ================= 03 ================= -->
+    <section class="level" id="namcach">
+      <div class="level-head">
+        <span class="level-num">03</span>
+        <div>
+          <h2>Năm chiến lược tiêu biểu</h2>
+          <p class="level-meta">Cả năm đều chạy thử được ở mục 05</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> thấy rằng các chiến lược không chỉ khác nhau mà nhiều khi <b>ngược nhau</b>: chiến lược này thắng đúng ở loại thị trường mà chiến lược kia thua.</p>
+
+      <div class="strats">
+        <div class="card">
+          <p class="kind">Mốc so sánh</p>
+          <h4>Mua và giữ</h4>
+          <p>Mua ngày đầu, không làm gì cho tới ngày cuối. Mọi chiến lược khác phải thắng được cái này thì mới đáng để bỏ công.</p>
+          <div class="rule">Vào: ngày đầu tiên<br>Ra: không bao giờ</div>
+          <p class="when"><b>Thắng khi</b> thị trường tăng dài hạn · <i>Thua khi</i> gặp một đợt sập lớn và phải chịu trọn</p>
+        </div>
+        <div class="card">
+          <p class="kind">Đầu tư định kỳ</p>
+          <h4>DCA hàng tháng</h4>
+          <p>Chia vốn đều cho mỗi tháng, đầu tháng mua một phần cố định bất kể giá. Giá thấp thì mua được nhiều cổ phiếu hơn.</p>
+          <div class="rule">Vào: phiên đầu mỗi tháng<br>Ra: không bán</div>
+          <p class="when"><b>Thắng khi</b> giá đi ngang hoặc giảm rồi hồi · <i>Thua khi</i> giá tăng thẳng từ đầu (tiền vào chậm)</p>
+        </div>
+        <div class="card">
+          <p class="kind">Theo xu hướng</p>
+          <h4>MA cắt nhau</h4>
+          <p>Giữ cổ phiếu khi đường trung bình ngắn nằm trên đường dài, tức là xu hướng đang lên. Cắt ra khi nó cắt xuống.</p>
+          <div class="rule">Vào: MA20 &gt; MA50<br>Ra: MA20 &lt; MA50</div>
+          <p class="when"><b>Thắng khi</b> có xu hướng mạnh, nhất là tránh được đợt sập dài · <i>Thua khi</i> giá đi ngang, tín hiệu giả liên tục</p>
+        </div>
+        <div class="card">
+          <p class="kind">Về trung bình</p>
+          <h4>RSI quá bán</h4>
+          <p>Mua khi giá bị bán quá đà (RSI rất thấp), bán khi nó hồi lại. Đặt cược rằng giá sẽ quay về mức bình thường.</p>
+          <div class="rule">Vào: RSI14 &lt; 30<br>Ra: RSI14 &gt; 55</div>
+          <p class="when"><b>Thắng khi</b> giá dao động trong biên · <i>Thua khi</i> gặp xu hướng giảm dài, “bắt dao rơi”</p>
+        </div>
+        <div class="card">
+          <p class="kind">Phá vỡ</p>
+          <h4>Vượt đỉnh 20 phiên</h4>
+          <p>Mua khi giá đóng cửa vượt đỉnh cao nhất 20 phiên trước, bán khi thủng đáy 10 phiên. Luật gốc của nhóm Turtle Traders.</p>
+          <div class="rule">Vào: đóng cửa &gt; đỉnh 20 phiên<br>Ra: đóng cửa &lt; đáy 10 phiên</div>
+          <p class="when"><b>Thắng khi</b> giá bứt khỏi vùng tích luỹ và chạy xa · <i>Thua khi</i> phá vỡ giả rồi quay đầu</p>
+        </div>
+      </div>
+
+      <p style="margin-top:15px">Ngoài phân tích kỹ thuật còn các chiến lược cơ bản như <b>đầu tư giá trị</b> (mua công ty tốt khi đang rẻ hơn giá trị thật, cách của Warren Buffett), <b>đầu tư tăng trưởng</b> (mua công ty tăng trưởng nhanh, chấp nhận giá đắt) và <b>đầu tư cổ tức</b>. Những chiến lược này cần dữ liệu báo cáo tài chính nên chưa backtest được ở đây.</p>
+    </section>
+
+    <!-- ================= 04 ================= -->
+    <section class="level" id="batay">
+      <div class="level-head">
+        <span class="level-num">04</span>
+        <div>
+          <h2>Backtest và các bẫy</h2>
+          <p class="level-meta">Một kết quả backtest đẹp chưa nói lên điều gì</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> biết cách một backtest có thể nói dối bạn, để không tin vào con số đầu tiên mình thấy.</p>
+
+      <p><b>Backtest</b> là đi lại từng phiên trong quá khứ và hỏi: “nếu hôm đó tôi làm đúng theo luật thì sẽ ra sao?”. Nó rẻ, nhanh và trung thực hơn trí nhớ của bạn. Nhưng nó có năm cái bẫy kinh điển:</p>
+
+      <div class="tbl-wrap">
+        <table class="rules">
+          <tr><th>Bẫy</th><th>Là gì</th><th>Trang này xử lý thế nào</th></tr>
+          <tr><td>Nhìn trước tương lai</td><td>Dùng giá đóng cửa hôm nay để quyết định mua <i>ở chính giá đó</i>, trong khi lúc ra quyết định bạn chưa biết giá đóng cửa.</td><td>Tín hiệu tính khi đóng cửa phiên T, lệnh khớp ở <b>giá mở cửa phiên T+1</b>.</td></tr>
+          <tr><td>Quên phí và thuế</td><td>Chiến lược giao dịch nhiều trông rất đẹp trên giấy, nhưng mỗi lượt mua–bán mất khoảng 0,4% cho phí và thuế.</td><td>Mặc định phí 0,15% mỗi chiều và thuế bán 0,1% với cổ phiếu, phí 0,1% với coin. Sửa được.</td></tr>
+          <tr><td>Quên luật sàn</td><td>Bán ngay hôm sau khi mua, trong khi cổ phiếu VN khoảng T+2 mới về tài khoản. Mua lẻ vài cổ phiếu trong khi lô tối thiểu là 100.</td><td>Cổ phiếu chỉ bán được từ phiên thứ 2 sau ngày mua, mua theo lô 100.</td></tr>
+          <tr><td>Quá khớp (overfitting)</td><td>Thử hàng trăm bộ tham số rồi chọn bộ đẹp nhất. Bộ đó chỉ “thuộc bài” quá khứ, không có lý do gì để đúng ở tương lai.</td><td>Không tự dò tham số. Nút “Chạy cả rổ” cho thấy cùng một luật cho kết quả khác nhau thế nào ở từng mã.</td></tr>
+          <tr><td>Mẫu quá nhỏ</td><td>Năm lệnh thắng cả năm có thể chỉ là may mắn. Một năm giá tăng thì mọi chiến lược mua đều trông giỏi.</td><td>Cho chọn 1, 3 hoặc 5 năm. Luôn so với mua và giữ trong cùng giai đoạn.</td></tr>
+        </table>
+      </div>
+
+      <p class="warn"><b>Thêm một bẫy không chữa được</b>Rổ VN30 hôm nay là những công ty đã thắng. Những mã từng ở VN30 rồi sa sút bị loại khỏi rổ không còn nằm trong danh sách. Chạy thử trên rổ hiện tại vì thế luôn đẹp hơn thực tế một chút. Người ta gọi đây là <b>thiên lệch kẻ sống sót</b> (survivorship bias).</p>
+    </section>
+
+    <!-- ================= 05 ================= -->
+    <section class="level" id="phong">
+      <div class="level-head">
+        <span class="level-num">05</span>
+        <div>
+          <h2>Phòng backtest</h2>
+          <p class="level-meta">Chọn mã, chọn luật, bấm chạy — so với mua và giữ trong cùng giai đoạn</p>
+        </div>
+      </div>
+      <p class="goal"><b>Cách dùng:</b> trước khi bấm chạy, hãy đoán trước chiến lược sẽ thắng hay thua mua và giữ, và vì sao. Đoán sai rồi tìm ra lý do mới là phần học thật.</p>
+
+      <div class="chips" id="kind" role="group" aria-label="Loại tài sản" style="margin-top:15px">
+        <button type="button" class="chip on" data-k="vn">Cổ phiếu VN</button>
+        <button type="button" class="chip" data-k="coin">Coin</button>
+      </div>
+
+      <div class="bt-ctl">
+        <label>Mã<input id="sym" list="sym-list" value="FPT" autocomplete="off" spellcheck="false"></label>
+        <datalist id="sym-list"></datalist>
+        <label>Chiến lược
+          <select id="strat">
+            <option value="bh">Mua và giữ</option>
+            <option value="dca">DCA hàng tháng</option>
+            <option value="ma" selected>MA cắt nhau</option>
+            <option value="rsi">RSI quá bán</option>
+            <option value="bo">Vượt đỉnh N phiên</option>
+          </select>
+        </label>
+        <label>Giai đoạn
+          <select id="years">
+            <option value="1">1 năm</option>
+            <option value="3" selected>3 năm</option>
+            <option value="5">5 năm</option>
+          </select>
+        </label>
+        <label>Vốn ban đầu<input id="cap" type="number" min="1" step="1" value="100000000" inputmode="numeric"></label>
+        <label>Phí mỗi chiều (%)<input id="fee" type="number" min="0" step="0.01" value="0.15"></label>
+        <label>Thuế khi bán (%)<input id="tax" type="number" min="0" step="0.01" value="0.1"></label>
+        <label>Cắt lỗ (% , 0 = tắt)<input id="stop" type="number" min="0" max="50" step="0.5" value="0"></label>
+        <div class="bt-params" id="params"></div>
+      </div>
+      <p class="bt-desc" id="desc"></p>
+
+      <div class="bt-row">
+        <button type="button" class="btn" id="run">Chạy backtest</button>
+        <button type="button" class="btn ghost" id="basket">Chạy cùng luật cho cả rổ</button>
+        <span class="lab-status" id="stt">chưa chạy</span>
+      </div>
+
+      <div id="err" class="err" hidden></div>
+
+      <div id="out" hidden>
+        <dl class="kpis" id="kpis"></dl>
+        <div class="verdict" id="verdict"></div>
+
+        <div class="card chart-card">
+          <div class="legend2" id="legend"></div>
+          <div class="plot"><svg id="chart" viewBox="0 0 900 470" style="aspect-ratio:auto" role="img" aria-label="Đồ thị giá kèm điểm mua bán, và đồ thị lãi lỗ của chiến lược so với mua và giữ"></svg></div>
+          <div class="readout" id="readout"><span class="c-muted">Rê chuột hoặc chạm vào đồ thị để đọc từng phiên.</span></div>
+        </div>
+
+        <div class="tbl-cap"><h3>Từng lệnh</h3><span class="lab-hint" id="tr-note"></span></div>
+        <div class="tbl-wrap scroll-y">
+          <table class="trades">
+            <thead id="tr-head"></thead>
+            <tbody id="tr-rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="bk" hidden>
+        <div class="tbl-cap"><h3 id="bk-title">Cùng luật trên cả rổ</h3><span class="lab-hint">Bấm vào một dòng để chạy chi tiết mã đó</span></div>
+        <div class="verdict" id="bk-sum"></div>
+        <div class="tbl-wrap scroll-y" style="margin-top:12px">
+          <table class="trades">
+            <thead><tr><th class="l">Mã</th><th>Chiến lược</th><th>Mua và giữ</th><th>Chênh</th><th>Sụt tối đa</th><th>Sụt tối đa (giữ)</th><th>Số lệnh</th><th>Tỷ lệ thắng</th></tr></thead>
+            <tbody id="bk-rows"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <p class="aside" style="margin-top:15px"><b>Bài tập</b>Chạy “MA cắt nhau” trên FPT 3 năm, rồi chuyển sang chạy cả rổ. Chiến lược thắng mua và giữ ở bao nhiêu mã? Sau đó đổi sang “RSI quá bán” và làm lại. Cuối cùng đổi MA nhanh từ 20 sang 10 và xem kết quả trên cả rổ thay đổi bao nhiêu. Nếu chỉ một thay đổi nhỏ mà kết quả đảo chiều, luật đó không đáng tin.</p>
+    </section>
+
+    <!-- ================= 06 ================= -->
+    <section class="level" id="doc">
+      <div class="level-head">
+        <span class="level-num">06</span>
+        <div>
+          <h2>Đọc kết quả thế nào</h2>
+          <p class="level-meta">Lợi nhuận chỉ là một nửa câu chuyện</p>
+        </div>
+      </div>
+      <p class="goal"><b>Mục tiêu:</b> đánh giá một chiến lược bằng cả lợi nhuận lẫn mức đau phải chịu, không chỉ nhìn con số lãi.</p>
+
+      <div class="tbl-wrap">
+        <table class="rules">
+          <tr><th>Chỉ số</th><th>Nghĩa</th><th>Đọc thế nào</th></tr>
+          <tr><td>Lợi nhuận</td><td>Vốn cuối kỳ so với vốn đầu, đã trừ phí và thuế.</td><td>Luôn đặt cạnh mua và giữ. Lãi 30% mà mua và giữ lãi 60% là thua.</td></tr>
+          <tr><td>Lãi kép/năm (CAGR)</td><td>Mức tăng đều mỗi năm cho ra cùng kết quả.</td><td>Dùng để so các giai đoạn dài ngắn khác nhau. Gửi tiết kiệm khoảng 5%/năm là mốc tối thiểu.</td></tr>
+          <tr><td>Sụt giảm tối đa</td><td>Từ đỉnh tài sản cao nhất xuống đáy thấp nhất sau đó.</td><td><b>Câu hỏi thật là: bạn có chịu nổi không?</b> Sụt 40% nghĩa là 100 triệu còn 60 triệu, và phải lãi 67% mới về lại vốn.</td></tr>
+          <tr><td>Tỷ lệ thắng</td><td>Bao nhiêu phần trăm số lệnh có lãi.</td><td>Thấp không có nghĩa là tệ. Chiến lược theo xu hướng thường chỉ thắng 30–45% nhưng lệnh thắng rất lớn.</td></tr>
+          <tr><td>Hệ số lợi nhuận</td><td>Tổng tiền lãi các lệnh thắng chia tổng tiền lỗ các lệnh thua.</td><td>Trên 1 là có lãi; trên 1,5 là khá; trên 3 với ít lệnh thì nghi ngờ may mắn.</td></tr>
+          <tr><td>Thời gian cầm hàng</td><td>Bao nhiêu phần trăm số phiên đang nắm cổ phiếu.</td><td>Chiến lược nắm hàng 40% thời gian mà lãi gần bằng mua và giữ là tốt: 60% thời gian còn lại tiền rảnh và không chịu rủi ro.</td></tr>
+        </table>
+      </div>
+
+      <h3>Ba điều rút ra sau khi chạy đủ nhiều</h3>
+      <ol class="steps">
+        <li><b>Không có chiến lược nào thắng mọi lúc.</b> Theo xu hướng thua khi thị trường đi ngang, về trung bình thua khi gặp xu hướng mạnh. Chọn chiến lược là chọn loại thị trường mình chấp nhận thua.</li>
+        <li><b>Mua và giữ rất khó đánh bại</b> trong một thị trường tăng, nhất là sau khi trừ phí. Lợi thế thật của các chiến lược có cắt lỗ thường là <b>sụt giảm nhỏ hơn</b>, không phải lãi nhiều hơn.</li>
+        <li><b>Kỷ luật quan trọng hơn chiến lược.</b> Một chiến lược trung bình làm đúng 100% số lần vẫn tốt hơn chiến lược hay nhưng bỏ cắt lỗ đúng lúc nó cần nhất. Backtest giả định bạn là cái máy; ngoài đời bạn không phải.</li>
+      </ol>
+
+      <p class="disclaimer">Kết quả backtest dựa trên dữ liệu giá công khai của VNDirect và Binance, có thể thiếu phiên, trễ hoặc đã điều chỉnh theo sự kiện quyền khác với bảng điện. Mô hình giản lược: khớp toàn bộ ở giá mở cửa, không tính trượt giá, không tính cổ tức tiền mặt, không tính lãi tiền nhàn rỗi. Kết quả quá khứ không bảo đảm cho tương lai. Đây là công cụ học tập, không phải khuyến nghị đầu tư.</p>
+    </section>
+
+  </main>
+</div>
+
+<script src="assets/site.js"></script>
+<script src="assets/market.js"></script>
+<script>
+/* ============================================================
+   Phòng backtest — tải nến, sinh tín hiệu, khớp lệnh từng phiên
+   ============================================================ */
+(function(){
+  'use strict';
+  var $ = function(id){ return document.getElementById(id); };
+  var NS = 'http://www.w3.org/2000/svg';
+
+  /* ---------- định dạng ---------- */
+  function fmtPct(x, sign){
+    if (x === null || x === undefined || !isFinite(x)) return '—';
+    var s = (x * 100).toLocaleString('vi-VN', { minimumFractionDigits:1, maximumFractionDigits:1 }) + '%';
+    return sign && x > 0 ? '+' + s : s;
+  }
+  function fmtMoney(x){ return Math.round(x).toLocaleString('vi-VN'); }
+  function fmtPx(x){
+    if (S.kind === 'vn') return Math.round(x).toLocaleString('vi-VN');
+    var d = x >= 100 ? 2 : x >= 1 ? 4 : 6;
+    return x.toLocaleString('en-US', { maximumFractionDigits:d });
+  }
+  function dmy(s){ return s.slice(8,10) + '/' + s.slice(5,7) + '/' + s.slice(0,4); }
+  function cls(x){ return x > 0 ? 'c-up' : x < 0 ? 'c-down' : ''; }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]; }); }
+
+  /* ---------- trạng thái ---------- */
+  var S = { kind:'vn' };
+  var DEF = {
+    vn:   { sym:'FPT',     cap:100000000, fee:0.15, tax:0.1 },
+    coin: { sym:'BTCUSDT', cap:10000,     fee:0.1,  tax:0 }
+  };
+  var STRATS = {
+    bh:  { name:'Mua và giữ', params:[],
+           desc:'Mua toàn bộ vốn ở giá mở cửa phiên đầu, giữ tới phiên cuối. Đây cũng là đường so sánh trên đồ thị.' },
+    dca: { name:'DCA hàng tháng', params:[],
+           desc:'Chia vốn đều cho số tháng trong giai đoạn, mua ở giá mở cửa phiên đầu mỗi tháng, không bán. Tiền chưa dùng tới nằm yên (không tính lãi).' },
+    ma:  { name:'MA cắt nhau', params:[{ k:'f', label:'MA nhanh', v:20 }, { k:'s', label:'MA chậm', v:50 }],
+           desc:'Nắm cổ phiếu khi MA nhanh nằm trên MA chậm, bán khi cắt xuống. Tín hiệu tính lúc đóng cửa, khớp ở giá mở cửa phiên sau.' },
+    rsi: { name:'RSI quá bán', params:[{ k:'lo', label:'Mua khi RSI dưới', v:30 }, { k:'hi', label:'Bán khi RSI trên', v:55 }],
+           desc:'Mua khi RSI 14 rơi xuống dưới ngưỡng quá bán, giữ tới khi RSI hồi lên trên ngưỡng bán.' },
+    bo:  { name:'Vượt đỉnh N phiên', params:[{ k:'n', label:'Đỉnh N phiên', v:20 }, { k:'m', label:'Thoát khi thủng đáy M phiên', v:10 }],
+           desc:'Mua khi giá đóng cửa vượt đỉnh cao nhất N phiên trước đó, bán khi đóng cửa thủng đáy thấp nhất M phiên trước đó.' }
+  };
+
+  /* ---------- tải dữ liệu ---------- */
+  var cache = {};
+  function loadLocal(sym){
+    return fetch('data/bars/' + sym + '.json', { cache:'no-cache' })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(d){ return (d.bars || []).map(function(b){ return b.slice(0, 6); }); });
+  }
+  function loadVN(sym, years){
+    var days = Math.round(years * 365.25) + 400;   // thêm ~1 năm làm nền cho chỉ báo
+    return Market.vnStock(sym, days).then(function(bars){ return { bars:bars, src:'VNDirect' }; })
+      .catch(function(e){
+        return loadLocal(sym).then(function(bars){
+          if (!bars.length) throw e;
+          return { bars:bars, src:'dữ liệu có sẵn (1 năm, VNDirect không trả lời)' };
+        }, function(){ throw e; });
+      });
+  }
+  var BN = ['https://api.binance.com', 'https://data-api.binance.vision'];
+  function bnGet(qs){
+    return fetch(BN[0] + '/api/v3/klines?' + qs, { cache:'no-store' })
+      .then(function(r){ if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .catch(function(){
+        return fetch(BN[1] + '/api/v3/klines?' + qs, { cache:'no-store' })
+          .then(function(r){ if (!r.ok) throw new Error('Binance HTTP ' + r.status); return r.json(); });
+      });
+  }
+  function loadCoin(sym, years){
+    var need = Math.round(years * 365.25) + 400, out = [], end = null;
+    function page(){
+      var qs = 'symbol=' + encodeURIComponent(sym) + '&interval=1d&limit=1000' + (end ? '&endTime=' + end : '');
+      return bnGet(qs).then(function(rows){
+        if (!Array.isArray(rows)) throw new Error('Binance không trả dữ liệu cho ' + sym);
+        out = rows.concat(out);
+        if (rows.length === 1000 && out.length < need){ end = rows[0][0] - 1; return page(); }
+      });
+    }
+    return page().then(function(){
+      if (!out.length) throw new Error('Không có dữ liệu cho ' + sym);
+      // bỏ nến ngày hôm nay chưa đóng
+      if (out[out.length-1][6] > Date.now()) out.pop();
+      return { src:'Binance', bars: out.map(function(r){
+        return [Market.vnStamp(r[0], false), +r[1], +r[2], +r[3], +r[4], +r[5]];
+      }) };
+    });
+  }
+  function load(kind, sym, years){
+    var key = kind + ':' + sym + ':' + years;
+    if (!cache[key]) {
+      cache[key] = (kind === 'vn' ? loadVN(sym, years) : loadCoin(sym, years));
+      cache[key].catch(function(){ delete cache[key]; });
+    }
+    return cache[key];
+  }
+
+  /* ---------- chỉ báo ---------- */
+  function sma(c, n){
+    var out = new Array(c.length).fill(null), s = 0;
+    for (var i=0;i<c.length;i++){ s += c[i]; if (i >= n) s -= c[i-n]; if (i >= n-1) out[i] = s / n; }
+    return out;
+  }
+  function rsi(c, n){
+    var out = new Array(c.length).fill(null), g = 0, l = 0;
+    for (var i=1;i<c.length;i++){
+      var d = c[i] - c[i-1], up = d > 0 ? d : 0, dn = d < 0 ? -d : 0;
+      if (i <= n){ g += up; l += dn; if (i === n){ g /= n; l /= n; out[i] = l === 0 ? 100 : 100 - 100/(1 + g/l); } }
+      else { g = (g*(n-1) + up)/n; l = (l*(n-1) + dn)/n; out[i] = l === 0 ? 100 : 100 - 100/(1 + g/l); }
+    }
+    return out;
+  }
+  /* đỉnh/đáy của n phiên TRƯỚC phiên i (không gồm phiên i) */
+  function prevMax(h, n){
+    var out = new Array(h.length).fill(null);
+    for (var i=n;i<h.length;i++){ var m = -Infinity; for (var j=i-n;j<i;j++) if (h[j] > m) m = h[j]; out[i] = m; }
+    return out;
+  }
+  function prevMin(l, n){
+    var out = new Array(l.length).fill(null);
+    for (var i=n;i<l.length;i++){ var m = Infinity; for (var j=i-n;j<i;j++) if (l[j] < m) m = l[j]; out[i] = m; }
+    return out;
+  }
+
+  /* ---------- tín hiệu: want[i] = muốn đang nắm hàng sau khi đóng cửa phiên i ---------- */
+  function signals(strat, bars, p){
+    var c = bars.map(function(b){ return b[4]; });
+    var n = bars.length, want = new Array(n).fill(false), lines = [], rline = null;
+    if (strat === 'ma'){
+      var f = sma(c, p.f), s = sma(c, p.s);
+      for (var i=0;i<n;i++) want[i] = f[i] !== null && s[i] !== null && f[i] > s[i];
+      lines = [{ name:'MA' + p.f, v:f, color:'var(--s-strat)' }, { name:'MA' + p.s, v:s, color:'var(--s-bh)' }];
+    } else if (strat === 'rsi'){
+      var r = rsi(c, 14), on = false;
+      for (var j=0;j<n;j++){
+        if (r[j] !== null){ if (!on && r[j] < p.lo) on = true; else if (on && r[j] > p.hi) on = false; }
+        want[j] = on;
+      }
+      rline = r;
+    } else if (strat === 'bo'){
+      var hi = prevMax(bars.map(function(b){ return b[2]; }), p.n);
+      var lo = prevMin(bars.map(function(b){ return b[3]; }), p.m), on2 = false;
+      for (var k=0;k<n;k++){
+        if (hi[k] !== null && lo[k] !== null){ if (!on2 && c[k] > hi[k]) on2 = true; else if (on2 && c[k] < lo[k]) on2 = false; }
+        want[k] = on2;
+      }
+      lines = [{ name:'Đỉnh ' + p.n + ' phiên', v:hi, color:'var(--s-strat)' }, { name:'Đáy ' + p.m + ' phiên', v:lo, color:'var(--s-bh)' }];
+    }
+    return { want:want, lines:lines, rsi:rline };
+  }
+
+  /* ---------- khớp lệnh ---------- */
+  function simulate(bars, start, cfg, strat, sig){
+    var fee = cfg.fee/100, tax = cfg.tax/100, stopPct = cfg.stop/100;
+    var lot = cfg.kind === 'vn' ? 100 : 0, tPlus = cfg.kind === 'vn' ? 2 : 0;
+    var cash = cfg.cap, sh = 0, entryIdx = -1, entryPx = 0, cost = 0, stopPx = 0, armed = true;
+    var eq = [], hold = [], trades = [], marks = [], fees = 0, held = 0;
+
+    function qty(money, px){
+      var q = money / (px * (1 + fee));
+      if (lot) return Math.floor(q / lot) * lot;
+      return Math.floor(q * 1e6) / 1e6;
+    }
+    function buy(j, px, money){
+      var q = qty(Math.min(money, cash), px);
+      if (q <= 0) return false;
+      var val = q * px, f = val * fee;
+      cash -= val + f; fees += f;
+      if (sh === 0){ entryIdx = j; entryPx = px; cost = 0; }
+      cost += val + f; sh += q;
+      stopPx = stopPct > 0 ? px * (1 - stopPct) : 0;
+      marks.push({ i:j, side:'buy', px:px });
+      return true;
+    }
+    function sell(j, px, why){
+      var val = sh * px, f = val * (fee + tax);
+      cash += val - f; fees += f;
+      trades.push({ in:bars[entryIdx][0], inPx:entryPx, out:bars[j][0], outPx:px, bars:j - entryIdx,
+                    pnl:val - f - cost, ret:(val - f) / cost - 1, why:why });
+      marks.push({ i:j, side:'sell', px:px });
+      sh = 0; entryIdx = -1; cost = 0;
+    }
+
+    // DCA: số tháng trong giai đoạn
+    var months = 0, monthOf = function(i){ return bars[i][0].slice(0, 7); };
+    if (strat === 'dca'){ for (var m=start;m<bars.length;m++) if (m === start || monthOf(m) !== monthOf(m-1)) months++; }
+    var slice = months ? cfg.cap / months : 0, budget = 0;
+
+    for (var j=start;j<bars.length;j++){
+      var b = bars[j], o = b[1];
+      if (strat === 'bh'){
+        if (j === start) buy(j, o, cash);
+      } else if (strat === 'dca'){
+        if (j === start || monthOf(j) !== monthOf(j-1)){
+          budget += slice;
+          var before = cash;
+          if (buy(j, o, budget)) budget -= before - cash;
+        }
+      } else {
+        var prev = sig.want[j-1];
+        if (sh > 0 && j - entryIdx >= tPlus){
+          // cắt lỗ trong phiên: mở cửa đã dưới mức cắt thì khớp ở giá mở cửa
+          if (stopPx && o <= stopPx){ sell(j, o, 'cắt lỗ'); armed = false; }
+          else if (!prev){ sell(j, o, 'tín hiệu'); }
+          else if (stopPx && b[3] <= stopPx){ sell(j, stopPx, 'cắt lỗ'); armed = false; }
+        }
+        if (!prev) armed = true;   // sau cắt lỗ phải chờ tín hiệu tắt rồi bật lại
+        if (sh === 0 && prev && armed && entryIdx === -1 && !(marks.length && marks[marks.length-1].i === j)) buy(j, o, cash);
+        // cắt lỗ ngay phiên mua (coin) nếu giá rơi thủng
+        if (sh > 0 && tPlus === 0 && entryIdx === j && stopPx && b[3] <= stopPx){ sell(j, stopPx, 'cắt lỗ'); armed = false; }
+      }
+      if (sh > 0) held++;
+      hold.push(sh > 0);
+      eq.push(cash + sh * b[4]);
+    }
+    var open = null;
+    if (sh > 0 && strat !== 'bh' && strat !== 'dca'){
+      var last = bars[bars.length-1], val = sh * last[4], f = val * (fee + tax);
+      open = { in:bars[entryIdx][0], inPx:entryPx, out:null, outPx:last[4], bars:bars.length-1-entryIdx,
+               pnl:val - f - cost, ret:(val - f)/cost - 1, why:'đang mở' };
+    }
+    return { eq:eq, hold:hold, trades:trades, open:open, marks:marks, fees:fees,
+             exposure: held / (bars.length - start), dcaBuys: strat === 'dca' ? marks.length : 0 };
+  }
+
+  function stats(eq, cap, d0, d1){
+    var peak = -Infinity, mdd = 0;
+    eq.forEach(function(v){ if (v > peak) peak = v; var dd = v/peak - 1; if (dd < mdd) mdd = dd; });
+    var ret = eq[eq.length-1]/cap - 1;
+    var yrs = (Date.parse(d1) - Date.parse(d0)) / (365.25 * 864e5);
+    return { ret:ret, mdd:mdd, cagr: yrs > 0.25 ? Math.pow(1 + ret, 1/yrs) - 1 : null };
+  }
+  function tradeStats(list){
+    var w = 0, gw = 0, gl = 0, sw = 0, sl = 0;
+    list.forEach(function(t){ if (t.pnl > 0){ w++; gw += t.pnl; sw += t.ret; } else { gl -= t.pnl; sl += t.ret; } });
+    var n = list.length;
+    return { n:n, win: n ? w/n : null, avgW: w ? sw/w : null, avgL: n-w ? sl/(n-w) : null, pf: gl > 0 ? gw/gl : (gw > 0 ? Infinity : null) };
+  }
+
+  /* chạy một backtest hoàn chỉnh trên một mảng nến */
+  function backtest(bars, cfg){
+    var lastD = bars[bars.length-1][0];
+    var startD = new Date(Date.parse(lastD) - cfg.years * 365.25 * 864e5).toISOString().slice(0, 10);
+    var start = 0; while (start < bars.length && bars[start][0] < startD) start++;
+    var warm = { ma: Math.max(cfg.p.f || 0, cfg.p.s || 0), rsi: 15, bo: Math.max(cfg.p.n || 0, cfg.p.m || 0) + 1 }[cfg.strat] || 0;
+    var short = false;
+    if (start < warm){ start = Math.min(warm, bars.length - 2); short = true; }
+    if (bars.length - start < 20) throw new Error('Quá ít dữ liệu để chạy (' + bars.length + ' phiên).');
+    var sig = signals(cfg.strat, bars, cfg.p);
+    var r = simulate(bars, start, cfg, cfg.strat, sig);
+    var bh = cfg.strat === 'bh' ? r : simulate(bars, start, cfg, 'bh', sig);
+    var d0 = bars[start][0];
+    var closed = r.trades.concat(r.open ? [r.open] : []);
+    return { bars:bars, start:start, sig:sig, r:r, bh:bh, short:short,
+             st:stats(r.eq, cfg.cap, d0, lastD), bst:stats(bh.eq, cfg.cap, d0, lastD), ts:tradeStats(closed) };
+  }
+
+  /* ---------- đọc form ---------- */
+  function readCfg(){
+    var strat = $('strat').value, p = {};
+    STRATS[strat].params.forEach(function(q){
+      var v = parseFloat($('p-' + q.k).value);
+      p[q.k] = isFinite(v) && v > 0 ? v : q.v;
+    });
+    if (strat === 'ma' || strat === 'bo'){ ['f','s','n','m'].forEach(function(k){ if (p[k]) p[k] = Math.max(1, Math.round(p[k])); }); }
+    if (strat === 'ma' && p.f >= p.s) throw new Error('MA nhanh phải ngắn hơn MA chậm.');
+    if (strat === 'rsi' && p.lo >= p.hi) throw new Error('Ngưỡng mua RSI phải thấp hơn ngưỡng bán.');
+    var num = function(id, d){ var v = parseFloat($(id).value); return isFinite(v) && v >= 0 ? v : d; };
+    return { kind:S.kind, strat:strat, p:p, years:+$('years').value,
+             cap: num('cap', DEF[S.kind].cap) || DEF[S.kind].cap, fee:num('fee', 0), tax:num('tax', 0), stop:Math.min(num('stop', 0), 50) };
+  }
+  function normSym(s){
+    s = String(s || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (S.kind === 'coin' && s && !/(USDT|USDC|FDUSD|BTC|ETH|BNB)$/.test(s)) s += 'USDT';
+    return s;
+  }
+
+  function renderParams(){
+    var st = STRATS[$('strat').value];
+    $('params').innerHTML = st.params.map(function(q){
+      return '<label>' + esc(q.label) + '<input id="p-' + q.k + '" type="number" min="1" step="1" value="' + q.v + '"></label>';
+    }).join('');
+    $('desc').textContent = st.desc;
+    $('basket').hidden = S.kind !== 'vn';
+  }
+
+  function setStatus(txt, kind){
+    var el = $('stt');
+    el.textContent = txt;
+    el.className = 'lab-status' + (kind ? ' is-' + kind : '');
+  }
+  function showErr(msg){ $('err').textContent = msg; $('err').hidden = !msg; }
+
+  /* ---------- chạy một mã ---------- */
+  var runId = 0;
+  function run(){
+    showErr('');
+    var cfg; try { cfg = readCfg(); } catch(e){ showErr(e.message); return; }
+    var sym = normSym($('sym').value);
+    if (!sym){ showErr('Nhập mã cần chạy.'); return; }
+    $('sym').value = sym;
+    var id = ++runId;
+    setStatus('đang tải ' + sym + '…', 'wait');
+    $('run').disabled = true;
+    load(cfg.kind, sym, cfg.years).then(function(d){
+      if (id !== runId) return;
+      var res = backtest(d.bars, cfg);
+      res.sym = sym; res.cfg = cfg; res.src = d.src;
+      S.last = res;
+      render(res);
+      setStatus(sym + ' · ' + d.src + ' · ' + (d.bars.length - res.start) + ' phiên', 'live');
+    }).catch(function(e){
+      if (id !== runId) return;
+      showErr('Không chạy được ' + sym + ': ' + (e && e.message || e) + (cfg.kind === 'vn' ? '. Kiểm tra lại mã, hoặc thử mã trong rổ VN30.' : '. Mã coin dạng BTCUSDT, ETHUSDT…'));
+      setStatus('lỗi', 'err');
+    }).then(function(){ $('run').disabled = false; });
+  }
+
+  function render(res){
+    var cfg = res.cfg, st = res.st, bst = res.bst, ts = res.ts, r = res.r;
+    var strat = cfg.strat, isBH = strat === 'bh', isDCA = strat === 'dca';
+    var endEq = r.eq[r.eq.length-1];
+    var cur = cfg.kind === 'vn' ? ' đ' : ' USDT';
+    function kpi(label, val, vs, c){
+      return '<div class="kpi"><dt>' + label + '</dt><dd class="' + (c || '') + '">' + val + '</dd>' +
+             (vs !== undefined ? '<span class="vs">' + vs + '</span>' : '') + '</div>';
+    }
+    var vsBH = function(s){ return isBH ? undefined : 'mua và giữ: ' + s; };
+    var h = '';
+    h += kpi('Lợi nhuận', fmtPct(st.ret, true), vsBH(fmtPct(bst.ret, true)), cls(st.ret));
+    h += kpi('Lãi kép / năm', fmtPct(st.cagr, true), vsBH(fmtPct(bst.cagr, true)), cls(st.cagr || 0));
+    h += kpi('Sụt giảm tối đa', fmtPct(st.mdd), vsBH(fmtPct(bst.mdd)), 'c-down');
+    h += kpi('Vốn cuối kỳ', fmtMoney(endEq) + '<span style="font-size:.7em">' + cur + '</span>', 'phí + thuế đã trả: ' + fmtMoney(r.fees));
+    if (!isBH && !isDCA){
+      h += kpi('Số lệnh', ts.n + '', ts.n ? 'thắng ' + fmtPct(ts.win) : 'không có lệnh nào');
+      h += kpi('Hệ số lợi nhuận', ts.pf === null ? '—' : ts.pf === Infinity ? '∞' : ts.pf.toLocaleString('vi-VN', { maximumFractionDigits:2 }),
+               'lãi TB ' + fmtPct(ts.avgW, true) + ' · lỗ TB ' + fmtPct(ts.avgL));
+      h += kpi('Thời gian cầm hàng', fmtPct(r.exposure), 'số phiên đang nắm hàng');
+    }
+    if (isDCA) h += kpi('Số lần mua', r.dcaBuys + '', 'mỗi lần ~' + fmtMoney(cfg.cap / Math.max(1, r.dcaBuys)) + cur);
+    $('kpis').innerHTML = h;
+
+    // nhận xét
+    var v = $('verdict'), msg, cl = '';
+    var d0 = res.bars[res.start][0], d1 = res.bars[res.bars.length-1][0];
+    var span = dmy(d0) + ' – ' + dmy(d1);
+    if (isBH){
+      msg = '<b>' + span + ':</b> mua ' + res.sym + ' rồi để yên thì ' + (st.ret >= 0 ? 'lãi ' : 'lỗ ') + fmtPct(Math.abs(st.ret)) +
+            ', nhưng có lúc tài sản giảm ' + fmtPct(-st.mdd) + ' so với đỉnh. Đây là mốc để so mọi chiến lược khác.';
+    } else {
+      var diff = st.ret - bst.ret, safer = st.mdd > bst.mdd + 0.02;
+      cl = diff > 0 ? 'win' : 'lose';
+      msg = '<b>' + span + ':</b> ' + STRATS[strat].name + ' ' + (diff > 0 ? 'thắng' : 'thua') + ' mua và giữ ' +
+            fmtPct(Math.abs(diff)).replace('%', '') + ' điểm phần trăm';
+      msg += safer ? ', và sụt giảm tối đa nhẹ hơn (' + fmtPct(st.mdd) + ' so với ' + fmtPct(bst.mdd) + ').'
+                   : st.mdd < bst.mdd - 0.02 ? ', và còn sụt giảm sâu hơn (' + fmtPct(st.mdd) + ' so với ' + fmtPct(bst.mdd) + ').'
+                   : ', với mức sụt giảm tối đa tương đương.';
+      if (diff <= 0 && safer) msg += ' Lãi ít hơn nhưng đỡ đau hơn — tuỳ bạn coi trọng điều nào.';
+      if (!isDCA && ts.n > 0 && ts.n < 6) msg += ' Chỉ có ' + ts.n + ' lệnh: quá ít để kết luận gì, có thể chỉ là may hoặc rủi.';
+      if (!isDCA && ts.n === 0) msg += ' Luật không phát tín hiệu nào trong giai đoạn này.';
+    }
+    if (res.short) msg += ' <span class="c-muted">Dữ liệu không đủ ' + cfg.years + ' năm nên giai đoạn bị rút ngắn.</span>';
+    v.className = 'verdict ' + cl;
+    v.innerHTML = msg;
+
+    // bảng lệnh
+    var list = isBH || isDCA ? [] : r.trades.concat(r.open ? [r.open] : []);
+    if (isDCA){
+      $('tr-head').innerHTML = '<tr><th class="l">Ngày mua</th><th>Giá</th></tr>';
+      $('tr-rows').innerHTML = r.marks.map(function(m){
+        return '<tr><td class="l">' + dmy(res.bars[m.i][0]) + '</td><td>' + fmtPx(m.px) + '</td></tr>';
+      }).join('');
+      $('tr-note').textContent = r.marks.length + ' lần mua, giá vốn bình quân thấp hơn giá trung bình khi giá biến động.';
+    } else if (isBH){
+      $('tr-head').innerHTML = '<tr><th class="l">Ngày mua</th><th>Giá</th><th>Giá cuối</th><th>Lãi/lỗ</th></tr>';
+      $('tr-rows').innerHTML = '<tr><td class="l">' + dmy(d0) + '</td><td>' + fmtPx(res.bars[res.start][1]) + '</td><td>' +
+        fmtPx(res.bars[res.bars.length-1][4]) + '</td><td class="' + cls(st.ret) + '">' + fmtPct(st.ret, true) + '</td></tr>';
+      $('tr-note').textContent = 'Một lệnh duy nhất.';
+    } else {
+      $('tr-head').innerHTML = '<tr><th class="l">Mua</th><th>Giá mua</th><th class="l">Bán</th><th>Giá bán</th><th>Số phiên</th><th>Lãi/lỗ</th><th class="l">Lý do bán</th></tr>';
+      $('tr-rows').innerHTML = list.length ? list.slice().reverse().map(function(t){
+        return '<tr><td class="l">' + dmy(t.in) + '</td><td>' + fmtPx(t.inPx) + '</td><td class="l">' + (t.out ? dmy(t.out) : '—') +
+          '</td><td>' + fmtPx(t.outPx) + '</td><td>' + t.bars + '</td><td class="' + cls(t.ret) + '">' + fmtPct(t.ret, true) +
+          '</td><td class="l">' + esc(t.why) + '</td></tr>';
+      }).join('') : '<tr><td class="l" colspan="7">Không có lệnh nào.</td></tr>';
+      $('tr-note').textContent = 'Mới nhất ở trên · lãi/lỗ đã trừ phí và thuế';
+    }
+
+    $('out').hidden = false;
+    drawChart(res);
+  }
+
+  /* ---------- đồ thị ---------- */
+  var W = 900, H = 470, L = 56, R = 14, P1, P2;
+  function el(n, a, txt){
+    var e = document.createElementNS(NS, n);
+    for (var k in a) e.setAttribute(k, a[k]);
+    if (txt !== undefined) e.textContent = txt;
+    return e;
+  }
+  function ticks(lo, hi, n){
+    var span = hi - lo || 1, step = Math.pow(10, Math.floor(Math.log10(span / n))), f = span / n / step;
+    step *= f > 5 ? 10 : f > 2 ? 5 : f > 1 ? 2 : 1;
+    var out = []; for (var v = Math.ceil(lo/step)*step; v <= hi + 1e-9; v += step) out.push(v);
+    return out;
+  }
+  function drawChart(res){
+    var svg = $('chart'); while (svg.firstChild) svg.removeChild(svg.firstChild);
+    // vẽ theo đúng bề rộng thật để chữ trên trục luôn là 11px
+    W = Math.max(300, Math.round(svg.parentNode.getBoundingClientRect().width) || 900);
+    H = W < 560 ? 420 : 470;
+    var mid = Math.round((H - 26) * 0.56);
+    P1 = [12, mid - 18]; P2 = [mid + 16, H - 24];
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    var bars = res.bars, s0 = res.start, n = bars.length - s0, cfg = res.cfg;
+    var isBH = cfg.strat === 'bh';
+    var x = function(i){ return L + (i - s0) * (W - L - R) / Math.max(1, n - 1); };
+
+    // --- khung 1: giá ---
+    var lo = Infinity, hi = -Infinity;
+    for (var i=s0;i<bars.length;i++){ lo = Math.min(lo, bars[i][4]); hi = Math.max(hi, bars[i][4]); }
+    res.sig.lines.forEach(function(ln){ for (var i=s0;i<bars.length;i++) if (ln.v[i] !== null){ lo = Math.min(lo, ln.v[i]); hi = Math.max(hi, ln.v[i]); } });
+    var pad = (hi - lo) * 0.08 || 1; lo -= pad; hi += pad;
+    var y1 = function(v){ return P1[1] - (v - lo) / (hi - lo) * (P1[1] - P1[0]); };
+    var g = el('g', {});
+    ticks(lo, hi, 4).forEach(function(t){
+      g.appendChild(el('line', { x1:L, x2:W-R, y1:y1(t), y2:y1(t), stroke:'var(--line-soft)', 'stroke-width':1 }));
+      g.appendChild(el('text', { x:L-8, y:y1(t)+4, 'text-anchor':'end', 'font-size':11, fill:'var(--muted)', 'font-family':'var(--font-mono)' },
+        cfg.kind === 'vn' && t >= 1000 ? (t/1000).toLocaleString('vi-VN') + 'k' : fmtPx(t)));
+    });
+    // nền vùng đang nắm hàng
+    var hold = res.r.hold, runStart = -1;
+    for (var k=0;k<=n;k++){
+      var on = k < n && hold[k];
+      if (on && runStart < 0) runStart = k;
+      if (!on && runStart >= 0){
+        if (!isBH) g.appendChild(el('rect', { x:x(s0+runStart), y:P1[0], width:Math.max(1, x(s0+k-1) - x(s0+runStart)), height:P1[1]-P1[0],
+          fill:'var(--s-strat)', 'fill-opacity':0.07 }));
+        runStart = -1;
+      }
+    }
+    function path(vals, yf){
+      var d = '', pen = false;
+      for (var i=s0;i<bars.length;i++){
+        var v = vals(i);
+        if (v === null || v === undefined){ pen = false; continue; }
+        d += (pen ? 'L' : 'M') + x(i).toFixed(1) + ' ' + yf(v).toFixed(1);
+        pen = true;
+      }
+      return d;
+    }
+    res.sig.lines.forEach(function(ln){
+      g.appendChild(el('path', { d:path(function(i){ return ln.v[i]; }, y1), fill:'none', stroke:ln.color, 'stroke-width':1.5, 'stroke-opacity':0.85, 'stroke-dasharray':'4 3' }));
+    });
+    g.appendChild(el('path', { d:path(function(i){ return bars[i][4]; }, y1), fill:'none', stroke:'var(--ink)', 'stroke-width':1.5 }));
+    // điểm mua bán
+    res.r.marks.forEach(function(m){
+      var cx = x(m.i), cy = y1(m.px);
+      if (m.side === 'buy'){
+        g.appendChild(el('path', { d:'M' + cx + ' ' + (cy+5) + 'l-6 10h12z', fill:'var(--up)', stroke:'var(--surface)', 'stroke-width':1.5 }));
+      } else {
+        g.appendChild(el('path', { d:'M' + cx + ' ' + (cy-5) + 'l-6 -10h12z', fill:'var(--down)', stroke:'var(--surface)', 'stroke-width':1.5 }));
+      }
+    });
+    g.appendChild(el('text', { x:L, y:P1[0]+2, 'font-size':11, 'font-weight':700, fill:'var(--muted)', 'dominant-baseline':'hanging', dx:6 }, 'GIÁ ' + res.sym));
+    svg.appendChild(g);
+
+    // --- khung 2: lợi nhuận ---
+    var cap = cfg.cap, se = res.r.eq, be = res.bh.eq;
+    var lo2 = 0, hi2 = 0;
+    for (var a=0;a<n;a++){ lo2 = Math.min(lo2, se[a]/cap-1, be[a]/cap-1); hi2 = Math.max(hi2, se[a]/cap-1, be[a]/cap-1); }
+    var pad2 = (hi2 - lo2) * 0.08 || 0.01; lo2 -= pad2; hi2 += pad2;
+    // chừa 34px trên cùng cho tiêu đề và nhãn giá trị
+    var y2 = function(v){ return P2[1] - (v - lo2) / (hi2 - lo2) * (P2[1] - P2[0] - 34); };
+    var g2 = el('g', {});
+    ticks(lo2, hi2, 4).forEach(function(t){
+      g2.appendChild(el('line', { x1:L, x2:W-R, y1:y2(t), y2:y2(t), stroke: Math.abs(t) < 1e-9 ? 'var(--line)' : 'var(--line-soft)', 'stroke-width':1 }));
+      g2.appendChild(el('text', { x:L-8, y:y2(t)+4, 'text-anchor':'end', 'font-size':11, fill:'var(--muted)', 'font-family':'var(--font-mono)' }, fmtPct(Math.abs(t) < 1e-9 ? 0 : t, true).replace(',0%', '%')));
+    });
+    if (!isBH) g2.appendChild(el('path', { d:path(function(i){ return be[i-s0]/cap-1; }, y2), fill:'none', stroke:'var(--s-bh)', 'stroke-width':2 }));
+    g2.appendChild(el('path', { d:path(function(i){ return se[i-s0]/cap-1; }, y2), fill:'none', stroke:'var(--s-strat)', 'stroke-width':2 }));
+    g2.appendChild(el('text', { x:L, y:P2[0]+2, 'font-size':11, 'font-weight':700, fill:'var(--muted)', 'dominant-baseline':'hanging', dx:6 }, 'LÃI / LỖ TRÊN VỐN'));
+    // giá trị cuối kỳ đặt dưới tiêu đề khung, không đè lên đường
+    var lab = el('text', { x:L, y:P2[0]+18, 'font-size':12, fill:'var(--ink)', 'dominant-baseline':'hanging', dx:6 });
+    lab.appendChild(el('tspan', { 'font-weight':700, fill:'var(--s-strat)' }, '— '));
+    lab.appendChild(el('tspan', { 'font-weight':700 }, (isBH ? 'Mua và giữ ' : 'Chiến lược ') + fmtPct(se[n-1]/cap-1, true)));
+    if (!isBH){
+      lab.appendChild(el('tspan', { 'font-weight':700, fill:'var(--s-bh)', dx:12 }, '— '));
+      lab.appendChild(el('tspan', {}, 'Mua và giữ ' + fmtPct(be[n-1]/cap-1, true)));
+    }
+    g2.appendChild(lab);
+    // trục thời gian
+    var nt = Math.min(W < 560 ? 4 : 6, n), lastLbl = -1;
+    for (var q=0;q<nt;q++){
+      var ii = s0 + Math.round(q * (n - 1) / Math.max(1, nt - 1));
+      if (ii === lastLbl) continue; lastLbl = ii;
+      var d = bars[ii][0];
+      g2.appendChild(el('text', { x:x(ii), y:H-6, 'text-anchor': q === 0 ? 'start' : q === nt-1 ? 'end' : 'middle', 'font-size':11, fill:'var(--muted)', 'font-family':'var(--font-mono)' },
+        d.slice(5,7) + '/' + d.slice(2,4)));
+    }
+    svg.appendChild(g2);
+
+    // --- lớp rê chuột ---
+    var cross = el('line', { y1:P1[0], y2:P2[1], stroke:'var(--muted)', 'stroke-width':1, 'stroke-dasharray':'3 3', visibility:'hidden' });
+    var dot1 = el('circle', { r:4, fill:'var(--s-strat)', stroke:'var(--surface)', 'stroke-width':2, visibility:'hidden' });
+    var dot2 = el('circle', { r:4, fill:'var(--s-bh)', stroke:'var(--surface)', 'stroke-width':2, visibility:'hidden' });
+    svg.appendChild(cross); svg.appendChild(dot2); svg.appendChild(dot1);
+    var hit = el('rect', { x:L, y:0, width:W-L-R, height:H, fill:'transparent' });
+    svg.appendChild(hit);
+    function at(evt){
+      var pt = svg.getBoundingClientRect(), cx = (evt.clientX - pt.left) * W / pt.width;
+      var i = Math.round((cx - L) / (W - L - R) * (n - 1));
+      i = Math.max(0, Math.min(n - 1, i));
+      var bi = s0 + i, xx = x(bi);
+      cross.setAttribute('x1', xx); cross.setAttribute('x2', xx); cross.setAttribute('visibility', 'visible');
+      dot1.setAttribute('cx', xx); dot1.setAttribute('cy', y2(se[i]/cap-1)); dot1.setAttribute('visibility', 'visible');
+      if (!isBH){ dot2.setAttribute('cx', xx); dot2.setAttribute('cy', y2(be[i]/cap-1)); dot2.setAttribute('visibility', 'visible'); }
+      var parts = ['<span><b>' + dmy(bars[bi][0]) + '</b></span>', '<span>Giá <b>' + fmtPx(bars[bi][4]) + '</b></span>'];
+      res.sig.lines.forEach(function(ln){ if (ln.v[bi] !== null) parts.push('<span>' + esc(ln.name) + ' <b>' + fmtPx(ln.v[bi]) + '</b></span>'); });
+      if (res.sig.rsi && res.sig.rsi[bi] !== null) parts.push('<span>RSI <b>' + res.sig.rsi[bi].toFixed(1) + '</b></span>');
+      parts.push('<span>' + (isBH ? 'Mua và giữ' : 'Chiến lược') + ' <b class="' + cls(se[i]/cap-1) + '">' + fmtPct(se[i]/cap-1, true) + '</b></span>');
+      if (!isBH){
+        parts.push('<span>Mua và giữ <b class="' + cls(be[i]/cap-1) + '">' + fmtPct(be[i]/cap-1, true) + '</b></span>');
+        parts.push('<span>' + (res.r.hold[i] ? 'đang nắm hàng' : 'đang cầm tiền') + '</span>');
+      }
+      $('readout').innerHTML = parts.join('');
+    }
+    hit.addEventListener('pointermove', at);
+    hit.addEventListener('pointerdown', at);
+    hit.addEventListener('pointerleave', function(){
+      [cross, dot1, dot2].forEach(function(e){ e.setAttribute('visibility', 'hidden'); });
+    });
+
+    // chú giải
+    var lg = '<span><i style="background:var(--ink)"></i>Giá đóng cửa</span>';
+    res.sig.lines.forEach(function(ln){ lg += '<span><i style="background:' + ln.color + ';opacity:.85"></i>' + esc(ln.name) + ' (nét đứt)</span>'; });
+    lg += '<span><i class="tri u"></i>Mua</span>';
+    if (!isBH && cfg.strat !== 'dca') lg += '<span><i class="tri d"></i>Bán</span>';
+    lg += '<span><i style="background:var(--s-strat)"></i>' + (isBH ? 'Mua và giữ' : 'Lãi/lỗ chiến lược') + '</span>';
+    if (!isBH) lg += '<span><i style="background:var(--s-bh)"></i>Lãi/lỗ mua và giữ</span>';
+    if (!isBH && cfg.strat !== 'dca') lg += '<span><i style="background:var(--s-strat);opacity:.2;height:10px"></i>Đang nắm hàng</span>';
+    $('legend').innerHTML = lg;
+    $('readout').innerHTML = '<span class="c-muted">Rê chuột hoặc chạm vào đồ thị để đọc từng phiên.</span>';
+  }
+
+  var rsz = null, lastW = 0;
+  window.addEventListener('resize', function(){
+    clearTimeout(rsz);
+    rsz = setTimeout(function(){
+      var w = $('chart').parentNode.getBoundingClientRect().width;
+      if (S.last && !$('out').hidden && Math.abs(w - lastW) > 2){ lastW = w; drawChart(S.last); }
+    }, 150);
+  });
+
+  /* ---------- chạy cả rổ ---------- */
+  var basketSyms = null;
+  function getBasket(){
+    if (basketSyms) return Promise.resolve(basketSyms);
+    return fetch('data/analysis.json', { cache:'no-cache' }).then(function(r){ return r.json(); })
+      .then(function(d){ basketSyms = (d.symbols || []).map(function(s){ return s.symbol; }); return basketSyms; });
+  }
+  function runBasket(){
+    showErr('');
+    var cfg; try { cfg = readCfg(); } catch(e){ showErr(e.message); return; }
+    if (cfg.strat === 'bh'){ showErr('Chọn một chiến lược khác “Mua và giữ” để so trên cả rổ.'); return; }
+    var id = ++runId;
+    $('basket').disabled = true;
+    getBasket().then(function(list){
+      var rows = [], done = 0, q = list.slice();
+      $('bk').hidden = false;
+      $('bk-title').textContent = STRATS[cfg.strat].name + ' · ' + cfg.years + ' năm · ' + list.length + ' mã';
+      $('bk-rows').innerHTML = ''; $('bk-sum').textContent = 'Đang chạy…'; $('bk-sum').className = 'verdict';
+      function worker(){
+        if (id !== runId || !q.length) return Promise.resolve();
+        var sym = q.shift();
+        return load('vn', sym, cfg.years).then(function(d){
+          var res = backtest(d.bars, cfg);
+          rows.push({ sym:sym, ret:res.st.ret, bh:res.bst.ret, mdd:res.st.mdd, bmdd:res.bst.mdd, n:res.ts.n, win:res.ts.win, local:d.src !== 'VNDirect' });
+        }).catch(function(){ rows.push({ sym:sym, err:true }); })
+          .then(function(){ done++; setStatus('cả rổ: ' + done + '/' + list.length, 'wait'); return worker(); });
+      }
+      return Promise.all([worker(), worker(), worker(), worker()]).then(function(){
+        if (id !== runId) return;
+        renderBasket(rows, cfg);
+        setStatus('cả rổ: xong ' + rows.filter(function(r){ return !r.err; }).length + ' mã', 'live');
+      });
+    }).catch(function(e){
+      showErr('Không đọc được danh sách rổ: ' + (e && e.message || e));
+      setStatus('lỗi', 'err');
+    }).then(function(){ $('basket').disabled = false; });
+  }
+  function renderBasket(rows, cfg){
+    var ok = rows.filter(function(r){ return !r.err; });
+    ok.sort(function(a, b){ return (b.ret - b.bh) - (a.ret - a.bh); });
+    var wins = ok.filter(function(r){ return r.ret > r.bh; }).length;
+    var safer = ok.filter(function(r){ return r.mdd > r.bmdd; }).length;
+    var avg = function(f){ return ok.reduce(function(s, r){ return s + f(r); }, 0) / Math.max(1, ok.length); };
+    var anyLocal = ok.some(function(r){ return r.local; });
+    var sum = $('bk-sum');
+    sum.className = 'verdict ' + (wins * 2 > ok.length ? 'win' : 'lose');
+    sum.innerHTML = '<b>' + STRATS[cfg.strat].name + ' thắng mua và giữ ở ' + wins + '/' + ok.length + ' mã.</b> ' +
+      'Lợi nhuận trung bình ' + fmtPct(avg(function(r){ return r.ret; }), true) + ' so với ' + fmtPct(avg(function(r){ return r.bh; }), true) +
+      ' nếu mua và giữ. Sụt giảm tối đa nhẹ hơn ở ' + safer + '/' + ok.length + ' mã (trung bình ' + fmtPct(avg(function(r){ return r.mdd; })) +
+      ' so với ' + fmtPct(avg(function(r){ return r.bmdd; })) + ').' +
+      (anyLocal ? ' <span class="c-muted">Một số mã không gọi được VNDirect nên chỉ chạy trên dữ liệu 1 năm có sẵn.</span>' : '');
+    $('bk-rows').innerHTML = ok.map(function(r){
+      var d = r.ret - r.bh;
+      return '<tr class="click" data-sym="' + r.sym + '"><td class="l"><b>' + r.sym + '</b>' + (r.local ? ' <span class="c-muted">· 1 năm</span>' : '') + '</td>' +
+        '<td class="' + cls(r.ret) + '">' + fmtPct(r.ret, true) + '</td><td class="' + cls(r.bh) + '">' + fmtPct(r.bh, true) + '</td>' +
+        '<td class="' + cls(d) + '">' + fmtPct(d, true) + '</td><td>' + fmtPct(r.mdd) + '</td><td>' + fmtPct(r.bmdd) + '</td>' +
+        '<td>' + (cfg.strat === 'dca' ? '—' : r.n) + '</td><td>' + (cfg.strat === 'dca' ? '—' : fmtPct(r.win)) + '</td></tr>';
+    }).join('') + rows.filter(function(r){ return r.err; }).map(function(r){
+      return '<tr><td class="l">' + r.sym + '</td><td colspan="7" class="l c-muted">không tải được dữ liệu</td></tr>';
+    }).join('');
+  }
+  $('bk-rows').addEventListener('click', function(e){
+    var tr = e.target.closest('tr[data-sym]');
+    if (!tr) return;
+    $('sym').value = tr.getAttribute('data-sym');
+    run();
+    $('out').scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+
+  /* ---------- gắn sự kiện ---------- */
+  function setKind(k){
+    S.kind = k;
+    Array.prototype.forEach.call(document.querySelectorAll('#kind .chip'), function(c){ c.classList.toggle('on', c.getAttribute('data-k') === k); });
+    var d = DEF[k];
+    $('sym').value = d.sym; $('cap').value = d.cap; $('fee').value = d.fee; $('tax').value = d.tax;
+    $('sym-list').innerHTML = (k === 'vn' ? (basketSyms || []) : ['BTCUSDT','ETHUSDT','BNBUSDT','SOLUSDT','XRPUSDT','ADAUSDT','DOGEUSDT'])
+      .map(function(s){ return '<option value="' + s + '">'; }).join('');
+    $('bk').hidden = true;
+    renderParams();
+  }
+  $('kind').addEventListener('click', function(e){
+    var b = e.target.closest('.chip'); if (!b || b.classList.contains('on')) return;
+    setKind(b.getAttribute('data-k')); run();
+  });
+  $('strat').addEventListener('change', function(){ renderParams(); run(); });
+  $('years').addEventListener('change', run);
+  $('run').addEventListener('click', run);
+  $('basket').addEventListener('click', runBasket);
+  $('sym').addEventListener('keydown', function(e){ if (e.key === 'Enter') run(); });
+  $('params').addEventListener('keydown', function(e){ if (e.key === 'Enter') run(); });
+
+  getBasket().then(function(){ if (S.kind === 'vn') setKind('vn'); run(); }, function(){ renderParams(); run(); });
+  renderParams();
+})();
+</script>
+</body>
+</html>
