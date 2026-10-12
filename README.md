@@ -44,6 +44,7 @@ nhanh hơn.
 
 - **Quét sàn** — chấm điểm 342 mã (VNALL + HNX30) sau mỗi phiên, loại mã có giá trị khớp dưới 3 tỷ/phiên, xếp theo điểm. Bảng lọc và sắp xếp được theo mọi cột; mã vào shortlist được chấm lại đầy đủ.
 - **Sổ theo dõi ý tưởng** — mã đạt mức MUA được mở thành một ý tưởng, khớp ở giá mở cửa phiên sau, theo dõi từng phiên tới khi chạm cắt lỗ, chạm mục tiêu, bị hạ bậc hoặc hết 40 phiên. Cùng luật với backtest nên thành tích sống so được thẳng với thành tích backtest.
+- **Nhắc trước giờ mở cửa** — 8:50 mỗi ngày, đọc lại sổ theo dõi và nhắc đúng việc cần làm: lệnh nào chờ đặt (kèm mức bỏ qua nếu mở cửa nhảy quá xa), mã nào đang giữ và cắt lỗ ở đâu, phiên trước đã đóng lệnh nào.
 - **Cảnh báo trong phiên** — mỗi 30 phút từ 9:15 đến 14:45, bot so giá khớp với ngưỡng đã cố định từ phiên trước: mất cắt lỗ, giảm sàn, lùi vào vùng mua, chạm mục tiêu. Không chấm điểm lại giữa phiên (nến chưa đóng), chỉ gửi Telegram, không commit gì vào repo.
 - **Tín hiệu phiên này** — bot quét sau mỗi phiên và chỉ liệt kê cái vừa *thay đổi*: mã đổi bậc khuyến nghị, lùi về vùng mua, mất điểm cắt lỗ hoặc đạt mục tiêu của kế hoạch phiên trước, setup kỹ thuật mới xuất hiện, thị trường đổi trạng thái. Chia ba mức ưu tiên, gửi được qua Telegram. **Bot không đặt lệnh và không giữ khoá API giao dịch nào.**
 - **Kiểm chứng bộ luật** — backtest point-in-time 5 năm, có phí, thuế, trượt giá, T+2 và lô 100; so 11 cách vào/thoát lệnh với mua-và-giữ VN-Index, trên cả rổ VN30 và rổ quét sàn 159 mã. Kết quả: **chưa biến thể nào thắng mua-và-giữ về lợi nhuận** (tốt nhất +14,8% so với +27,7% trong 5 năm) nhưng sụt vốn nhẹ hơn hẳn (−23,0% so với −40,3%). Phát hiện đáng giá nhất: trên rổ rộng, **bỏ chốt lời cứng** đưa R trung bình từ −0,08 lên **+0,54/lệnh** — chỗ rò rỉ nằm ở mục tiêu đặt quá gần, không nằm ở cách chọn mã. Con số nằm ngay trên trang, không bị giấu.
@@ -72,6 +73,7 @@ scripts/
   scan.py         quét cả sàn, lọc thanh khoản, chọn shortlist
   signals.py      so hai phiên, phát tín hiệu, gửi Telegram
   ideas.py        sổ theo dõi: điểm buy → theo dõi → điểm sell
+  morning.py      nhắc việc cần làm trước giờ mở cửa
   intraday.py     canh ngưỡng giá trong phiên, gửi Telegram
   telegram_setup.py  lấy chat id, gửi thử một tin
   backtest.py     chạy lại bộ luật trên 5 năm quá khứ

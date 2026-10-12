@@ -7,10 +7,14 @@ name: Cảnh báo trong phiên
 on:
   schedule:
     # Giờ VN = UTC + 7. Phiên 9:15–14:45, nghỉ trưa 11:30–13:00.
-    # Sáng:  02:30→09:30, 03:00→10:00 … 04:30→11:30
-    - cron: "30,0 2-4 * * 1-5"
-    # Chiều: 06:00→13:00, 06:30→13:30, 07:00→14:00, 07:30→14:30
-    - cron: "0,30 6-7 * * 1-5"
+    # Lần đầu để 9:20 cho sát lúc ATO vừa khớp, chứ không phải 9:00 (script tự
+    # thoát trước 9:15 nên lịch 9:00 chỉ chạy không).
+    # Sáng:  02:20→09:20, 02:50→09:50, 03:20→10:20, 03:50→10:50
+    - cron: "20,50 2-3 * * 1-5"
+    # 04:20→11:20, sát giờ nghỉ trưa
+    - cron: "20 4 * * 1-5"
+    # Chiều: 06:05→13:05, 06:35→13:35, 07:05→14:05, 07:35→14:35 (sát ATC)
+    - cron: "5,35 6-7 * * 1-5"
   workflow_dispatch:
 
 permissions:

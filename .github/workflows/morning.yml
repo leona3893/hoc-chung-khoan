@@ -1,0 +1,36 @@
+name: Nhắc trước giờ mở cửa
+
+# Đọc lại sổ theo dõi và bảng điểm của phiên trước rồi nhắn một tin ngắn:
+# hôm nay cần đặt lệnh gì, đang giữ gì, cắt lỗ ở đâu.
+# Không gọi API giá, không tính lại gì, không commit gì vào repo.
+
+on:
+  schedule:
+    # 01:50 UTC = 08:50 giờ Việt Nam, thứ Hai → thứ Sáu (trước phiên ATO 9:00)
+    - cron: "50 1 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: morning
+  cancel-in-progress: true
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Nhắc việc cần làm hôm nay
+        env:
+          PYTHONIOENCODING: utf-8
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scripts/morning.py

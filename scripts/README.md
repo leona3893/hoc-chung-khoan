@@ -9,6 +9,7 @@ Ba script, chạy bằng Python chuẩn (không cần `pip install`):
 | `ideas.py` | **Tầng 3** — mở ý tưởng khi có điểm buy, theo dõi tới điểm sell → `data/ideas.json` | Sau `signals.py` |
 | `signals.py` | So bảng điểm phiên mới với phiên trước, tìm những gì vừa đổi → `data/signals.json` + gửi Telegram | Ngay sau `fetch_ssi.py` |
 | `backtest.py` | Chạy lại bộ luật trên 5 năm quá khứ → `data/backtest.json` | Khi sửa luật, hoặc hằng tuần |
+| `morning.py` | Nhắc trước giờ mở cửa: hôm nay cần đặt lệnh gì, đang giữ gì, cắt lỗ ở đâu | 8:50 mỗi ngày |
 | `intraday.py` | Canh giá so với ngưỡng của kế hoạch phiên trước, nhắn Telegram | Mỗi 30 phút trong phiên |
 | `telegram_setup.py` | Lấy chat id và gửi thử một tin | Một lần, khi bật Telegram |
 
@@ -142,6 +143,27 @@ Biên độ một phiên của HOSE là ±7%, HNX ±10%. Nên cả ba script đ�
 một phiên** là dấu hiệu điều chỉnh giá, và xử lý riêng: `signals.py` báo "chuỗi giá vừa bị điều
 chỉnh" rồi bỏ hết so sánh ngưỡng của mã đó trong phiên; `ideas.py` đóng ý tưởng với lý do
 "điều chỉnh cổ tức" và không ghi nhận R giả; `intraday.py` cũng vậy.
+
+---
+
+## Một ngày của bot
+
+| Giờ VN | Script | Gửi gì | Ghi repo |
+| --- | --- | --- | --- |
+| **8:50** | `morning.py` | Nhắc việc cần làm hôm nay: lệnh chờ đặt, mã đang giữ và mức cắt lỗ của từng mã | Không |
+| 9:20 → 14:35, mỗi 30 phút | `intraday.py` | Chỉ khi có mã chạm ngưỡng: mất cắt lỗ, giảm sàn, vào vùng mua, chạm mục tiêu | Không |
+| **16:30** | `scan.py` → `fetch_ssi.py` → `signals.py` → `ideas.py` | Hai tin: cái gì vừa đổi, và điểm buy/sell của sổ theo dõi | Có |
+| 17:00 thứ Bảy | `backtest.py` | Không nhắn | Có |
+
+Nhịp này khớp với cách hệ thống hoạt động: nến ngày đóng lúc 14:45 nên **16:30 mới là lúc
+điểm đáng tin**; bạn đọc buổi tối, nghĩ lúc không có giá nhấp nháy, rồi **đặt lệnh sáng hôm sau**
+— đúng như `ideas.py` và backtest đều giả định (khớp ở giá mở cửa phiên sau). Tin 8:50 tồn tại
+vì qua một đêm thì dễ quên mất mình định làm gì.
+
+`morning.py` không gọi API giá và không tính lại gì — chỉ đọc `ideas.json` và `analysis.json`
+nên không bao giờ sai vì nến chưa đóng. Không có gì đang mở hoặc chờ khớp thì nó im lặng
+(`--force` để gửi cả khi trống). Nó cũng không biết ngày nghỉ lễ: hôm đó tin vẫn tới nhưng
+không có gì phải làm vì phiên 16:30 trước đó không tạo ý tưởng mới.
 
 ---
 
