@@ -24,47 +24,6 @@
   --fs-xl:1.4rem; --fs-2xl:1.85rem;
 }
 
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --ground:#0E1116;
-    --surface:#161A21;
-    --surface-2:#1D222B;
-    --ink:#E9ECF1;
-    --ink-2:#C4CBD5;
-    --muted:#94A0B0;
-    --line:#272E39;
-    --line-soft:#20262F;
-    --accent:#EFB544;
-    --accent-ink:#F2C067;
-    --accent-wash:#241D0F;
-    --up:#2FBF6B;
-    --down:#F2605B;
-    --ceil:#BE72F0;
-    --floor:#5C9CFF;
-    --ref:#EFB544;
-    --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
-  }
-}
-:root[data-theme="dark"]{
-  --ground:#0E1116;
-  --surface:#161A21;
-  --surface-2:#1D222B;
-  --ink:#E9ECF1;
-  --ink-2:#C4CBD5;
-  --muted:#94A0B0;
-  --line:#272E39;
-  --line-soft:#20262F;
-  --accent:#EFB544;
-  --accent-ink:#F2C067;
-  --accent-wash:#241D0F;
-  --up:#2FBF6B;
-  --down:#F2605B;
-  --ceil:#BE72F0;
-  --floor:#5C9CFF;
-  --ref:#EFB544;
-  --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.7);
-}
-
 *{box-sizing:border-box}
 body{
   margin:0; background:var(--ground); color:var(--ink);
@@ -286,81 +245,45 @@ p + .fig, ul + .fig, ol + .fig, .dl + .fig, .formula + .fig, .tbl-wrap + .fig,
 .lab-empty{ font-size:var(--fs-xs); color:var(--muted); font-style:italic }
 
 /* ==========================================================
-   Adobe Spectrum (S2) — token hoá, phẳng có viền, tầng bậc chính xác
-   nền gray-100 · thẻ gray-50 viền gray-200 · accent blue-900
-   bo 8px (control) / 12px (card) · motion 130–190ms · focus 2px blue-800
+   Data-Dense Dashboard — tối đa thông tin trên mỗi màn hình
+   nền xám trung tính · thẻ trắng viền mảnh · accent xanh dữ liệu · xanh lục / đỏ cho tăng / giảm
+   padding 8–12px · chữ 13–15px · bo 4–6px · số dùng mono tabular · bảng đầu dính, hover tô hàng
    ========================================================== */
 :root{
-  --ground:#F8F8F8;
+  --ground:#F5F5F5;
   --surface:#FFFFFF;
-  --surface-2:#F3F3F3;
-  --ink:#222222;
-  --ink-2:#464646;
-  --muted:#6D6D6D;
-  --line:#D5D5D5;
-  --line-soft:#E6E6E6;
-  --accent:#0265DC;
-  --accent-ink:#0054B6;
-  --accent-wash:#E0F2FF;
-  --focus:#147AF3;
-  --up:#007A4D;
-  --down:#D31510;
-  --ceil:#7326D3;
-  --floor:#0B6E7C;
-  --ref:#A34D00;
-  --font-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
-  --font-serif:"Source Serif 4",Georgia,serif;
-  --font-mono:"Source Code Pro",ui-monospace,"Cascadia Mono",monospace;
-  --shadow:0 1px 4px rgba(0,0,0,.08);
-  --radius:12px;
-  --radius-ctl:8px;
-  --dur:160ms;
-  --ease:cubic-bezier(.45,0,.4,1);
+  --surface-2:#F0F2F5;
+  --ink:#262A30;
+  --ink-2:#3D434C;
+  --muted:#5E6670;
+  --line:#D4D8DE;
+  --line-soft:#E5E8EC;
+  --accent:#1F5FD0;
+  --accent-ink:#174AA6;
+  --accent-wash:#E8EFFC;
+  --on-accent:#FFFFFF;
+  --focus:#1F5FD0;
+  --up:#0E7C42;
+  --down:#C62828;
+  --ceil:#7B3FC4;
+  --floor:#0B7285;
+  --ref:#9A6A00;
+  --font-body:"Inter","Segoe UI",system-ui,sans-serif;
+  --font-serif:"Inter","Segoe UI",system-ui,sans-serif;
+  --font-mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",monospace;
+  --fs-xs:.75rem; --fs-sm:.8125rem; --fs-base:.9375rem; --fs-lg:1.0625rem;
+  --fs-xl:1.25rem; --fs-2xl:1.5rem;
+  --shadow:0 1px 2px rgba(16,24,40,.06);
+  --grid-gap:8px;
+  --card-pad:12px;
+  --row-h:36px;
+  --header-h:48px;
+  --radius:6px;
+  --radius-ctl:4px;
+  --dur:120ms;
+  --ease:cubic-bezier(.2,0,0,1);
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --ground:#2C2C2C;
-    --surface:#373737;
-    --surface-2:#434343;
-    --ink:#F5F5F5;
-    --ink-2:#DEDEDE;
-    --muted:#C4C4C4;
-    --line:#6A6A6A;
-    --line-soft:#565656;
-    --accent:#7CB9F9;
-    --accent-ink:#A5D0FB;
-    --accent-wash:#1F4272;
-    --focus:#7CBCFB;
-    --up:#4FD3A1;
-    --down:#FF9A94;
-    --ceil:#C9A3F9;
-    --floor:#5FD4E8;
-    --ref:#F2CE79;
-    --shadow:0 1px 4px rgba(0,0,0,.4);
-  }
-}
-:root[data-theme="dark"]{
-    --ground:#2C2C2C;
-    --surface:#373737;
-    --surface-2:#434343;
-    --ink:#F5F5F5;
-    --ink-2:#DEDEDE;
-    --muted:#C4C4C4;
-    --line:#6A6A6A;
-    --line-soft:#565656;
-    --accent:#7CB9F9;
-    --accent-ink:#A5D0FB;
-    --accent-wash:#1F4272;
-    --focus:#7CBCFB;
-    --up:#4FD3A1;
-    --down:#FF9A94;
-    --ceil:#C9A3F9;
-    --floor:#5FD4E8;
-    --ref:#F2CE79;
-  --shadow:0 1px 4px rgba(0,0,0,.4);
-}
-
-/* chữ: Adobe Clean → Source Sans 3; heading không bóp chữ, đậm 700 */
+/* chữ: heading không bóp chữ, đậm 700 */
 body{ background:var(--ground); line-height:1.5 }
 main{ max-width:76ch }
 h1,h2,h3{ letter-spacing:0; font-weight:700 }
@@ -369,7 +292,7 @@ h1{ font-weight:800; letter-spacing:-.01em }
 h3{ font-weight:700 }
 b,strong{ font-weight:700 }
 
-/* "detail" của Spectrum: nhãn nhỏ viết hoa, đậm, chữ thường không mono */
+/* nhãn "detail": nhãn nhỏ viết hoa, đậm, chữ thường không mono */
 .eyebrow, .rail-title, .fact dt, .level-meta, .rail-note, .plan .when,
 .dl dt small, .aside b, .warn b, .lab-s, .lab-hint, .lab-ohlc dt{
   font-family:var(--font-body); font-weight:700; letter-spacing:.06em; text-transform:uppercase;
@@ -407,7 +330,7 @@ a{ color:var(--accent-ink); text-decoration-thickness:1px; text-underline-offset
 .fig{ padding:18px 18px 14px }
 .fig figcaption{ border-top-color:var(--line-soft) }
 
-/* in-line alert của S2: viền 2px, bo 12, nền lớp 2 */
+/* khối ghi chú / cảnh báo: viền, bo, nền lớp 2 */
 .aside, .warn{ padding:16px 20px; border-radius:var(--radius); background:var(--surface); box-shadow:none }
 .aside{ border:2px solid var(--line) }
 .warn{ border:2px solid var(--down) }
@@ -438,7 +361,7 @@ table.board tbody tr:hover td, table.tbl tbody tr:hover td{ background:var(--sur
 .plan li, .disclaimer{ border-color:var(--line-soft) }
 .legend{ font-family:var(--font-body); font-weight:600 }
 
-/* checkbox Spectrum: ô 16px, nhãn sentence-case, không chip */
+/* checkbox: ô 16px, nhãn sentence-case, không chip */
 .mark{
   margin-top:28px; padding:0; min-height:44px; border:0; border-radius:0; background:transparent; box-shadow:none;
   font-family:var(--font-body); font-size:var(--fs-sm); font-weight:600; letter-spacing:0; text-transform:none; color:var(--ink-2);
@@ -559,7 +482,7 @@ html{ scroll-behavior:smooth }
   font:700 var(--fs-sm)/1 var(--font-body); border-radius:var(--radius-ctl); min-height:36px;
   padding:0 16px; cursor:pointer; border:1px solid var(--line);
 }
-.jn-primary{ background:var(--accent); border-color:var(--accent); color:#fff }
+.jn-primary{ background:var(--accent); border-color:var(--accent); color:var(--on-accent) }
 .jn-primary:hover{ background:var(--accent-ink); border-color:var(--accent-ink) }
 .jn-ghost{ background:var(--surface); color:var(--ink-2) }
 .jn-ghost:hover{ background:var(--surface-2); color:var(--ink) }
@@ -610,3 +533,122 @@ html{ scroll-behavior:smooth }
 .stat dt{ font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--muted) }
 .stat dd{ margin:4px 0 0; font-weight:700; font-size:var(--fs-base); font-variant-numeric:tabular-nums }
 .stat dd small{ display:block; font-weight:400; font-size:var(--fs-xs); color:var(--muted); margin-top:3px; line-height:1.5 }
+
+/* ==========================================================
+   Data-Dense Dashboard — lớp hoàn thiện: mật độ, lưới, bảng, KPI
+   ========================================================== */
+body{ background:var(--ground); font-size:var(--fs-base); line-height:1.55 }
+.wrap{ max-width:1440px; padding:0 clamp(12px,2vw,24px) }
+main{ max-width:92ch; padding-top:20px }
+h1,h2,h3{ font-family:var(--font-body); letter-spacing:-.01em }
+.num, table td, .stat dd, .jn-cards dd, .jn-facts dd, .fact dd, .lab-ohlc dd{ font-variant-numeric:tabular-nums }
+
+/* thanh trên: cao 48px, dính đầu trang */
+.topnav{ position:sticky; top:0; z-index:20; background:var(--surface); border-bottom:1px solid var(--line) }
+.topnav .wrap{ min-height:var(--header-h); padding-top:6px; padding-bottom:6px; gap:2px 6px }
+.topnav .brand{ font-size:var(--fs-sm); font-weight:800 }
+.topnav a.nav{ font-size:var(--fs-sm); min-height:32px; padding:0 10px; border-radius:var(--radius-ctl) }
+.topnav a.nav[aria-current="page"]{ background:var(--accent-wash); color:var(--accent-ink); box-shadow:inset 0 -2px 0 var(--accent) }
+
+/* masthead gọn: tiêu đề nhỏ, dải KPI */
+.masthead{ background:var(--surface); border-bottom:1px solid var(--line) }
+.masthead .wrap{ padding-top:20px; padding-bottom:16px }
+.eyebrow{ font-size:11px; color:var(--accent-ink) }
+h1{ font-size:clamp(1.5rem,3vw,1.875rem); font-weight:800; margin-top:6px }
+.h1-sub{ font-size:var(--fs-base); margin-top:6px; max-width:110ch; line-height:1.5 }
+.facts{ margin-top:14px; display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:var(--grid-gap);
+  border:0; background:transparent; overflow:visible; border-radius:0 }
+.fact{ padding:8px var(--card-pad); background:var(--surface-2); border:1px solid var(--line-soft); border-radius:var(--radius);
+  border-left:3px solid var(--accent) }
+.fact:last-child{ border-right:1px solid var(--line-soft) }
+.fact dt{ font-size:10.5px }
+.fact dd{ font-size:var(--fs-base); font-weight:700; margin-top:2px }
+
+/* lưới trang: rail 220px dính dưới thanh trên */
+@media (min-width:1000px){
+  .shell{ grid-template-columns:220px minmax(0,1fr); gap:0 28px }
+  .rail{ top:var(--header-h); max-height:calc(100vh - var(--header-h)); padding:20px 0 24px }
+}
+.rail ol{ margin-top:8px }
+.rail a{ min-height:30px; padding:5px 10px; font-size:var(--fs-sm); border-radius:var(--radius-ctl); grid-template-columns:24px minmax(0,1fr) }
+.rail a.on{ background:var(--accent-wash); color:var(--accent-ink); box-shadow:inset 2px 0 0 var(--accent) }
+.rail-note{ margin-top:14px }
+
+/* khối nội dung: khoảng cách chặt */
+.level{ padding-bottom:28px; scroll-margin-top:calc(var(--header-h) + 12px) }
+.level + .level{ padding-top:26px }
+.level-head{ gap:10px }
+.level-num{ font-size:var(--fs-xl); font-family:var(--font-mono); font-weight:700; padding-top:2px }
+.level h2{ font-size:clamp(1.2rem,2.4vw,1.4rem); font-weight:800 }
+.level-meta{ margin-top:3px; font-size:var(--fs-xs) }
+h3{ font-size:var(--fs-lg); margin-top:22px; font-weight:700 }
+p + p, p + ul, ul + p{ margin-top:10px }
+
+.aside{ font-family:var(--font-body); font-style:normal; font-size:var(--fs-sm); line-height:1.55;
+  padding:10px var(--card-pad); border:1px solid var(--line-soft); border-left:3px solid var(--accent);
+  background:var(--accent-wash); border-radius:var(--radius) }
+.warn{ padding:10px var(--card-pad); border:1px solid color-mix(in srgb, var(--down) 30%, transparent); border-left:3px solid var(--down);
+  background:color-mix(in srgb, var(--down) 5%, var(--surface)); border-radius:var(--radius) }
+.formula{ padding:10px var(--card-pad); font-size:var(--fs-xs) }
+
+/* thẻ: trắng, viền mảnh, bóng rất nhẹ, padding 12px */
+.goal, .board-wrap, .tbl-wrap, .fig, .lab-read, .jn-form, .jn-item, .card, .stat, .jn-cards{
+  border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow);
+}
+.goal{ margin-top:12px; padding:8px var(--card-pad); border-left:3px solid var(--accent) }
+.card, .jn-form, .jn-item{ padding:var(--card-pad) }
+.fig{ padding:var(--card-pad) var(--card-pad) 10px; margin-top:12px }
+.fig figcaption{ margin-top:8px; padding-top:8px }
+.lab-read{ padding:10px var(--card-pad) }
+.grid, .strats{ gap:var(--grid-gap) !important }
+
+/* KPI: ô sát nhau, nhãn nhỏ, số mono lớn */
+.stat, .jn-cards{ gap:1px; background:var(--line-soft) }
+.stat > div, .jn-cards div{ padding:8px var(--card-pad) }
+.stat dt, .jn-cards dt, .jn-facts dt{ font-size:10.5px }
+.stat dd, .jn-cards dd{ font-family:var(--font-mono); font-size:var(--fs-lg); margin-top:2px }
+
+/* bảng: hàng 36px, đầu dính, hover tô hàng, số mono */
+table.board th, table.tbl th, .wl th, table.screen th, table.rules th{
+  position:sticky; top:0; z-index:1; background:var(--surface-2); font-size:11.5px; font-weight:700;
+  padding:6px 10px; border-bottom:1px solid var(--line); text-transform:none; letter-spacing:.01em }
+table.board td, .wl td, table.screen td{ padding:0 10px; height:var(--row-h); font-size:var(--fs-sm) }
+table.tbl td, table.rules td{ padding:7px 10px; font-size:var(--fs-sm) }
+table.board td, .wl td{ font-family:var(--font-mono) }
+.wl .sym, .wl .sub{ font-family:var(--font-body) }
+table.board tbody tr:hover td, table.tbl tbody tr:hover td, .wl tbody tr:hover td,
+table.screen tbody tr:hover td, table.rules tbody tr:hover td{ background:var(--accent-wash) }
+.wl tbody tr.on td, table.screen tbody tr.on td{ background:color-mix(in srgb, var(--accent) 14%, var(--surface)) }
+
+/* điều khiển: gọn 28–32px, bo 4px */
+.lab-tf{ gap:0 }
+.lab-tf button{ min-height:28px; padding:0 10px; font-size:var(--fs-xs); border-radius:0; margin-left:-1px }
+.lab-tf button:first-child{ border-radius:var(--radius-ctl) 0 0 var(--radius-ctl); margin-left:0 }
+.lab-tf button:last-child{ border-radius:0 var(--radius-ctl) var(--radius-ctl) 0 }
+.lab-tf button.on{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); position:relative }
+.lab-jump{ min-height:26px; padding:0 10px; border-width:1px; border-radius:var(--radius-ctl); background:var(--surface) }
+.lab-jump:hover{ background:var(--accent-wash) }
+.lab-inds button, .chips .chip{ min-height:28px; padding:0 10px; border-radius:var(--radius-ctl); font-size:var(--fs-xs) }
+.lab-inds button.on, .chips .chip.on{ background:var(--accent); border-color:var(--accent); color:var(--on-accent) }
+.lab-ctl input[type="text"], .lab-ctl select, .jn-form input, .jn-form select, .toolbar input[type=search]{
+  min-height:32px; border-radius:var(--radius-ctl); font-size:var(--fs-sm) }
+.lab-ctl input:focus-visible, .lab-ctl select:focus-visible, .jn-form input:focus-visible,
+.jn-form select:focus-visible, .toolbar input:focus-visible{
+  border-color:var(--accent); box-shadow:0 0 0 3px var(--accent-wash); outline:2px solid var(--focus); outline-offset:0 }
+.jn-primary, .jn-ghost, .jn-tools button{ min-height:32px; border-radius:var(--radius-ctl); font-size:var(--fs-sm) }
+.jn-primary{ color:var(--on-accent) }
+.jn-grid{ gap:var(--grid-gap) }
+.jn-list{ gap:var(--grid-gap); margin-top:12px }
+.mark{ margin-top:16px; min-height:36px }
+.tag, .lab-tag, .jn-side{ border-radius:var(--radius-ctl) }
+@media (pointer:coarse){
+  .lab-tf button, .lab-jump, .lab-inds button, .chip, .jn-primary, .jn-ghost, .jn-tools button, .topnav a.nav{ min-height:44px }
+}
+
+/* trạng thái đang tải: vòng xoay nhỏ */
+.lab-status.is-wait::before{ background:transparent; border:2px solid var(--accent); border-right-color:transparent;
+  width:8px; height:8px; animation:dd-spin .8s linear infinite }
+@keyframes dd-spin{ to{ transform:rotate(360deg) } }
+
+.outro{ padding:28px 0 40px }
+.disclaimer{ margin-top:20px; padding-top:14px; max-width:110ch }
