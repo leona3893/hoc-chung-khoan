@@ -9,7 +9,7 @@ Tài liệu tự học đầu tư, dạng trang HTML tĩnh — vừa để đọ
 | [`index.html`](index.html) | **Cổ phiếu** — 8 cấp độ từ bản chất cổ phiếu đến hệ thống giao dịch riêng, theo luật chơi HOSE/HNX/UPCoM, kèm 17 hình minh hoạ SVG |
 | [`coin.html`](coin.html) | **Coin** — 8 phần về thị trường crypto: khác cổ phiếu ở đâu, sàn và ví, đòn bẩy và funding, chu kỳ, pháp lý ở VN |
 | [`chien-luoc.html`](chien-luoc.html) | **Chiến lược** — chiến lược là gì, các trường phái và khung thời gian, năm chiến lược tiêu biểu, các bẫy khi backtest, kèm phòng backtest chạy trên giá thật (VNDirect/Binance) có tính phí, thuế, T+2 và so với mua & giữ, chạy được cả rổ VN30 |
-| [`phan-tich.html`](phan-tich.html) | **Phòng phân tích** — tín hiệu sau mỗi phiên, chấm điểm kỹ thuật và khuyến nghị cho VN30, kiểm chứng bộ luật bằng backtest, bảng theo dõi cổ phiếu + coin, đồ thị chỉ báo, nhật ký giao dịch giả lập |
+| [`phan-tich.html`](phan-tich.html) | **Phòng phân tích** — quét cả sàn, tín hiệu sau mỗi phiên, sổ theo dõi từ điểm buy tới điểm sell, bảng điểm kỹ thuật, kiểm chứng bộ luật bằng backtest, bảng theo dõi cổ phiếu + coin, đồ thị chỉ báo, nhật ký giao dịch giả lập |
 
 ## Dữ liệu
 
@@ -24,8 +24,26 @@ Hai đường, không có backend:
 
 Khi không có mạng, phần thực hành ở hai trang bài học lùi về bộ dữ liệu nhúng sẵn (HPG 01/06–07/09/2026 và 120 nến ngày của BTC), nên bài học vẫn đọc và bấm được offline.
 
+## Ba tầng của bot
+
+```
+quét sàn (342 mã)  →  lọc thanh khoản → 162 mã có điểm  →  shortlist ~40 mã
+                                                              ↓
+                           chấm điểm đầy đủ + kế hoạch giá (vùng mua, cắt lỗ, mục tiêu)
+                                                              ↓
+              tín hiệu "cái gì vừa đổi"  +  sổ theo dõi: điểm buy → theo dõi → điểm sell
+                                                              ↓
+                     trong phiên: canh ngưỡng giá, nhắn Telegram ngay khi chạm
+```
+
+Bot **không đặt lệnh** và không giữ khoá API giao dịch nào. Lý do dừng ở mức báo tín hiệu nằm ở
+mục kiểm chứng: bộ luật này chưa thắng được mua-và-giữ, nên tự động hoá nó chỉ làm mất tiền
+nhanh hơn.
+
 ## Công cụ trong phòng phân tích
 
+- **Quét sàn** — chấm điểm 342 mã (VNALL + HNX30) sau mỗi phiên, loại mã có giá trị khớp dưới 3 tỷ/phiên, xếp theo điểm. Bảng lọc và sắp xếp được theo mọi cột; mã vào shortlist được chấm lại đầy đủ.
+- **Sổ theo dõi ý tưởng** — mã đạt mức MUA được mở thành một ý tưởng, khớp ở giá mở cửa phiên sau, theo dõi từng phiên tới khi chạm cắt lỗ, chạm mục tiêu, bị hạ bậc hoặc hết 40 phiên. Cùng luật với backtest nên thành tích sống so được thẳng với thành tích backtest.
 - **Cảnh báo trong phiên** — mỗi 30 phút từ 9:15 đến 14:45, bot so giá khớp với ngưỡng đã cố định từ phiên trước: mất cắt lỗ, giảm sàn, lùi vào vùng mua, chạm mục tiêu. Không chấm điểm lại giữa phiên (nến chưa đóng), chỉ gửi Telegram, không commit gì vào repo.
 - **Tín hiệu phiên này** — bot quét sau mỗi phiên và chỉ liệt kê cái vừa *thay đổi*: mã đổi bậc khuyến nghị, lùi về vùng mua, mất điểm cắt lỗ hoặc đạt mục tiêu của kế hoạch phiên trước, setup kỹ thuật mới xuất hiện, thị trường đổi trạng thái. Chia ba mức ưu tiên, gửi được qua Telegram. **Bot không đặt lệnh và không giữ khoá API giao dịch nào.**
 - **Kiểm chứng bộ luật** — backtest point-in-time 5 năm trên 33 mã, có phí, thuế, trượt giá, T+2 và lô 100; so 10 cách vào/thoát lệnh với mua-và-giữ VN-Index. Kết quả hiện tại: **không biến thể nào thắng được mua-và-giữ** (tốt nhất +13,4% so với +27,7% trong 5 năm), bù lại sụt vốn nhẹ hơn (−22,6% so với −40,3%). Con số này nằm ngay trên trang, không bị giấu — vì đó là điều quyết định bạn nên tin bảng điểm tới mức nào.
@@ -51,14 +69,18 @@ assets/
   btc-fallback.json  dữ liệu BTC dự phòng khi mất mạng
 scripts/
   fetch_ssi.py    tải dữ liệu SSI, tính chỉ báo, chấm điểm
+  scan.py         quét cả sàn, lọc thanh khoản, chọn shortlist
   signals.py      so hai phiên, phát tín hiệu, gửi Telegram
+  ideas.py        sổ theo dõi: điểm buy → theo dõi → điểm sell
   intraday.py     canh ngưỡng giá trong phiên, gửi Telegram
   telegram_setup.py  lấy chat id, gửi thử một tin
   backtest.py     chạy lại bộ luật trên 5 năm quá khứ
   watchlist.json  danh sách mã được chấm điểm
   README.md       cách chạy bot, bật Telegram, đọc backtest
 data/
-  analysis.json   bối cảnh thị trường + bảng điểm mọi mã
+  scan.json       kết quả quét sàn, bảng gọn mọi mã qua lọc
+  ideas.json      sổ theo dõi ý tưởng đang mở và đã đóng
+  analysis.json   bối cảnh thị trường + bảng điểm rổ chính
   signals.json    tín hiệu phiên mới nhất + lịch sử 45 ngày
   backtest.json   kết quả kiểm chứng bộ luật
   bars/<mã>.json  nến và chỉ báo từng mã, tải khi cần

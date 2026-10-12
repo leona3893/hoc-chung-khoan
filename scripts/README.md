@@ -4,16 +4,37 @@ Ba script, chạy bằng Python chuẩn (không cần `pip install`):
 
 | Script | Làm gì | Chạy khi nào |
 | --- | --- | --- |
-| `fetch_ssi.py` | Tải giá từ SSI iBoard, tính chỉ báo, chấm điểm → `data/analysis.json`, `data/bars/` | Sau mỗi phiên |
+| `scan.py` | **Tầng 1** — quét cả sàn (VNALL + HNX30), lọc thanh khoản, chấm điểm nhanh → `data/scan.json` + shortlist | Sau mỗi phiên |
+| `fetch_ssi.py` | **Tầng 2** — chấm điểm đầy đủ cho VN30 + mã tay + shortlist → `data/analysis.json`, `data/bars/` | Sau `scan.py` |
+| `ideas.py` | **Tầng 3** — mở ý tưởng khi có điểm buy, theo dõi tới điểm sell → `data/ideas.json` | Sau `signals.py` |
 | `signals.py` | So bảng điểm phiên mới với phiên trước, tìm những gì vừa đổi → `data/signals.json` + gửi Telegram | Ngay sau `fetch_ssi.py` |
 | `backtest.py` | Chạy lại bộ luật trên 5 năm quá khứ → `data/backtest.json` | Khi sửa luật, hoặc hằng tuần |
 | `intraday.py` | Canh giá so với ngưỡng của kế hoạch phiên trước, nhắn Telegram | Mỗi 30 phút trong phiên |
 | `telegram_setup.py` | Lấy chat id và gửi thử một tin | Một lần, khi bật Telegram |
 
 ```bash
-python scripts/fetch_ssi.py          # bảng điểm
-python scripts/signals.py            # tín hiệu (cần chạy ít nhất 2 phiên mới có gì để so)
-python scripts/backtest.py           # kiểm chứng, ~3 phút lần đầu, sau đó vài giây nhờ cache
+python scripts/scan.py               # quét sàn, ~4 phút cho 342 mã
+python scripts/fetch_ssi.py          # bảng điểm đầy đủ cho rổ chính + shortlist
+python scripts/signals.py            # tín hiệu (cần ít nhất 2 phiên mới có gì để so)
+python scripts/ideas.py              # sổ theo dõi: điểm buy → theo dõi → điểm sell
+python scripts/intraday.py           # cảnh báo trong phiên (chạy trong giờ giao dịch)
+python scripts/backtest.py           # kiểm chứng rổ chính
+python scripts/backtest.py --universe scan   # kiểm chứng rổ quét sàn
+```
+
+## Ba tầng, đúng thứ tự
+
+```
+   scan.py          342 mã  →  lọc thanh khoản  →  162 mã có điểm  →  shortlist ~40 mã
+      ↓
+   fetch_ssi.py     chấm lại đầy đủ shortlist + VN30: có khối ngoại, hỗ trợ/kháng cự,
+                    và KẾ HOẠCH GIÁ (vùng mua, cắt lỗ, mục tiêu, lời/lỗ)
+      ↓
+   signals.py       so với phiên trước → cái gì vừa đổi
+   ideas.py         mã đạt MUA → mở ý tưởng → khớp giá mở cửa phiên sau → theo dõi
+                    từng phiên → ĐIỂM SELL khi chạm cắt lỗ / mục tiêu / bị hạ bậc / hết hạn
+      ↓
+   intraday.py      trong phiên: canh ngưỡng giá của kế hoạch, nhắn ngay khi chạm
 ```
 
 GitHub Actions đã chạy sẵn: bảng điểm + tín hiệu lúc 16:30 giờ Việt Nam các ngày trong tuần
@@ -73,6 +94,54 @@ Tự động hoá một bộ luật chưa chứng minh được kỳ vọng dư�
 
 Không có hai secret đó thì workflow vẫn chạy bình thường, chỉ là không gửi tin — trang web vẫn
 hiển thị tín hiệu ở mục 02.
+
+---
+
+## Quét sàn
+
+`scan.py` lấy rổ **VNALL** (toàn bộ cổ phiếu HOSE trong rổ VNAllShare, 312 mã) cộng **HNX30**.
+UPCoM không có API nhóm công khai — và cũng là nơi screen kỹ thuật ít đáng tin nhất vì thanh
+khoản quá mỏng; cần thì thêm tay vào `extra` trong `watchlist.json`.
+
+Hai cái lọc trước khi chấm điểm:
+
+- **Thanh khoản**: giá trị khớp trung bình 20 phiên ≥ 3 tỷ/phiên (`scan_min_value_20d`).
+  Dưới mức đó bạn không vào ra được mà không tự đẩy giá. Lọc này loại khoảng 180/342 mã.
+- **Đủ lịch sử**: ≥ 150 phiên, để MA50 và biên 52 tuần có nghĩa.
+
+Điểm trong `scan.json` **không có thành phần khối ngoại** (±10) — lấy dữ liệu khối ngoại cho 342
+mã là 342 request nữa, không đáng. Mã vào shortlist được `fetch_ssi.py` chấm lại đầy đủ.
+
+Đổi rổ, ngưỡng thanh khoản hay độ dài shortlist ở `watchlist.json`:
+`scan_groups`, `scan_min_value_20d`, `scan_min_sessions`, `scan_shortlist`.
+
+---
+
+## Sổ theo dõi ý tưởng
+
+`ideas.py` là phần trả lời câu "ra điểm buy rồi thì sao nữa". Vòng đời một ý tưởng:
+
+| Phiên | Việc xảy ra |
+| --- | --- |
+| t | Mã đạt mức **MUA** → ghi ý tưởng, trạng thái *chờ khớp* |
+| t+1 | Khớp ở **giá mở cửa**. Mở cửa cao hơn giá tín hiệu quá 4% thì **bỏ**, không mua đuổi |
+| mỗi phiên | Chạm cắt lỗ → ĐIỂM SELL · chạm mục tiêu → ĐIỂM SELL · bị hạ bậc xuống GIẢM/BÁN → ĐIỂM SELL · giữ quá 40 phiên → ĐIỂM SELL |
+
+Tối đa 5 ý tưởng mở cùng lúc, đúng như backtest. Nhờ vậy **thành tích sống so được thẳng với
+thành tích backtest** — lệch nhiều và kéo dài là dấu hiệu bộ luật đang mất tác dụng, không phải
+vận xấu.
+
+### Bẫy điều chỉnh giá — đã xử lý
+
+Cổ phiếu Việt Nam trả cổ tức bằng cổ phiếu rất thường xuyên, và chuỗi giá bị **điều chỉnh hồi
+tố**: giá quá khứ bị hạ xuống. Hậu quả nếu không chặn: kế hoạch cũ (cắt lỗ 25.631) đem so với
+giá mới đã điều chỉnh (22.700) trông y như một cú sập xuyên cắt lỗ, và bot báo "mất cắt lỗ" trong
+khi thực tế không ai mất gì.
+
+Biên độ một phiên của HOSE là ±7%, HNX ±10%. Nên cả ba script đều coi mức rơi **hơn 12% trong
+một phiên** là dấu hiệu điều chỉnh giá, và xử lý riêng: `signals.py` báo "chuỗi giá vừa bị điều
+chỉnh" rồi bỏ hết so sánh ngưỡng của mã đó trong phiên; `ideas.py` đóng ý tưởng với lý do
+"điều chỉnh cổ tức" và không ghi nhận R giả; `intraday.py` cũng vậy.
 
 ---
 

@@ -438,6 +438,8 @@ def main():
     ap.add_argument("--refresh", action="store_true", help="tải lại lịch sử giá và chấm điểm lại")
     ap.add_argument("--only", help="chỉ vài mã, cách nhau bằng phẩy")
     ap.add_argument("--years", type=float, default=0, help="chỉ backtest N năm gần nhất")
+    ap.add_argument("--universe", choices=["detail", "scan"], default="detail",
+                    help="detail = rổ đang chấm điểm đầy đủ; scan = toàn bộ mã qua lọc thanh khoản")
     args = ap.parse_args()
 
     with open(CFG_PATH, encoding="utf-8") as f:
@@ -447,8 +449,16 @@ def main():
 
     # danh sách mã: lấy đúng rổ đang được chấm điểm
     symbols = []
+    if args.universe == "scan":
+        scan_path = os.path.join(DATA_DIR, "scan.json")
+        if not os.path.exists(scan_path):
+            print("Chưa có data/scan.json — chạy scripts/scan.py trước.", file=sys.stderr)
+            return 1
+        with open(scan_path, encoding="utf-8") as f:
+            symbols = [r["symbol"] for r in json.load(f)["rows"]]
+        print(f"Rổ quét sàn: {len(symbols)} mã qua lọc thanh khoản.", file=sys.stderr)
     ana_path = os.path.join(DATA_DIR, "analysis.json")
-    if os.path.exists(ana_path):
+    if not symbols and os.path.exists(ana_path):
         with open(ana_path, encoding="utf-8") as f:
             symbols = [s["symbol"] for s in json.load(f)["symbols"]]
     if not symbols:
@@ -537,6 +547,7 @@ def main():
 
     out = {
         "updatedAt": datetime.now(VN_TZ).strftime("%Y-%m-%d %H:%M"),
+        "universeKind": args.universe,
         "period": {"from": all_days[0], "to": all_days[-1], "sessions": len(all_days)},
         "universe": sorted(scores_by_sym),
         "benchmark": bench,
@@ -558,7 +569,8 @@ def main():
         ],
     }
     os.makedirs(DATA_DIR, exist_ok=True)
-    with open(OUT_PATH, "w", encoding="utf-8") as f:
+    out_path = OUT_PATH if args.universe == "detail" else os.path.join(DATA_DIR, "backtest-scan.json")
+    with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
     print(f"\nXong sau {time.time()-t0:.0f}s → data/backtest.json (tốt nhất theo R: {best['name']})",
           file=sys.stderr)

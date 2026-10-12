@@ -685,7 +685,19 @@ def main():
             print(f"[nhóm] {g}: {len(universe)} mã", file=sys.stderr)
         except Exception as e:  # noqa: BLE001
             print(f"[lỗi] nhóm {g}: {e}", file=sys.stderr)
-    for s in cfg.get("extra", []):
+    # mã khai báo tay, cộng shortlist do scripts/scan.py chọn ra từ cả sàn
+    wanted = list(cfg.get("extra", []))
+    short_path = os.path.join(DATA_DIR, "scan-shortlist.json")
+    if os.path.exists(short_path):
+        try:
+            with open(short_path, encoding="utf-8") as f:
+                sl = json.load(f)
+            wanted += [x for x in sl.get("symbols", []) if x not in wanted]
+            print(f"[shortlist] thêm {len(sl.get('symbols', []))} mã từ quét sàn "
+                  f"(phiên {sl.get('dataDate')})", file=sys.stderr)
+        except Exception as e:  # noqa: BLE001
+            print(f"[lỗi] đọc shortlist: {e}", file=sys.stderr)
+    for s in wanted:
         if s not in universe:
             try:
                 q = fetch_quote(s)

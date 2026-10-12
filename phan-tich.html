@@ -213,13 +213,15 @@ table.screen tr:last-child td{ border-bottom:0 }
     <p class="rail-title">Trong trang này</p>
     <ol id="toc">
       <li><a href="#boicanh"><span class="n">01</span><span>Bối cảnh thị trường</span></a></li>
-      <li><a href="#tinhieu"><span class="n">02</span><span>Tín hiệu phiên này</span></a></li>
-      <li><a href="#bangdiem"><span class="n">03</span><span>Bảng điểm &amp; khuyến nghị</span></a></li>
-      <li><a href="#chitiet"><span class="n">04</span><span>Đọc kỹ một mã</span></a></li>
-      <li><a href="#theodoi"><span class="n">05</span><span>Bảng theo dõi của bạn</span></a></li>
-      <li><a href="#nhatky"><span class="n">06</span><span>Nhật ký giao dịch</span></a></li>
-      <li><a href="#kiemchung"><span class="n">07</span><span>Bộ luật này có ăn tiền không</span></a></li>
-      <li><a href="#cachcham"><span class="n">08</span><span>Cách máy chấm điểm</span></a></li>
+      <li><a href="#quetsan"><span class="n">02</span><span>Quét sàn</span></a></li>
+      <li><a href="#tinhieu"><span class="n">03</span><span>Tín hiệu phiên này</span></a></li>
+      <li><a href="#sotheodoi"><span class="n">04</span><span>Sổ theo dõi ý tưởng</span></a></li>
+      <li><a href="#bangdiem"><span class="n">05</span><span>Bảng điểm &amp; khuyến nghị</span></a></li>
+      <li><a href="#chitiet"><span class="n">06</span><span>Đọc kỹ một mã</span></a></li>
+      <li><a href="#theodoi"><span class="n">07</span><span>Bảng theo dõi của bạn</span></a></li>
+      <li><a href="#nhatky"><span class="n">08</span><span>Nhật ký giao dịch</span></a></li>
+      <li><a href="#kiemchung"><span class="n">09</span><span>Bộ luật này có ăn tiền không</span></a></li>
+      <li><a href="#cachcham"><span class="n">10</span><span>Cách máy chấm điểm</span></a></li>
       <li><a href="index.html"><span class="n">←</span><span>Bài học cổ phiếu</span></a></li>
       <li><a href="coin.html"><span class="n">←</span><span>Bài học coin</span></a></li>
     </ol>
@@ -245,10 +247,47 @@ table.screen tr:last-child td{ border-bottom:0 }
       <p class="lab-hint" style="margin-top:10px">Độ rộng đếm trên <span id="b-count">…</span> mã trong danh sách chấm điểm. Càng nhiều mã nằm trên MA50, sóng tăng càng có nền rộng; chỉ vài mã trụ kéo chỉ số là dấu hiệu yếu.</p>
     </section>
 
-    <!-- ================= 02 TÍN HIỆU ================= -->
-    <section class="level" id="tinhieu">
+    <!-- ================= 02 QUÉT SÀN ================= -->
+    <section class="level" id="quetsan">
       <div class="level-head">
         <span class="level-num">02</span>
+        <div>
+          <h2>Quét sàn</h2>
+          <p class="level-meta">Tầng 1 — một lượt cả sàn, lọc ra mã đáng xem kỹ</p>
+        </div>
+      </div>
+      <p class="goal"><b>Cách dùng:</b> đây là cái phễu. Máy chấm điểm toàn bộ cổ phiếu HOSE trong rổ VNAllShare cộng HNX30, loại mã thanh khoản mỏng, rồi xếp theo điểm. Bấm tiêu đề cột để sắp xếp; thử sắp theo <i>3 tháng</i> để thấy mã nào đang thực sự mạnh hơn phần còn lại. Mã có chữ “xem kỹ ↓” là mã đã được chấm lại đầy đủ — bấm vào để mở phần đọc kỹ.</p>
+
+      <dl class="breadth" id="scan-cards"></dl>
+      <p class="lab-hint" id="scan-note" style="margin-top:10px"></p>
+
+      <div class="toolbar">
+        <input type="search" id="scan-q" placeholder="Tìm mã hoặc tên…" aria-label="Tìm trong kết quả quét">
+        <div class="chips" id="scan-chips" role="group" aria-label="Lọc theo khuyến nghị">
+          <button type="button" class="chip on" data-f="">Tất cả</button>
+          <button type="button" class="chip" data-f="buy">MUA</button>
+          <button type="button" class="chip" data-f="acc">TÍCH LŨY</button>
+          <button type="button" class="chip" data-f="hold">THEO DÕI</button>
+          <button type="button" class="chip" data-f="reduce">GIẢM</button>
+          <button type="button" class="chip" data-f="sell">BÁN</button>
+        </div>
+        <span class="lab-status is-wait" id="scan-stt" style="margin-left:auto">đang tải…</span>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="tbl" id="scan-table">
+          <thead id="scan-head"></thead>
+          <tbody id="scan-body"></tbody>
+        </table>
+      </div>
+
+      <p class="warn"><b>Quét rộng không tự sinh ra lợi thế</b>Phễu này giúp bạn không bỏ sót mã, nhưng nó vẫn chạy đúng bộ luật mà mục 09 đã kiểm chứng là <b>không thắng được mua-và-giữ</b>. Quét 162 mã bằng một bộ luật không có lợi thế thì chỉ ra nhiều ứng viên hơn, không ra nhiều tiền hơn. Dùng nó để thu hẹp danh sách phải đọc, rồi tự quyết.</p>
+    </section>
+
+    <!-- ================= 03 TÍN HIỆU ================= -->
+    <section class="level" id="tinhieu">
+      <div class="level-head">
+        <span class="level-num">03</span>
         <div>
           <h2>Tín hiệu phiên này</h2>
           <p class="level-meta">Chỉ những gì vừa <i>thay đổi</i> so với phiên trước — không phải cả bảng điểm</p>
@@ -276,10 +315,34 @@ table.screen tr:last-child td{ border-bottom:0 }
       <p class="warn" id="sig-warn" hidden><b>Tín hiệu không phải lệnh mua</b>Theo chính phần kiểm chứng ở mục 07, bộ luật đứng sau các tín hiệu này <b>không thắng được mua-và-giữ VN-Index</b> trong 5 năm qua. Hãy dùng chúng như một cái máy quét để thu hẹp danh sách phải xem, rồi tự quyết định — đừng dùng như lệnh.</p>
     </section>
 
-    <!-- ================= 03 BẢNG ĐIỂM ================= -->
+    <!-- ================= 04 SỔ THEO DÕI ================= -->
+    <section class="level" id="sotheodoi">
+      <div class="level-head">
+        <span class="level-num">04</span>
+        <div>
+          <h2>Sổ theo dõi ý tưởng</h2>
+          <p class="level-meta">Tầng 3 — từ điểm buy, theo dõi từng phiên, tới điểm sell</p>
+        </div>
+      </div>
+      <p class="goal"><b>Vì sao có mục này:</b> một tín hiệu mua chỉ có nghĩa khi có người theo nó tới cùng. Sổ này làm đúng việc đó: mã nào đạt mức MUA thì được mở thành một ý tưởng, khớp ở giá mở cửa phiên sau, rồi bám từng phiên cho tới khi chạm cắt lỗ, chạm mục tiêu, bị hạ bậc hay hết thời gian giữ. Không tiền thật, không lệnh thật — nhưng mọi con số đều là giá thật.</p>
+
+      <dl class="breadth" id="idea-cards"></dl>
+      <p class="lab-hint" id="idea-rules" style="margin-top:10px"></p>
+      <p class="lab-status is-wait" id="idea-stt" style="margin-top:8px">đang tải…</p>
+
+      <h3>Đang mở</h3>
+      <div id="idea-open"></div>
+
+      <h3>Đã đóng</h3>
+      <div id="idea-closed"></div>
+
+      <p class="aside"><b>Con số đáng nhìn ở đây</b>Không phải tỷ lệ thắng, mà là <b>R trung bình</b> — mỗi đơn vị rủi ro bỏ ra thu về bao nhiêu. Và điều quan trọng hơn cả: so nó với con số backtest ở mục 09. Nếu sổ sống tệ hơn backtest nhiều và kéo dài, bộ luật đang mất tác dụng chứ không phải bạn gặp vận xấu.</p>
+    </section>
+
+    <!-- ================= 05 BẢNG ĐIỂM ================= -->
     <section class="level" id="bangdiem">
       <div class="level-head">
-        <span class="level-num">03</span>
+        <span class="level-num">05</span>
         <div>
           <h2>Bảng điểm &amp; khuyến nghị</h2>
           <p class="level-meta">VN30 và vài mã theo dõi thêm, chấm lại sau mỗi phiên</p>
@@ -326,7 +389,7 @@ table.screen tr:last-child td{ border-bottom:0 }
     <!-- ================= 03 CHI TIẾT ================= -->
     <section class="level" id="chitiet">
       <div class="level-head">
-        <span class="level-num">04</span>
+        <span class="level-num">06</span>
         <div>
           <h2>Đọc kỹ một mã</h2>
           <p class="level-meta">Đồ thị, kế hoạch giao dịch và toàn bộ lý do cho điểm số</p>
@@ -391,7 +454,7 @@ table.screen tr:last-child td{ border-bottom:0 }
     <!-- ================= 04 BẢNG THEO DÕI ================= -->
     <section class="level" id="theodoi">
       <div class="level-head">
-        <span class="level-num">05</span>
+        <span class="level-num">07</span>
         <div>
           <h2>Bảng theo dõi của bạn</h2>
           <p class="level-meta">Cổ phiếu VN và coin trong cùng một bảng, giá gọi trực tiếp</p>
@@ -446,7 +509,7 @@ table.screen tr:last-child td{ border-bottom:0 }
     <!-- ================= 05 NHẬT KÝ ================= -->
     <section class="level" id="nhatky">
       <div class="level-head">
-        <span class="level-num">06</span>
+        <span class="level-num">08</span>
         <div>
           <h2>Nhật ký giao dịch giả lập</h2>
           <p class="level-meta">Giấy và bút, có máy tính bỏ túi đi kèm</p>
@@ -465,7 +528,7 @@ table.screen tr:last-child td{ border-bottom:0 }
     <!-- ================= 07 KIỂM CHỨNG ================= -->
     <section class="level" id="kiemchung">
       <div class="level-head">
-        <span class="level-num">07</span>
+        <span class="level-num">09</span>
         <div>
           <h2>Bộ luật này có ăn tiền không</h2>
           <p class="level-meta">Chạy lại đúng bộ luật trên 5 năm quá khứ, có phí, thuế, trượt giá và T+2</p>
@@ -517,7 +580,7 @@ table.screen tr:last-child td{ border-bottom:0 }
 
     <section class="level" id="cachcham">
       <div class="level-head">
-        <span class="level-num">08</span>
+        <span class="level-num">10</span>
         <div>
           <h2>Cách máy chấm điểm</h2>
           <p class="level-meta">Minh bạch để bạn tự kiểm tra — và tự sửa luật nếu không đồng ý</p>
@@ -576,6 +639,7 @@ table.screen tr:last-child td{ border-bottom:0 }
 <script src="assets/chart.js"></script>
 <script src="assets/market.js"></script>
 <script src="assets/journal.js"></script>
+<script src="assets/scan-ideas.js" defer></script>
 <script>
 /* ============================================================
    Phần A — bảng điểm và khuyến nghị, đọc data/analysis.json

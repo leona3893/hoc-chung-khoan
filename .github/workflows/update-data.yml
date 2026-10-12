@@ -16,7 +16,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
 
@@ -24,7 +24,14 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Tải dữ liệu SSI và tính khuyến nghị
+      # Tầng 1 — quét cả sàn (VNALL + HNX30), lọc thanh khoản, chọn shortlist
+      - name: Quét sàn
+        env:
+          PYTHONIOENCODING: utf-8
+        run: python scripts/scan.py
+
+      # Tầng 2 — chấm điểm đầy đủ cho VN30 + mã khai báo tay + shortlist của tầng 1
+      - name: Chấm điểm và lập kế hoạch giá
         env:
           PYTHONIOENCODING: utf-8
         run: python scripts/fetch_ssi.py
@@ -32,12 +39,20 @@ jobs:
       - name: Quét tín hiệu và gửi Telegram
         env:
           PYTHONIOENCODING: utf-8
-          # Hai secret này là tuỳ chọn. Không có thì bot chỉ ghi data/signals.json
-          # cho trang web đọc, không gửi tin. Bot không đặt lệnh nên ở đây
-          # không có và không được đặt bất kỳ khoá API giao dịch nào.
+          # Hai secret này là tuỳ chọn. Không có thì bot chỉ ghi file cho trang web
+          # đọc, không gửi tin. Bot không đặt lệnh nên ở đây không có và không được
+          # đặt bất kỳ khoá API giao dịch nào.
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python scripts/signals.py
+
+      # Tầng 3 — sổ theo dõi: mở ý tưởng khi có điểm buy, theo dõi tới điểm sell
+      - name: Cập nhật sổ theo dõi ý tưởng
+        env:
+          PYTHONIOENCODING: utf-8
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scripts/ideas.py
 
       - name: Commit nếu có thay đổi
         run: |

@@ -38,6 +38,10 @@ VN_TZ = timezone(timedelta(hours=7))
 KEEP_DAYS = 45          # giữ lịch sử tín hiệu bao nhiêu ngày
 KEEP_MAX = 400          # và tối đa bao nhiêu bản ghi
 ZONE_TOL = 1.015        # "đã lùi về vùng mua" = giá cách mép dưới vùng không quá 1,5%
+# Biên độ một phiên của HOSE là ±7%, HNX ±10%. Giá rơi hơn 12% so với phiên trước
+# không phải do thị trường mà do chuỗi giá bị điều chỉnh hồi tố (trả cổ tức, chia
+# tách, phát hành thêm). Khi đó mọi mức giá trong kế hoạch phiên trước đều vô nghĩa.
+ADJ_DROP = 0.88
 
 # Thứ bậc khuyến nghị, để biết nâng hay hạ bậc
 RANK = {"sell": 0, "reduce": 1, "hold": 2, "acc": 3, "buy": 4}
@@ -59,6 +63,7 @@ KIND = {
     "pullback":      (3, "Test lại MA20", "buy"),
     "volspike":      (3, "Khối lượng đột biến", "buy"),
     "regime":        (1, "Đổi trạng thái thị trường", "info"),
+    "adjusted":      (2, "Giá bị điều chỉnh", "info"),
 }
 
 
@@ -76,6 +81,7 @@ GROUPABLE = {
     "breakout": "bứt phá kèm khối lượng",
     "pullback": "test lại MA20",
     "volspike": "có khối lượng đột biến",
+    "adjusted": "vừa bị điều chỉnh giá (cổ tức / chia tách)",
 }
 
 
@@ -162,8 +168,20 @@ def detect(cur, prev_state):
                                        + ("" if (rr or 0) >= 1.5 else
                                           " Tỷ lệ lời/lỗ dưới 1,5 — theo chính kế hoạch thì chưa đáng vào.")))
 
-        # --- 3. Mất điểm cắt lỗ / đạt mục tiêu của chính kế hoạch phiên trước
+        # --- 2b. Giá bị điều chỉnh hồi tố: kế hoạch phiên trước không còn so được
         pplan = p.get("plan") or {}
+        pclose = p.get("close")
+        if pclose and close < pclose * ADJ_DROP:
+            out.append(dict(base, kind="adjusted", level=2, side="info",
+                            title=f"{sym}: chuỗi giá vừa bị điều chỉnh "
+                                  f"({n0(pclose)} → {n0(close)})",
+                            detail="Mức giảm này vượt biên độ một phiên, nên gần như chắc chắn do "
+                                   "trả cổ tức, chia tách hoặc phát hành thêm — không phải do bị bán. "
+                                   "Mọi mức giá trong kế hoạch phiên trước (cắt lỗ, mục tiêu, vùng mua) "
+                                   "đã vô nghĩa; kế hoạch mới ở bảng điểm phiên này mới đúng."))
+            continue  # bỏ hẳn các so sánh ngưỡng của mã này trong phiên này
+
+        # --- 3. Mất điểm cắt lỗ / đạt mục tiêu của chính kế hoạch phiên trước
         if pplan.get("stop") and close < pplan["stop"] and (p.get("close") or close) >= pplan["stop"]:
             lvl, tag, side = KIND["stop_broken"]
             out.append(dict(base, kind="stop_broken", level=lvl, side=side,

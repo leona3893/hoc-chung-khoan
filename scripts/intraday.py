@@ -40,6 +40,7 @@ STATE = os.path.join(DATA_DIR, "cache", "intraday-state.json")
 
 VN_TZ = timezone(timedelta(hours=7))
 ZONE_TOL = 1.015          # "đã vào vùng mua" = giá cách mép dưới vùng không quá 1,5%
+ADJ_DROP = 0.88           # rơi hơn 12% so với giá đóng cửa phiên trước = điều chỉnh giá
 ACT_RECS = ("buy", "acc")  # chỉ canh mã phiên trước được khuyến nghị tích cực
 OPEN_MIN = 9 * 60 + 15     # 9:15
 CLOSE_MIN = 14 * 60 + 50   # 14:50, qua ATC một chút
@@ -50,6 +51,7 @@ KINDS = {
     "floor":  ("🔴", "giảm sàn"),
     "entry":  ("🟢", "vào vùng mua"),
     "target": ("🟡", "chạm mục tiêu"),
+    "adjust": ("⚪", "giá bị điều chỉnh"),
 }
 
 
@@ -141,6 +143,19 @@ def check(analysis, quotes, done):
             continue
         px = q["price"]
         fired = set(done.get(sym, []))
+        # Chuỗi giá bị điều chỉnh (cổ tức, chia tách) làm mọi ngưỡng của kế hoạch
+        # phiên trước lệch hẳn. Biên độ một phiên là ±7% nên rơi hơn 12% là dấu hiệu rõ.
+        if s.get("close") and px < s["close"] * ADJ_DROP:
+            if "adjust" not in fired:
+                icon, label = KINDS["adjust"]
+                hits.append({"symbol": sym, "kind": "adjust", "icon": icon, "label": label,
+                             "title": f"{sym} giá đang {n0(px)}, thấp hơn 12% so với đóng cửa "
+                                      f"phiên trước {n0(s['close'])}",
+                             "detail": "Vượt biên độ một phiên nên gần như chắc là điều chỉnh cổ "
+                                       "tức/chia tách, không phải bị bán. Mọi ngưỡng của kế hoạch "
+                                       "phiên trước đã vô nghĩa — chờ bảng điểm phiên này tính lại.",
+                             "price": px, "chgPct": q["chgPct"], "rec": s["rec"]})
+            continue
 
         def add(kind, title, detail):
             if kind in fired:
@@ -171,7 +186,7 @@ def check(analysis, quotes, done):
             add("target",
                 f"{sym} chạm mục tiêu {n0(plan['target'])} — đang {n0(px)} ({q['chgPct']:+.2f}%)",
                 "Theo kế hoạch thì chốt một phần và nâng cắt lỗ cho phần còn lại.")
-    order = {"stop": 0, "floor": 1, "target": 2, "entry": 3}
+    order = {"stop": 0, "floor": 1, "adjust": 2, "target": 3, "entry": 4}
     hits.sort(key=lambda h: (order[h["kind"]], h["symbol"]))
     return hits
 
