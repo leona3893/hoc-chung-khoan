@@ -26,6 +26,7 @@ Khi không có mạng, phần thực hành ở hai trang bài học lùi về b�
 
 ## Công cụ trong phòng phân tích
 
+- **Cảnh báo trong phiên** — mỗi 30 phút từ 9:15 đến 14:45, bot so giá khớp với ngưỡng đã cố định từ phiên trước: mất cắt lỗ, giảm sàn, lùi vào vùng mua, chạm mục tiêu. Không chấm điểm lại giữa phiên (nến chưa đóng), chỉ gửi Telegram, không commit gì vào repo.
 - **Tín hiệu phiên này** — bot quét sau mỗi phiên và chỉ liệt kê cái vừa *thay đổi*: mã đổi bậc khuyến nghị, lùi về vùng mua, mất điểm cắt lỗ hoặc đạt mục tiêu của kế hoạch phiên trước, setup kỹ thuật mới xuất hiện, thị trường đổi trạng thái. Chia ba mức ưu tiên, gửi được qua Telegram. **Bot không đặt lệnh và không giữ khoá API giao dịch nào.**
 - **Kiểm chứng bộ luật** — backtest point-in-time 5 năm trên 33 mã, có phí, thuế, trượt giá, T+2 và lô 100; so 10 cách vào/thoát lệnh với mua-và-giữ VN-Index. Kết quả hiện tại: **không biến thể nào thắng được mua-và-giữ** (tốt nhất +13,4% so với +27,7% trong 5 năm), bù lại sụt vốn nhẹ hơn (−22,6% so với −40,3%). Con số này nằm ngay trên trang, không bị giấu — vì đó là điều quyết định bạn nên tin bảng điểm tới mức nào.
 - **Bảng điểm & khuyến nghị** — chấm 34 mã (VN30 + vài mã thêm) trên thang ±100 theo bảy thành phần: cấu trúc xu hướng, động lượng, khối lượng, sức mạnh tương đối so với VN-Index, khối ngoại, vị trí 52 tuần và phanh rủi ro ngắn hạn. Quy ra năm mức từ MUA đến BÁN, kèm **toàn bộ lý do cho từng điểm cộng trừ**, vùng hỗ trợ/kháng cự, điểm cắt lỗ, mục tiêu và tỷ lệ lời/lỗ. Lọc, tìm và sắp xếp được theo mọi cột.
@@ -51,6 +52,8 @@ assets/
 scripts/
   fetch_ssi.py    tải dữ liệu SSI, tính chỉ báo, chấm điểm
   signals.py      so hai phiên, phát tín hiệu, gửi Telegram
+  intraday.py     canh ngưỡng giá trong phiên, gửi Telegram
+  telegram_setup.py  lấy chat id, gửi thử một tin
   backtest.py     chạy lại bộ luật trên 5 năm quá khứ
   watchlist.json  danh sách mã được chấm điểm
   README.md       cách chạy bot, bật Telegram, đọc backtest

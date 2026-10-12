@@ -7,6 +7,7 @@ Ba script, chạy bằng Python chuẩn (không cần `pip install`):
 | `fetch_ssi.py` | Tải giá từ SSI iBoard, tính chỉ báo, chấm điểm → `data/analysis.json`, `data/bars/` | Sau mỗi phiên |
 | `signals.py` | So bảng điểm phiên mới với phiên trước, tìm những gì vừa đổi → `data/signals.json` + gửi Telegram | Ngay sau `fetch_ssi.py` |
 | `backtest.py` | Chạy lại bộ luật trên 5 năm quá khứ → `data/backtest.json` | Khi sửa luật, hoặc hằng tuần |
+| `intraday.py` | Canh giá so với ngưỡng của kế hoạch phiên trước, nhắn Telegram | Mỗi 30 phút trong phiên |
 | `telegram_setup.py` | Lấy chat id và gửi thử một tin | Một lần, khi bật Telegram |
 
 ```bash
@@ -15,8 +16,9 @@ python scripts/signals.py            # tín hiệu (cần chạy ít nhất 2 ph
 python scripts/backtest.py           # kiểm chứng, ~3 phút lần đầu, sau đó vài giây nhờ cache
 ```
 
-GitHub Actions đã chạy sẵn hai việc đầu vào 16:30 giờ Việt Nam các ngày trong tuần
-([update-data.yml](../.github/workflows/update-data.yml)) và backtest chiều thứ Bảy
+GitHub Actions đã chạy sẵn: bảng điểm + tín hiệu lúc 16:30 giờ Việt Nam các ngày trong tuần
+([update-data.yml](../.github/workflows/update-data.yml)), cảnh báo trong phiên mỗi 30 phút
+([intraday.yml](../.github/workflows/intraday.yml)), và backtest chiều thứ Bảy
 ([backtest.yml](../.github/workflows/backtest.yml)).
 
 ---
@@ -71,6 +73,43 @@ Tự động hoá một bộ luật chưa chứng minh được kỳ vọng dư�
 
 Không có hai secret đó thì workflow vẫn chạy bình thường, chỉ là không gửi tin — trang web vẫn
 hiển thị tín hiệu ở mục 02.
+
+---
+
+## Cảnh báo trong phiên
+
+`intraday.py` chạy mỗi 30 phút từ 9:15 đến 14:45 và **không chấm điểm lại**. Nó chỉ so giá khớp
+hiện tại với bốn ngưỡng đã cố định từ phiên trước:
+
+| Ngưỡng | Khi nào nhắn |
+| --- | --- |
+| Mất cắt lỗ | Giá khớp xuống dưới `plan.stop` |
+| Giảm sàn | Giá khớp bằng hoặc dưới giá sàn |
+| Vào vùng mua | Giá lùi về trong 1,5% quanh `plan.entryLo` |
+| Chạm mục tiêu | Giá khớp đạt `plan.target` |
+
+Chỉ xét những mã phiên trước được khuyến nghị **MUA** hoặc **TÍCH LŨY** — mã đã bị hạ bậc thì
+tín hiệu cuối phiên đã nói rồi, không cần nhắc lại trong phiên.
+
+**Vì sao không chấm điểm lại giữa phiên**: điểm được tính từ MA20/50/200, RSI 14, MACD trên giá
+đóng cửa ngày. Chấm lúc 10h là chấm trên một cây nến chưa đóng — 10h ra MUA, 14h ra THEO DÕI,
+ATC lại đổi lần nữa. Đó là nhiễu, không phải tín hiệu. Ngưỡng giá thì khác: nó là một con số cố
+định, so với giá hiện tại lúc nào cũng đúng.
+
+Mỗi ngưỡng chỉ nhắn **một lần mỗi phiên**. Trạng thái "đã nhắn gì" nằm trong
+`data/cache/intraday-state.json`, lưu qua Actions cache nên **không commit gì vào repo**. Gửi
+thất bại thì không ghi trạng thái, lần chạy sau nhắn lại.
+
+```bash
+python scripts/intraday.py --dry      # xem trước, không gửi, không ghi trạng thái
+python scripts/intraday.py --force    # bỏ qua kiểm tra giờ và phiên, để thử ngoài giờ
+python scripts/intraday.py --reset    # xoá trạng thái, cho nhắn lại từ đầu
+```
+
+Hai giới hạn phải biết: cron của GitHub Actions **thường trễ 5–15 phút** khi GitHub tải cao, nên
+đừng dùng nó để canh lệnh theo từng phút; và nếu repo không có hoạt động nào trong 60 ngày,
+GitHub tự tạm dừng các workflow theo lịch. Muốn chính xác tới giây thì phải có tiến trình chạy
+liên tục ở máy bạn hoặc VPS — với hệ thống giữ trung bình 12 phiên thì không cần.
 
 ---
 

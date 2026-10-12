@@ -1,0 +1,57 @@
+name: Cảnh báo trong phiên
+
+# Canh giá so với ngưỡng của kế hoạch phiên trước (mất cắt lỗ, vào vùng mua,
+# chạm mục tiêu, giảm sàn). Không chấm điểm lại, không commit gì vào repo —
+# chỉ gửi Telegram. Không có khoá API giao dịch nào ở đây.
+
+on:
+  schedule:
+    # Giờ VN = UTC + 7. Phiên 9:15–14:45, nghỉ trưa 11:30–13:00.
+    # Sáng:  02:30→09:30, 03:00→10:00 … 04:30→11:30
+    - cron: "30,0 2-4 * * 1-5"
+    # Chiều: 06:00→13:00, 06:30→13:30, 07:00→14:00, 07:30→14:30
+    - cron: "0,30 6-7 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: intraday
+  cancel-in-progress: true
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Trạng thái "ngưỡng nào đã nhắn hôm nay" nằm trong cache, không commit vào repo.
+      # Cache mới mỗi lần chạy, restore-keys lấy bản gần nhất.
+      - name: Lấy trạng thái đã nhắn
+        uses: actions/cache/restore@v4
+        with:
+          path: data/cache
+          key: intraday-state-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: intraday-state-
+
+      - name: Canh ngưỡng giá
+        env:
+          PYTHONIOENCODING: utf-8
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          mkdir -p data/cache
+          python scripts/intraday.py
+
+      - name: Lưu trạng thái đã nhắn
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/cache
+          key: intraday-state-${{ github.run_id }}-${{ github.run_attempt }}
