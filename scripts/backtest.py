@@ -572,7 +572,7 @@ def main():
     out_path = OUT_PATH if args.universe == "detail" else os.path.join(DATA_DIR, "backtest-scan.json")
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
-    print(f"\nXong sau {time.time()-t0:.0f}s → data/backtest.json (tốt nhất theo R: {best['name']})",
+    print(f"\nXong sau {time.time()-t0:.0f}s → data/{os.path.basename(out_path)} (tốt nhất theo R: {best['name']})",
           file=sys.stderr)
     return 0
 

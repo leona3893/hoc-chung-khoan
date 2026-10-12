@@ -536,6 +536,14 @@ table.screen tr:last-child td{ border-bottom:0 }
       </div>
       <p class="goal"><b>Vì sao phải có mục này:</b> một bảng điểm trông thuyết phục không có nghĩa là nó kiếm được tiền. Phần dưới đây chạy lại chính bộ luật ở mục 08 trên dữ liệu quá khứ: điểm của ngày t chỉ dùng dữ liệu tới hết ngày t, lệnh khớp ở giá mở cửa phiên sau, trừ đủ chi phí. Nếu kết quả tệ, bạn cần biết — đó là lý do nó nằm ngay trên trang này chứ không bị giấu đi.</p>
 
+      <div class="toolbar">
+        <div class="chips" id="bt-universe" role="group" aria-label="Chọn rổ cổ phiếu">
+          <button type="button" class="chip on" data-u="detail">Rổ chính (VN30 + mã tay)</button>
+          <button type="button" class="chip" data-u="scan">Rổ quét sàn (159 mã)</button>
+        </div>
+        <span class="lab-status is-wait" id="bt-stt" style="margin-left:auto">đang tải…</span>
+      </div>
+
       <div class="regime" id="bt-verdict">Đang tải kết quả backtest…</div>
 
       <dl class="breadth" id="bt-cards"></dl>
@@ -1423,6 +1431,7 @@ table.screen tr:last-child td{ border-bottom:0 }
   function cls(n){ return n > 0 ? 'c-up' : n < 0 ? 'c-down' : ''; }
   function el(tag, attrs, text){ var e = document.createElementNS(NS, tag); for (var k in attrs) e.setAttribute(k, attrs[k]); if (text != null) e.textContent = text; return e; }
   function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function status(node, text, kind){ if (node){ node.textContent = text; node.className = 'lab-status' + (kind ? ' is-' + kind : ''); } }
   function strat(){ return BT.variants.filter(function(v){ return v.name !== 'benchmark'; }); }
   function bm(){ return BT.variants.filter(function(v){ return v.name === 'benchmark'; })[0] || null; }
   function cur(){ return BT.variants.filter(function(v){ return v.name === pick; })[0]; }
@@ -1576,7 +1585,19 @@ table.screen tr:last-child td{ border-bottom:0 }
   });
   $('bt-pick').addEventListener('change', function(){ pick = $('bt-pick').value; paint(); });
 
-  fetch('data/backtest.json', { cache: 'no-cache' }).then(function(r){
+  var FILES = { detail: 'data/backtest.json', scan: 'data/backtest-scan.json' };
+  var universe = 'detail';
+
+  $('bt-universe').addEventListener('click', function(e){
+    var b = e.target.closest('[data-u]');
+    if (!b || b.getAttribute('data-u') === universe) return;
+    universe = b.getAttribute('data-u');
+    $('bt-universe').querySelectorAll('.chip').forEach(function(c){ c.classList.toggle('on', c === b); });
+    load();
+  });
+
+  function load(){
+  fetch(FILES[universe], { cache: 'no-cache' }).then(function(r){
     if (!r.ok) throw new Error('HTTP ' + r.status);
     return r.json();
   }).then(function(d){
@@ -1589,12 +1610,17 @@ table.screen tr:last-child td{ border-bottom:0 }
     $('bt-caveats').innerHTML = (d.caveats || []).map(function(c){ return '<li>' + esc(c) + '</li>'; }).join('');
     $('bt-meta').textContent = 'Kỳ kiểm chứng ' + d.period.from + ' → ' + d.period.to + ' (' +
       vn(d.period.sessions) + ' phiên, ' + d.universe.length + ' mã). Tính lúc ' + d.updatedAt +
-      '. Chạy lại bằng: python scripts/backtest.py';
+      '. Chạy lại bằng: python scripts/backtest.py' + (universe === 'scan' ? ' --universe scan' : '');
+    status($('bt-stt'), d.universe.length + ' mã · ' + vn(d.period.sessions) + ' phiên · ' +
+      d.variants.length + ' cách vào/thoát lệnh', 'live');
   }).catch(function(){
     $('bt-verdict').setAttribute('data-r', 'Trung tính');
-    $('bt-verdict').innerHTML = 'Chưa có <code>data/backtest.json</code>. Chạy <code>python scripts/backtest.py</code> ' +
-      '(khoảng 3 phút cho 33 mã, 5 năm) để tự kiểm chứng bộ luật trước khi tin vào bảng điểm.';
+    status($('bt-stt'), 'chưa có dữ liệu', 'wait');
+    $('bt-verdict').innerHTML = 'Chưa có <code>' + FILES[universe] + '</code>. Chạy <code>python scripts/backtest.py' +
+      (universe === 'scan' ? ' --universe scan' : '') + '</code> để tự kiểm chứng bộ luật trước khi tin vào bảng điểm.';
   });
+  }
+  load();
 })();
 </script>
 </body>

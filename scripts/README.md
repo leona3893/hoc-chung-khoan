@@ -212,10 +212,37 @@ Sửa giả định ở `COST` và `RULES` đầu file, thêm biến thể ở d
 Con số đáng nhìn là **R trung bình mỗi lệnh**, không phải tỷ lệ thắng. Tỷ lệ thắng 60% mà R
 trung bình bằng 0 nghĩa là lệnh thắng nhỏ hơn lệnh thua — đúng vấn đề của bộ luật hiện tại.
 
+### Hai rổ, hai kết quả khác nhau
+
+| | Rổ chính (33 mã VN30) | Rổ quét sàn (159 mã) |
+| --- | --- | --- |
+| Chỉ MUA, chốt ở kháng cự | +11,2% · R tb +0,032 | −15,9% · R tb −0,084 |
+| MUA + TÍCH LŨY | +13,4% · R tb +0,110 | −9,0% · R tb +0,062 |
+| **MUA, không chốt lời cứng** | −9,5% · R tb −0,022 | **+14,8% · R tb +0,538** |
+| Mua và giữ VN-Index | +27,7% · sụt 40,3% | +27,7% · sụt 40,3% |
+
+Đọc được hai điều:
+
+1. **Mục tiêu đặt ở kháng cự gần nhất là chỗ rò rỉ lớn nhất.** Trên rổ rộng, bỏ chốt lời cứng
+   làm R trung bình nhảy từ −0,08 lên **+0,54**: lệnh thắng trung bình 3,34R so với lệnh lỗ
+   0,91R. Thắng chỉ 34% số lệnh nhưng tổng vẫn dương — đúng hình dạng của một hệ thống theo
+   xu hướng.
+2. **Nhưng vẫn chưa thắng mua-và-giữ về lợi nhuận tuyệt đối** (+14,8% so với +27,7% trong 5
+   năm), chỉ hơn ở mức sụt vốn (−23,0% so với −40,3%). Lý do R cao mà lãi không cao: với lệnh
+   có cắt lỗ sát, quy mô 1% rủi ro đòi hỏi vị thế lớn hơn giới hạn 25% vốn một mã, nên số tiền
+   thật trên mỗi R nhỏ hơn 1%.
+
+**Cảnh báo về chính con số +0,538R**: nó là cái tốt nhất trong 11 biến thể chạy trên *cùng* một
+đoạn dữ liệu. Chọn ra cái tốt nhất sau khi đã thấy kết quả thì luôn đẹp hơn thực tế. Muốn tin
+nó thì phải kiểm tra ngoài mẫu — ví dụ tính riêng 2021–2023 rồi áp sang 2024–2026 — hoặc theo
+dõi sổ ý tưởng chạy tiến về phía trước đủ lâu. Đừng đổi luật chỉ vì một con số đẹp.
+
 ### Những gì backtest này *không* chứng minh được
 
 - Thành phần khối ngoại (±10 điểm) bị bỏ: API SSI chỉ cho dữ liệu mua/bán ròng khoảng một tháng.
-- Rổ mã là VN30 **hiện tại** → có thiên lệch người sống sót, kết quả quá khứ bị tô hồng.
+- Rổ mã là VN30 / VNAllShare **hiện tại** → có thiên lệch người sống sót, kết quả quá khứ bị tô hồng.
+- Biến thể tốt nhất được chọn sau khi xem kết quả của cả 11 biến thể trên cùng dữ liệu, nên
+  lợi thế của nó bị thổi lên. Chưa có kiểm tra ngoài mẫu.
 - Giá chưa chắc đã điều chỉnh cổ tức và chia tách (tuỳ nguồn).
 - Không mô phỏng được việc không khớp đủ khối lượng ở mã thanh khoản thấp.
 
