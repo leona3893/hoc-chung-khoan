@@ -303,12 +303,39 @@ def okx_history(symbol, interval, start):
     return [b for b in out if b[0] >= start]
 
 
-def liquid_pairs(limit, min_vol=1e7):
+UNIVERSE_PATH = os.path.join(DATA_DIR, "crypto-universe.json")
+
+
+def universe(limit, min_vol=1e7):
+    """Rổ cặp để quét — LUÔN là coin của Binance, không bao giờ lấy từ nơi khác.
+
+    Binance chặn IP của GitHub Actions, mà danh sách cặp của OKX có hàng trăm cổ
+    phiếu Mỹ token hoá đặt tên khác hẳn. Nên khi bị chặn, ta dùng lại bản chụp rổ
+    Binance đã lưu trong repo thay vì hỏi sàn khác. Nến thì vẫn lấy từ OKX được,
+    vì lúc đó ta đã biết chính xác mình cần mã nào.
+    """
     try:
-        tickers = get("/api/v3/ticker/24hr")
+        pairs = liquid_pairs(limit, min_vol)
+        os.makedirs(DATA_DIR, exist_ok=True)
+        with open(UNIVERSE_PATH, "w", encoding="utf-8") as f:
+            json.dump({"updatedAt": datetime.now(VN_TZ).strftime("%Y-%m-%d %H:%M"),
+                       "source": "binance", "minVol": min_vol, "pairs": pairs},
+                      f, ensure_ascii=False, indent=1)
+        return pairs
     except GeoBlocked:
-        print("[nguồn] Binance chặn vùng này — chuyển sang OKX.", file=sys.stderr)
-        return okx_liquid_pairs(limit, min_vol)
+        if os.path.exists(UNIVERSE_PATH):
+            with open(UNIVERSE_PATH, encoding="utf-8") as f:
+                d = json.load(f)
+            pairs = [p for p in d.get("pairs", []) if not is_stock_token(p[:-4])][:limit]
+            print(f"[nguồn] Binance chặn vùng này — dùng rổ đã lưu "
+                  f"({len(pairs)} cặp, cập nhật {d.get('updatedAt')}).", file=sys.stderr)
+            return pairs
+        raise RuntimeError("Binance chặn vùng này và chưa có data/crypto-universe.json. "
+                           "Chạy script này một lần ở nơi gọi được Binance để tạo rổ.")
+
+
+def liquid_pairs(limit, min_vol=1e7):
+    tickers = get("/api/v3/ticker/24hr")
     rows = []
     for x in tickers:
         s = x["symbol"]

@@ -100,11 +100,15 @@ def render(bars, meta, path, window=70):
     f_title, f_sub, f_lbl, f_sm = font(19, True), font(13), font(13), font(11)
 
     plot_w = W - PAD_L - PAD_R
+    # Chừa một khoảng trống bên phải để vẽ vùng chốt lời / cắt lỗ. Không có nó thì
+    # lệnh vừa vào (nến cuối) chỉ còn một vạch mỏng sát mép, không đọc được gì.
+    proj_w = plot_w * 0.26
+    cand_w = plot_w - proj_w
     y0, y1 = PAD_T, PAD_T + PRICE_H
     vy0, vy1 = y1 + GAP, y1 + GAP + VOL_H
 
     def px(i):
-        return PAD_L + plot_w * (i + 0.5) / n
+        return PAD_L + cand_w * (i + 0.5) / n
 
     def py(p):
         return y1 - (p - lo) / (hi - lo) * (y1 - y0)
@@ -144,6 +148,11 @@ def render(bars, meta, path, window=70):
         w = d.textlength(text, font=f_sm)
         d.rectangle([W - PAD_R + 3, y - 8, W - PAD_R + 9 + w, y + 8], fill=BG)
         d.text((W - PAD_R + 6, y - 7), text, font=f_sm, fill=color)
+
+    # ranh giới "hiện tại": bên phải là phần chiếu tới, chưa có giá
+    nowx = PAD_L + cand_w
+    for yy in range(int(y0), int(vy1), 7):
+        d.line([nowx, yy, nowx, yy + 3], fill=GRID)
 
     # --- vùng chốt lời / cắt lỗ, kéo từ nến vào lệnh sang phải
     ei = meta.get("entryIdx")

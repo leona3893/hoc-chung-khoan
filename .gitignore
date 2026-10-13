@@ -13,3 +13,6 @@ desktop.ini
 # Cache backtest (tự tạo lại được, không cần commit)
 data/cache/
 scripts/__pycache__/
+
+# Ảnh mẫu dựng tay, không phải output của bot
+anh-mau/

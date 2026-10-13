@@ -227,27 +227,23 @@ def stats_of(state):
 def build_buy(it):
     ex = C.EXIT
     sym = it["symbol"].replace("USDT", "/USDT")
-    lines = [f"🟢 <b>MUA {esc(sym)}</b>",
-             f"Vào: <b>{fmt(it['entry'])}</b>",
-             f"Cắt lỗ: {fmt(it.get('stop0') or it['stop'])} (−{ex['slPct']:.0f}%)"]
-    if it.get("tp"):
-        lines.append(f"Chốt lời: {fmt(it['tp'])} (+{ex['tpPct']:.0f}%)")
-    lines.append(f"Trailing {ex['trailPct']:.0f}% · Giữ tối đa {ex['maxHold']}h")
-    e = expectancy(it["strategy"], CFG["interval"])
-    tag = f" ({e['avgR']:+.3f}R/lệnh khi backtest)" if e else ""
-    lines.append(f"Chiến lược: {esc(it['strategy'])}{tag}")
-    lines.append("⚠️ Sổ giấy, không phải khuyến nghị.")
-    return "\n".join(lines)
+    return "\n".join([
+        f"🟢 <b>BUY {esc(sym)}</b>",
+        f"Giá: <b>{fmt(it['entry'])}</b>",
+        f"Cắt lỗ {fmt(it.get('stop0') or it['stop'])}"
+        + (f" · Chốt lời {fmt(it['tp'])}" if it.get("tp") else ""),
+        f"Giữ tối đa {ex['maxHold']}h · {esc(it['strategy'])}",
+    ])
 
 
 def build_sell(it):
     sym = it["symbol"].replace("USDT", "/USDT")
     ico = "🔴" if it["pnlPct"] < 0 else "🟢"
     return "\n".join([
-        f"{ico} <b>BÁN {esc(sym)}</b>",
-        f"Ra: <b>{fmt(it['exitPrice'])}</b> · {it['pnlPct']:+.2f}% ({it['r']:+.2f}R)",
-        f"Lý do: {EXIT_LABEL.get(it['exitReason'], it['exitReason'])} · giữ {it['held'] * PER_H}h",
-        f"Chiến lược: {esc(it['strategy'])}",
+        f"{ico} <b>SELL {esc(sym)}</b>",
+        f"Giá: <b>{fmt(it['exitPrice'])}</b> ({it['pnlPct']:+.2f}%, {it['r']:+.2f}R)",
+        f"Đã giữ {it['held'] * PER_H}h · {EXIT_LABEL.get(it['exitReason'], it['exitReason'])}"
+        f" · {esc(it['strategy'])}",
     ])
 
 
@@ -347,7 +343,7 @@ def main():
     state = load(STATE, {"open": [], "closed": []}) or {"open": [], "closed": []}
 
     try:
-        universe = C.liquid_pairs(CFG["pairs"])
+        universe = C.universe(CFG["pairs"])
     except Exception as e:  # noqa: BLE001
         print(f"Không lấy được danh sách cặp: {e}", file=sys.stderr)
         return 1

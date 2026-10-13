@@ -1,1 +1,1 @@
-{"open":[],"closed":[],"updatedAt":"2026-10-13 12:37","interval":"4h","strategies":["vcr","rsi_vol_gated"],"exit":{"slPct":5.0,"tpPct":10.0,"trailPct":7.0,"maxHold":72},"maxOpen":8,"stats":{"open":0,"closed":0,"winRatePct":null,"totalR":null,"avgR":null,"sumPnlPct":null}}
+{"open":[],"closed":[],"updatedAt":"2026-10-13 12:45","interval":"4h","strategies":["vcr","rsi_vol_gated"],"exit":{"slPct":5.0,"tpPct":10.0,"trailPct":7.0,"maxHold":72},"maxOpen":8,"stats":{"open":0,"closed":0,"winRatePct":null,"totalR":null,"avgR":null,"sumPnlPct":null}}
