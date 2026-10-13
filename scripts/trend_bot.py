@@ -54,6 +54,7 @@ CFG = {
                 "DOGEUSDT", "ADAUSDT", "AVAXUSDT", "LINKUSDT", "LTCUSDT"],
     "strategy": "donchian_btc",       # hoặc donchian / momentum / ma200 / golden
     "maxOpen": 5,
+    "capital": 150,                   # vốn thật dự định bỏ vào (USDT) — chia đều 5 phần
     "lookback": 400,                  # đủ cho MA200 ngày
     "warnNear": 3.0,                  # còn cách ngưỡng thoát dưới 3% thì nhắc
 }
@@ -172,10 +173,23 @@ def stats_of(state):
 
 
 # ---------------------------------------------------------------------------
+def size_line(it):
+    """Gợi ý số tiền cho mỗi lệnh: chia đều vốn cho số vị thế tối đa."""
+    usdt = CFG["capital"] / CFG["maxOpen"]
+    qty = usdt / it["entry"]
+    lines = [f"Mua: <b>~{usdt:.0f} USDT</b> (≈ {qty:.6g} {it['symbol'].replace('USDT', '')})"]
+    if it.get("exitLevel") and it["exitLevel"] < it["entry"]:
+        loss = usdt * (1 - it["exitLevel"] / it["entry"])
+        lines.append(f"Nếu thủng ngưỡng: lỗ ~{loss:.1f} USDT "
+                     f"(−{(1 - it['exitLevel'] / it['entry']) * 100:.1f}%)")
+    return lines
+
+
 def build_buy(it):
     return "\n".join([
         f"🟢 <b>BUY {B.esc(it['symbol'].replace('USDT', '/USDT'))}</b> · 📈1D",
         f"Giá: <b>{B.fmt(it['entry'])}</b>",
+        *size_line(it),
         f"Ra khi thủng {B.fmt(it['exitLevel'])}" if it.get("exitLevel") else "Ra theo luật",
         f"Khung ngày · {LABEL.get(it['strategy'], it['strategy'])}",
     ])
