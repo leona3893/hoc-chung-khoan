@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-13 13:02",
+ "updatedAt": "2026-10-13 13:17",
  "source": "binance",
  "minVol": 10000000.0,
  "pairs": [
@@ -26,8 +26,8 @@
   "LINKUSDT",
   "ONDOUSDT",
   "HYPEUSDT",
-  "ZROUSDT",
   "UUSDT",
+  "ZROUSDT",
   "GTCUSDT",
   "FILUSDT",
   "RSRUSDT",

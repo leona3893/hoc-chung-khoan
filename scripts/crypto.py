@@ -254,7 +254,36 @@ def e_ma100(x, i, p):
     return x.sma100[i] is not None and x.c[i] < x.sma100[i]
 
 
+# Chế độ thị trường theo BTC (ngày -> "tăng"/"giảm"), do nơi gọi điền vào.
+REGIME = {}
+
+
+def s_momentum(x, i, p):
+    """Động lượng chuỗi thời gian: giá vừa vượt lên trên giá N ngày trước."""
+    n = p.get("look", 90)
+    if i < n + 1:
+        return False
+    return x.c[i - 1] <= x.c[i - 1 - n] and x.c[i] > x.c[i - n]
+
+
+def e_momentum(x, i, p):
+    n = p.get("look", 90)
+    return i >= n and x.c[i] < x.c[i - n]
+
+
+def s_donchian_btc(x, i, p):
+    """Donchian, nhưng chỉ vào khi BTC đang trên MA200 ngày — tránh mua altcoin
+    lúc cả thị trường đang trong sóng giảm."""
+    if REGIME and REGIME.get(x.t[i]) != "tăng":
+        return False
+    return s_donchian(x, i, p)
+
+
 STRATEGIES = {
+    "momentum": {"fn": s_momentum, "exitFn": e_momentum, "params": {"look": 90},
+                 "label": "Giá vượt giá 90 ngày trước, ra khi thủng lại (động lượng)"},
+    "donchian_btc": {"fn": s_donchian_btc, "exitFn": e_donchian, "params": {"inn": 20, "out": 10},
+                     "label": "Donchian chỉ khi BTC trên MA200 (xu hướng có lọc)"},
     "ma200": {"fn": s_above_ma200, "exitFn": e_below_ma200, "params": {},
               "label": "Vượt lên MA200, ra khi mất MA200 (theo xu hướng)"},
     "ma100": {"fn": s_ma100, "exitFn": e_ma100, "params": {},

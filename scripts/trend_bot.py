@@ -48,14 +48,19 @@ VN_TZ = timezone(timedelta(hours=7))
 
 CFG = {
     "interval": "1d",                 # luật tính trên nến ngày — không đổi thành 1h
-    "symbols": ["BTCUSDT", "ETHUSDT"],
-    "strategy": "donchian",           # hoặc ma200 / ma100 / golden
-    "maxOpen": 2,
+    # 10 coin lớn. Walk-forward + bootstrap trên rổ này: donchian_btc có xác suất
+    # dương 100%, và năm 2022 sập không mất đồng nào nhờ lọc BTC.
+    "symbols": ["BTCUSDT", "ETHUSDT", "SOLUSDT", "BNBUSDT", "XRPUSDT",
+                "DOGEUSDT", "ADAUSDT", "AVAXUSDT", "LINKUSDT", "LTCUSDT"],
+    "strategy": "donchian_btc",       # hoặc donchian / momentum / ma200 / golden
+    "maxOpen": 5,
     "lookback": 400,                  # đủ cho MA200 ngày
     "warnNear": 3.0,                  # còn cách ngưỡng thoát dưới 3% thì nhắc
 }
 
-LABEL = {"donchian": "phá đỉnh 20 ngày, ra khi thủng đáy 10 ngày",
+LABEL = {"donchian_btc": "phá đỉnh 20 ngày khi BTC trên MA200, ra khi thủng đáy 10 ngày",
+         "momentum": "giá vượt giá 90 ngày trước, ra khi thủng lại",
+         "donchian": "phá đỉnh 20 ngày, ra khi thủng đáy 10 ngày",
          "ma200": "vượt MA200, ra khi mất MA200",
          "ma100": "vượt MA100, ra khi mất MA100",
          "golden": "MA50 cắt lên MA200, ra khi cắt xuống"}
@@ -81,9 +86,12 @@ def load(path, default=None):
 
 def exit_level(x, i, strat_name, params):
     """Ngưỡng giá mà nếu thủng thì luật bảo thoát — để canh trong ngày."""
-    if strat_name == "donchian":
+    if strat_name in ("donchian", "donchian_btc"):
         n = params.get("out", 10)
         return min(x.l[max(0, i - n):i]) if i >= n else None
+    if strat_name == "momentum":
+        n = params.get("look", 90)
+        return x.c[i - n] if i >= n else None
     if strat_name in ("ma200", "ma100"):
         return (x.sma200 if strat_name == "ma200" else x.sma100)[i]
     if strat_name == "golden":
@@ -249,13 +257,26 @@ def main():
                       for s in args.symbols.split(",") if s.strip()]
 
     data = {}
-    for sym in CFG["symbols"]:
+    need = list(CFG["symbols"]) + ([] if "BTCUSDT" in CFG["symbols"] else ["BTCUSDT"])
+    for sym in need:
         try:
             bars = B.fetch_recent(sym, CFG["interval"], CFG["lookback"])
             if len(bars) >= 220:
                 data[sym] = (bars, C.Ctx(bars))
         except Exception as e:  # noqa: BLE001
             print(f"  [lỗi] {sym}: {str(e)[:80]}", file=sys.stderr)
+
+    # Chế độ thị trường theo BTC cho chiến lược có lọc (donchian_btc)
+    if "BTCUSDT" in data:
+        bb, bx = data["BTCUSDT"]
+        C.REGIME.clear()
+        C.REGIME.update({bb[k][0]: ("tăng" if (bx.sma200[k] and bb[k][4] > bx.sma200[k]) else "giảm")
+                         for k in range(len(bb))})
+        k = len(bb) - 2
+        print(f"BTC {'TRÊN' if C.REGIME[bb[k][0]] == 'tăng' else 'DƯỚI'} MA200 ngày "
+              f"({B.fmt(bb[k][4])} so với {B.fmt(bx.sma200[k])})", file=sys.stderr)
+    if "BTCUSDT" not in CFG["symbols"]:
+        data.pop("BTCUSDT", None)
     if not data:
         print("Không lấy được nến ngày.", file=sys.stderr)
         return 1
