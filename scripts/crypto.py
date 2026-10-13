@@ -46,15 +46,25 @@ HEADERS = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chr
 STABLE = {"USDC", "FDUSD", "TUSD", "USD1", "RLUSD", "BUSD", "DAI", "USDP", "USDE",
           "EUR", "TRY", "BRL", "ARS", "XUSD", "AEUR"}
 
-# Binance niêm yết ~90 cổ phiếu và ETF Mỹ token hoá, đặt tên bằng mã chứng khoán + "B"
-# (AAPLB, TSLAB, NVDAB, SPYB, SNDKB…). Chúng không phải coin: giá bám cổ phiếu cơ sở,
-# nên chiến lược crypto áp lên đó là so sai thị trường. Lọc theo quy tắc đặt tên, trừ
-# vài coin thật cũng kết thúc bằng B — thêm vào NOT_STOCK nếu gặp mã mới.
-NOT_STOCK = {"SHIB", "BNB", "COMB", "CLUB"}
+# Cả hai sàn đều niêm yết hàng trăm cổ phiếu và ETF Mỹ token hoá. Chúng KHÔNG phải
+# coin: giá bám cổ phiếu cơ sở, nên chiến lược crypto áp lên đó là so sai thị trường.
+# Hai sàn đặt tên khác nhau:
+#   Binance: mã chứng khoán + "B"   → AAPLB, TSLAB, NVDAB, SPYB, SNDKB
+#   OKX:     "X" + mã chứng khoán   → XAAPL, XTSLA, XNVDA, XSPY, XSNDK
+# Không sàn nào đánh dấu chúng trong metadata, nên chỉ còn cách lọc theo tên. Nhầm một
+# token cổ phiếu tốn kém hơn nhiều so với bỏ sót một coin, nên lọc theo hướng thận
+# trọng: loại hết, trừ các coin thật trong hai danh sách dưới. Gặp mã mới thì thêm vào.
+NOT_STOCK_B = {"SHIB", "BNB", "COMB", "CLUB", "JOB"}
+NOT_STOCK_X = {"XRP", "XLM", "XMR", "XTZ", "XCH", "XEC", "XDC", "XVG", "XNO",
+               "XAUT", "XCN", "XYO", "XAI", "XPL", "XDB", "XMT"}
 
 
 def is_stock_token(base):
-    return base.endswith("B") and len(base) >= 4 and base not in NOT_STOCK
+    if base.endswith("B") and len(base) >= 4 and base not in NOT_STOCK_B:
+        return True
+    if base.startswith("X") and len(base) >= 3 and base not in NOT_STOCK_X:
+        return True
+    return False
 
 # ---------------------------------------------------------------------------
 # Khối thoát lệnh dùng chung — đúng bộ tham số bot kia in trên chart
