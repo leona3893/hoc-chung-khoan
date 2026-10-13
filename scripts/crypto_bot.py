@@ -46,7 +46,8 @@ VN_TZ = timezone(timedelta(hours=7))
 CFG = {
     "interval": "1h",         # khung nến bot làm việc
     "pairs": 30,              # quét bao nhiêu cặp thanh khoản nhất
-    "maxOpen": 8,             # tối đa bao nhiêu vị thế giấy cùng lúc
+    "maxOpen": 5,             # tối đa bao nhiêu vị thế giấy cùng lúc — bằng đúng trần
+                              # trong backtest, để hai bộ số so thẳng được với nhau
     "strategies": ["vcr", "rsi_vol_gated"],   # chạy song song, mỗi cặp chỉ một vị thế
     "lookback": 300,          # số nến tải về mỗi lần, đủ cho mọi chỉ báo
 }
