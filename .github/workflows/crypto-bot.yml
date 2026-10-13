@@ -6,8 +6,8 @@ name: Bot tín hiệu crypto
 
 on:
   schedule:
-    # Nến 4h đóng lúc 00,04,08,12,16,20 giờ UTC. Chạy sau 6 phút cho chắc nến đã chốt.
-    - cron: "6 0,4,8,12,16,20 * * *"
+    # Nến 1h đóng vào đầu mỗi giờ. Chạy sau 5 phút cho chắc nến đã chốt.
+    - cron: "5 * * * *"
   workflow_dispatch:
     inputs:
       test:
@@ -50,9 +50,15 @@ jobs:
             python scripts/crypto_bot.py
           fi
 
-      - name: Commit sổ nếu có thay đổi
+      # Chạy mỗi giờ nên chỉ commit khi thực sự có lệnh vào hoặc ra, không commit
+      # mỗi lần giá vị thế đang mở nhúc nhích.
+      - name: Commit sổ khi có lệnh vào hoặc ra
         if: github.event.inputs.test == ''
         run: |
+          if [ ! -f data/cache/events.flag ]; then
+            echo "Không có lệnh vào/ra trong lần quét này."
+            exit 0
+          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/crypto-ideas.json

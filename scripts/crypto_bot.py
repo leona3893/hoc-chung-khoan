@@ -44,14 +44,14 @@ BACKTEST = os.path.join(DATA_DIR, "crypto-backtest.json")
 VN_TZ = timezone(timedelta(hours=7))
 
 CFG = {
-    "interval": "4h",         # khung nến bot làm việc
+    "interval": "1h",         # khung nến bot làm việc
     "pairs": 30,              # quét bao nhiêu cặp thanh khoản nhất
     "maxOpen": 8,             # tối đa bao nhiêu vị thế giấy cùng lúc
     "strategies": ["vcr", "rsi_vol_gated"],   # chạy song song, mỗi cặp chỉ một vị thế
     "lookback": 300,          # số nến tải về mỗi lần, đủ cho mọi chỉ báo
 }
 
-PER_H = 4   # số giờ mỗi nến, đặt lại theo --interval
+PER_H = 1   # số giờ mỗi nến, đặt lại theo --interval
 
 EXIT_LABEL = {
     "stop": "chạm cắt lỗ", "trail": "cắt lỗ dời chạm", "tp": "đạt mục tiêu",
@@ -461,6 +461,16 @@ def main():
     with open(STATE, "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, separators=(",", ":"))
     print("Đã ghi data/crypto-ideas.json", file=sys.stderr)
+
+    # Chạy mỗi giờ mà commit mỗi lần thì repo ngập commit vô nghĩa (giá vị thế đang
+    # mở đổi liên tục). Chỉ đánh dấu khi thực sự có lệnh vào hoặc ra.
+    flag = os.path.join(DATA_DIR, "cache", "events.flag")
+    os.makedirs(os.path.dirname(flag), exist_ok=True)
+    if events:
+        with open(flag, "w", encoding="utf-8") as f:
+            f.write(str(len(events)))
+    elif os.path.exists(flag):
+        os.remove(flag)
 
     if args.no_send or not msgs:
         if not msgs:

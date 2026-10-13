@@ -243,8 +243,10 @@ def render(bars, meta, path, window=70):
         t = datetime.fromtimestamp(seg[i][0] / 1000, VN_TZ)
         d.text((px(i) - 16, vy1 + 8), t.strftime("%d/%m %H:%M"), font=f_sm, fill=MUTED)
 
-    foot = (f"Nguồn {meta.get('source', 'Binance')} · giờ Việt Nam · "
-            f"sổ giấy, không phải khuyến nghị")
+    last_t = datetime.fromtimestamp(seg[-1][0] / 1000, VN_TZ)
+    foot = (f"Nguồn {meta.get('source', 'Binance')} · nến cuối {last_t:%H:%M %d/%m/%Y} giờ VN "
+            f"· O {fmt(seg[-1][1])} H {fmt(seg[-1][2])} L {fmt(seg[-1][3])} C {fmt(seg[-1][4])} "
+            f"· sổ giấy, không phải khuyến nghị")
     d.text((PAD_L, H - 22), foot, font=f_sm, fill=MUTED)
 
     os.makedirs(os.path.dirname(path) or ".", exist_ok=True)

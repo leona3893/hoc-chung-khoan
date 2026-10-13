@@ -1,5 +1,5 @@
 {
- "updatedAt": "2026-10-13 12:45",
+ "updatedAt": "2026-10-13 13:02",
  "source": "binance",
  "minVol": 10000000.0,
  "pairs": [
@@ -17,20 +17,20 @@
   "UNIUSDT",
   "WLDUSDT",
   "AVAXUSDT",
-  "WUSDT",
   "CTKUSDT",
+  "WUSDT",
   "ADAUSDT",
   "TAOUSDT",
   "PEPEUSDT",
   "PUMPUSDT",
-  "ONDOUSDT",
   "LINKUSDT",
+  "ONDOUSDT",
   "HYPEUSDT",
-  "UUSDT",
   "ZROUSDT",
+  "UUSDT",
   "GTCUSDT",
-  "RSRUSDT",
   "FILUSDT",
+  "RSRUSDT",
   "FETUSDT",
   "LTCUSDT"
  ]
