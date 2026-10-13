@@ -320,6 +320,61 @@ def tg_send(token, chat, text):
 
 
 # ---------------------------------------------------------------------------
+def send_test(symbol, args):
+    """Gửi một tin mẫu kèm ảnh, dựng từ nến thật mới nhất của một mã.
+
+    Dùng để kiểm tra token Telegram và đường gửi ảnh mà không phải chờ tín hiệu
+    thật xuất hiện. Không ghi gì vào sổ.
+    """
+    symbol = symbol.upper()
+    if not symbol.endswith("USDT"):
+        symbol += "USDT"
+    global PER_H
+    PER_H = {"1h": 1, "2h": 2, "4h": 4, "6h": 6, "12h": 12, "1d": 24}.get(CFG["interval"], 1)
+    try:
+        bars = fetch_recent(symbol, CFG["interval"], CFG["lookback"])
+    except Exception as e:  # noqa: BLE001
+        print(f"Không lấy được nến {symbol}: {e}", file=sys.stderr)
+        return 1
+    if not bars:
+        print(f"Không có nến cho {symbol}.", file=sys.stderr)
+        return 1
+
+    last = bars[-1]
+    entry = last[4]
+    it = {
+        "symbol": symbol, "strategy": "gửi thử", "entryTs": last[0], "entry": entry,
+        "stop": entry * (1 - C.EXIT["slPct"] / 100), "stop0": entry * (1 - C.EXIT["slPct"] / 100),
+        "tp": entry * (1 + C.EXIT["tpPct"] / 100) if C.EXIT.get("tpPct") else None,
+        "held": 0,
+    }
+    cap = "🧪 <b>GỬI THỬ</b> — không phải tín hiệu thật\n" + build_buy(it)
+    img = None if args.no_chart else chart_for({"kind": "buy", "it": it},
+                                               {symbol: bars},
+                                               os.path.join(DATA_DIR, "cache", "charts"))
+    print(f"Gửi thử {symbol} · giá {fmt(entry)} · ảnh: {img or 'không'}", file=sys.stderr)
+    if args.dry:
+        print(cap)
+        return 0
+
+    token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+    chat = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+    if not token or not chat:
+        print("Chưa có TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID — không gửi được.", file=sys.stderr)
+        print(cap)
+        return 1
+    try:
+        r = tg_photo(token, chat, img, cap) if img else tg_send(token, chat, cap)
+        if r.get("ok"):
+            print("Đã gửi Telegram." + (" (kèm ảnh)" if img else " (chỉ chữ)"), file=sys.stderr)
+            return 0
+        print(f"Telegram trả lỗi: {r}", file=sys.stderr)
+        return 1
+    except Exception as e:  # noqa: BLE001
+        print(f"Lỗi gửi Telegram: {e}", file=sys.stderr)
+        return 1
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry", action="store_true")
@@ -329,6 +384,9 @@ def main():
     ap.add_argument("--pairs", type=int, default=CFG["pairs"])
     ap.add_argument("--summary", action="store_true", help="gửi kèm một tin tổng kết ngắn")
     ap.add_argument("--no-chart", action="store_true", help="không vẽ ảnh, chỉ gửi chữ")
+    ap.add_argument("--test", nargs="?", const="BTCUSDT", metavar="MÃ",
+                    help="gửi thử một tin mẫu kèm ảnh để kiểm tra đường truyền, "
+                         "không động vào sổ")
     args = ap.parse_args()
 
     if args.reset:
@@ -338,6 +396,8 @@ def main():
         return 0
 
     CFG["interval"], CFG["pairs"] = args.interval, args.pairs
+    if args.test:
+        return send_test(args.test, args)
     global PER_H
     PER_H = {"1h": 1, "2h": 2, "4h": 4, "6h": 6, "12h": 12, "1d": 24}.get(args.interval, 1)
     state = load(STATE, {"open": [], "closed": []}) or {"open": [], "closed": []}

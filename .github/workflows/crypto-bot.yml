@@ -9,6 +9,11 @@ on:
     # Nến 4h đóng lúc 00,04,08,12,16,20 giờ UTC. Chạy sau 6 phút cho chắc nến đã chốt.
     - cron: "6 0,4,8,12,16,20 * * *"
   workflow_dispatch:
+    inputs:
+      test:
+        description: "Gửi thử một tin mẫu kèm ảnh (nhập mã, vd BTC). Để trống = quét thật."
+        required: false
+        default: ""
 
 permissions:
   contents: write
@@ -38,9 +43,15 @@ jobs:
           PYTHONIOENCODING: utf-8
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
-        run: python scripts/crypto_bot.py
+        run: |
+          if [ -n "${{ github.event.inputs.test }}" ]; then
+            python scripts/crypto_bot.py --test "${{ github.event.inputs.test }}"
+          else
+            python scripts/crypto_bot.py
+          fi
 
       - name: Commit sổ nếu có thay đổi
+        if: github.event.inputs.test == ''
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

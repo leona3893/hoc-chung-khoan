@@ -379,6 +379,16 @@ với multipart tự dựng bằng `urllib`, không thêm thư viện nào.
 
 Xem thử một ảnh mẫu: `python scripts/crypto_chart.py BTCUSDT 4h`
 
+**Gửi thử một tin thật** — kiểm tra token Telegram và đường gửi ảnh mà không phải chờ tín hiệu:
+
+```bash
+python scripts/crypto_bot.py --test BTC        # gửi một tin mẫu kèm ảnh
+python scripts/crypto_bot.py --test BTC --dry  # chỉ in ra, không gửi
+```
+
+Trên GitHub: **Actions → Bot tín hiệu crypto → Run workflow**, điền mã vào ô *test* (vd `BTC`).
+Để trống ô đó thì nó quét thật như bình thường. Lần chạy thử không ghi gì vào sổ.
+
 ### Lọc token cổ phiếu
 
 Binance niêm yết khoảng 90 cổ phiếu và ETF Mỹ token hoá, đặt tên bằng mã chứng khoán cộng chữ
