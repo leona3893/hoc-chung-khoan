@@ -1,0 +1,49 @@
+name: Bot tín hiệu crypto
+
+# Quét các cặp thanh khoản nhất mỗi khi nến 4h đóng, mở vị thế GIẤY khi có tín hiệu,
+# theo dõi tới khi chạm cắt lỗ / chốt lời / trailing / hết hạn giữ, rồi báo điểm bán.
+# Không đặt lệnh, không giữ khoá API sàn — chỉ có token Telegram để gửi tin.
+
+on:
+  schedule:
+    # Nến 4h đóng lúc 00,04,08,12,16,20 giờ UTC. Chạy sau 6 phút cho chắc nến đã chốt.
+    - cron: "6 0,4,8,12,16,20 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crypto-bot
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Quét tín hiệu crypto
+        env:
+          PYTHONIOENCODING: utf-8
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python scripts/crypto_bot.py
+
+      - name: Commit sổ nếu có thay đổi
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/crypto-ideas.json
+          if git diff --cached --quiet; then
+            echo "Sổ không đổi."
+            exit 0
+          fi
+          git pull --rebase --autostash origin main
+          git commit -m "Sổ crypto $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push

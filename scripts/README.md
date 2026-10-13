@@ -9,7 +9,8 @@ Ba script, chạy bằng Python chuẩn (không cần `pip install`):
 | `ideas.py` | **Tầng 3** — mở ý tưởng khi có điểm buy, theo dõi tới điểm sell → `data/ideas.json` | Sau `signals.py` |
 | `signals.py` | So bảng điểm phiên mới với phiên trước, tìm những gì vừa đổi → `data/signals.json` + gửi Telegram | Ngay sau `fetch_ssi.py` |
 | `backtest.py` | Chạy lại bộ luật trên 5 năm quá khứ → `data/backtest.json` | Khi sửa luật, hoặc hằng tuần |
-| `crypto.py` | Khung chiến lược crypto: nhiều chiến lược cắm vào một bộ máy, backtest nến 1h Binance | Khi thêm hoặc sửa chiến lược |
+| `crypto.py` | Khung chiến lược crypto: nhiều chiến lược cắm vào một bộ máy, backtest nến Binance/OKX | Khi thêm hoặc sửa chiến lược |
+| `crypto_bot.py` | Bot tín hiệu crypto: quét sàn mỗi nến 4h, ra điểm mua, theo dõi, ra điểm bán | Mỗi 4 giờ, 24/7 |
 | `morning.py` | Nhắc trước giờ mở cửa: hôm nay cần đặt lệnh gì, đang giữ gì, cắt lỗ ở đâu | 8:50 mỗi ngày |
 | `intraday.py` | Canh giá so với ngưỡng của kế hoạch phiên trước, nhắn Telegram | Mỗi 30 phút trong phiên |
 | `telegram_setup.py` | Lấy chat id và gửi thử một tin | Một lần, khi bật Telegram |
@@ -334,6 +335,42 @@ thị trường.
   crypto. Kết quả thật nhiều khả năng còn tệ hơn, không khá hơn.
 - Nến 1h không cho biết trong một nến giá chạm cắt lỗ trước hay chốt lời trước; ở đây luôn giả
   định chạm cắt lỗ trước.
+
+## Bot tín hiệu crypto
+
+`crypto_bot.py` là bản crypto của sổ theo dõi ý tưởng: quét các cặp thanh khoản nhất mỗi khi
+nến 4h đóng, mở **vị thế giấy** khi một chiến lược bắt được tín hiệu, rồi theo dõi tới khi
+chạm cắt lỗ / chốt lời / trailing / hết hạn giữ và báo điểm bán kèm PnL và số R.
+
+```bash
+python scripts/crypto_bot.py --dry       # xem trước, không ghi, không gửi
+python scripts/crypto_bot.py             # chạy thật
+python scripts/crypto_bot.py --reset     # xoá sổ
+```
+
+Cấu hình ở `CFG` đầu file: khung nến, số cặp quét, số vị thế tối đa, và **danh sách chiến lược
+chạy song song** (mặc định `vcr` + `rsi_vol_gated`). Khối thoát lệnh lấy thẳng từ `crypto.py`
+nên backtest và bot luôn dùng chung một bộ luật.
+
+GitHub Actions chạy lúc 00:06, 04:06, 08:06, 12:06, 16:06, 20:06 UTC
+([crypto-bot.yml](../.github/workflows/crypto-bot.yml)) — sáu phút sau mỗi lần nến 4h đóng.
+Sổ ghi vào `data/crypto-ideas.json` và chỉ commit khi có thay đổi.
+
+### Nguồn dữ liệu dự phòng
+
+Binance trả **HTTP 451** cho một số vùng, trong đó có dải IP của GitHub Actions. Nên cả
+`crypto.py` lẫn `crypto_bot.py` tự chuyển sang **OKX** khi gặp 451 — cùng dữ liệu nến, khác
+định dạng, đã kiểm tra chạy được cho cả danh sách cặp lẫn lịch sử giá.
+
+### Bot này không đặt lệnh
+
+Không có khoá API sàn ở bất kỳ đâu trong repo. Nếu sau này bạn muốn nó đặt lệnh thật, phần đó
+**phải** chạy ở máy bạn hoặc VPS với khoá trong `.env` không commit — không bao giờ để trên
+GitHub Actions của một repo công khai.
+
+Và trước khi nghĩ tới chuyện đó: đọc lại bảng kết quả backtest ở trên. Năm chiến lược, hai
+khung thời gian, ba năm dữ liệu, tất cả đều âm. Bot này có giá trị như **một cái máy ghi chép
+chạy tiến về phía trước** để đối chiếu với backtest — không phải như một nguồn thu nhập.
 
 ## Sửa bộ luật
 

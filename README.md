@@ -36,6 +36,8 @@ quét sàn (342 mã)  →  lọc thanh khoản → 162 mã có điểm  →  sho
                      trong phiên: canh ngưỡng giá, nhắn Telegram ngay khi chạm
 ```
 
+Có thêm một bot crypto chạy song song ([`crypto_bot.py`](scripts/crypto_bot.py)): quét các cặp USDT thanh khoản nhất mỗi khi nến 4h đóng, mở vị thế giấy, theo dõi tới điểm bán. Năm chiến lược cắm rời trong [`crypto.py`](scripts/crypto.py), trong đó hai cái dựng lại từ một kênh tín hiệu công khai — và **cả năm đều âm khi backtest 3 năm**, thua xa mua-giữ BTC (+212%). Số liệu nằm trong [`data/crypto-backtest.json`](data/crypto-backtest.json) và được gắn vào từng tin nhắn của bot.
+
 Bot **không đặt lệnh** và không giữ khoá API giao dịch nào. Lý do dừng ở mức báo tín hiệu nằm ở
 mục kiểm chứng: bộ luật này chưa thắng được mua-và-giữ, nên tự động hoá nó chỉ làm mất tiền
 nhanh hơn.
@@ -76,6 +78,8 @@ scripts/
   morning.py      nhắc việc cần làm trước giờ mở cửa
   intraday.py     canh ngưỡng giá trong phiên, gửi Telegram
   telegram_setup.py  lấy chat id, gửi thử một tin
+  crypto.py       khung chiến lược crypto + backtest nến Binance/OKX
+  crypto_bot.py   bot tín hiệu crypto: quét, ra điểm mua, theo dõi, ra điểm bán
   backtest.py     chạy lại bộ luật trên 5 năm quá khứ
   watchlist.json  danh sách mã được chấm điểm
   README.md       cách chạy bot, bật Telegram, đọc backtest
@@ -85,6 +89,8 @@ data/
   analysis.json   bối cảnh thị trường + bảng điểm rổ chính
   signals.json    tín hiệu phiên mới nhất + lịch sử 45 ngày
   backtest.json   kết quả kiểm chứng bộ luật
+  crypto-backtest.json  kết quả 5 chiến lược crypto trên 3 năm nến
+  crypto-ideas.json     sổ vị thế giấy của bot crypto
   bars/<mã>.json  nến và chỉ báo từng mã, tải khi cần
 ```
 

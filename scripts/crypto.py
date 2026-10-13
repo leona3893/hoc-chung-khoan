@@ -198,6 +198,10 @@ STRATEGIES = {
 # ---------------------------------------------------------------------------
 # Dữ liệu
 # ---------------------------------------------------------------------------
+class GeoBlocked(RuntimeError):
+    """Binance trả 451 — vùng này bị chặn, phải dùng nguồn khác."""
+
+
 def get(url, retries=3):
     last = None
     for k in range(retries):
@@ -206,15 +210,87 @@ def get(url, retries=3):
                 req = urllib.request.Request(host + url, headers=HEADERS)
                 with urllib.request.urlopen(req, timeout=30) as r:
                     return json.load(r)
+            except urllib.error.HTTPError as e:
+                last = e
+                if e.code == 451:
+                    # Binance chặn một số vùng, trong đó có dải IP của GitHub Actions.
+                    # Không retry vô ích — để bên gọi chuyển sang nguồn dự phòng.
+                    raise GeoBlocked(f"Binance chặn vùng này (451)")
             except Exception as e:  # noqa: BLE001
                 last = e
         time.sleep(1.5 * (k + 1))
     raise RuntimeError(f"Không lấy được {url}: {last}")
 
 
-def liquid_pairs(limit, min_vol=1e7):
+# ---------------------------------------------------------------------------
+# Nguồn dự phòng: OKX. Cùng dữ liệu nến, khác định dạng và thứ tự.
+# ---------------------------------------------------------------------------
+OKX_BAR = {"1h": "1H", "2h": "2H", "4h": "4H", "6h": "6H", "12h": "12H", "1d": "1D"}
+
+
+def okx_klines(symbol, interval, limit=300, before=None):
+    """Trả về [[ts, o, h, l, c, v], ...] sắp theo thời gian tăng dần."""
+    q = {"instId": (symbol[:-4] + "-USDT") if symbol.endswith("USDT") else symbol,
+         "bar": OKX_BAR.get(interval, "1H"), "limit": min(limit, 300)}
+    if before:
+        q["after"] = before     # OKX: 'after' nghĩa là lấy các nến CŨ HƠN mốc này
+    req = urllib.request.Request("https://www.okx.com/api/v5/market/candles?"
+                                 + urllib.parse.urlencode(q), headers=HEADERS)
+    with urllib.request.urlopen(req, timeout=30) as r:
+        d = json.load(r)
+    rows = d.get("data") or []
+    out = [[int(x[0]), float(x[1]), float(x[2]), float(x[3]), float(x[4]), float(x[5])]
+           for x in rows]
+    out.sort(key=lambda b: b[0])
+    return out
+
+
+def okx_liquid_pairs(limit, min_vol=1e7):
+    req = urllib.request.Request("https://www.okx.com/api/v5/market/tickers?instType=SPOT",
+                                 headers=HEADERS)
+    with urllib.request.urlopen(req, timeout=30) as r:
+        d = json.load(r)
     rows = []
-    for x in get("/api/v3/ticker/24hr"):
+    for x in d.get("data") or []:
+        inst = x.get("instId", "")
+        if not inst.endswith("-USDT"):
+            continue
+        base = inst[:-5]
+        if base in STABLE:
+            continue
+        try:
+            qv = float(x.get("volCcy24h") or 0) * float(x.get("last") or 0)
+        except (TypeError, ValueError):
+            continue
+        if qv >= min_vol:
+            rows.append((qv, base + "USDT"))
+    rows.sort(reverse=True)
+    return [s for _, s in rows[:limit]]
+
+
+def okx_history(symbol, interval, start):
+    """Lấy ngược về quá khứ từng trang 300 nến cho tới khi phủ hết khoảng cần."""
+    out, before = [], None
+    for _ in range(80):
+        page = okx_klines(symbol, interval, 300, before)
+        if not page:
+            break
+        out = page + out
+        before = str(page[0][0])
+        if page[0][0] <= start:
+            break
+        time.sleep(0.12)
+    return [b for b in out if b[0] >= start]
+
+
+def liquid_pairs(limit, min_vol=1e7):
+    try:
+        tickers = get("/api/v3/ticker/24hr")
+    except GeoBlocked:
+        print("[nguồn] Binance chặn vùng này — chuyển sang OKX.", file=sys.stderr)
+        return okx_liquid_pairs(limit, min_vol)
+    rows = []
+    for x in tickers:
         s = x["symbol"]
         if not s.endswith("USDT"):
             continue
@@ -246,25 +322,32 @@ def klines(symbol, interval, months, refresh=False):
         except Exception:  # noqa: BLE001
             pass
 
+    src = "binance"
     bars, cur = [], start
-    while cur < end:
-        q = urllib.parse.urlencode({"symbol": symbol, "interval": interval,
-                                    "startTime": cur, "limit": 1000})
-        rows = get("/api/v3/klines?" + q)
-        if not rows:
-            break
-        for r in rows:
-            bars.append([int(r[0]), float(r[1]), float(r[2]), float(r[3]), float(r[4]), float(r[5])])
-        nxt = rows[-1][0] + 1
-        if nxt <= cur:
-            break
-        cur = nxt
-        if len(rows) < 1000:
-            break
+    try:
+        while cur < end:
+            q = urllib.parse.urlencode({"symbol": symbol, "interval": interval,
+                                        "startTime": cur, "limit": 1000})
+            rows = get("/api/v3/klines?" + q)
+            if not rows:
+                break
+            for r in rows:
+                bars.append([int(r[0]), float(r[1]), float(r[2]), float(r[3]),
+                             float(r[4]), float(r[5])])
+            nxt = rows[-1][0] + 1
+            if nxt <= cur:
+                break
+            cur = nxt
+            if len(rows) < 1000:
+                break
+    except GeoBlocked:
+        print("[nguồn] Binance chặn vùng này — lấy nến từ OKX.", file=sys.stderr)
+        bars, src = okx_history(symbol, interval, start), "okx"
+
     os.makedirs(CACHE_DIR, exist_ok=True)
     with open(p, "w", encoding="utf-8") as f:
         json.dump({"symbol": symbol, "interval": interval, "day": today,
-                   "months": months, "bars": bars},
+                   "months": months, "source": src, "bars": bars},
                   f, separators=(",", ":"))
     return bars
 
@@ -445,6 +528,7 @@ def main():
     ap.add_argument("--pairs", type=int, default=30, help="số cặp thanh khoản nhất")
     ap.add_argument("--months", type=float, default=24, help="số tháng lịch sử")
     ap.add_argument("--strategy", help="chỉ chạy một chiến lược")
+    ap.add_argument("--interval", default="1h", help="khung nến: 1h, 4h, 1d")
     ap.add_argument("--refresh", action="store_true")
     ap.add_argument("--list", action="store_true")
     args = ap.parse_args()
@@ -454,16 +538,23 @@ def main():
             print(f"  {k:<16} {v['label']}  {v['params']}")
         return 0
 
+    # maxHold đếm bằng số nến: quy đổi để mọi khung giữ cùng số giờ
+    per = {"1h": 1, "2h": 2, "4h": 4, "6h": 6, "12h": 12, "1d": 24}.get(args.interval, 1)
+    if per > 1:
+        EXIT["maxHold"] = max(3, EXIT["maxHold"] // per)
+        print(f"Khung {args.interval}: giữ tối đa {EXIT['maxHold']} nến "
+              f"(= {EXIT['maxHold'] * per} giờ)", file=sys.stderr)
+
     t0 = time.time()
     pairs = liquid_pairs(args.pairs)
     if "BTCUSDT" not in pairs:
         pairs.append("BTCUSDT")
-    print(f"{len(pairs)} cặp, {args.months:.0f} tháng nến 1h.", file=sys.stderr)
+    print(f"{len(pairs)} cặp, {args.months:.0f} tháng nến {args.interval}.", file=sys.stderr)
 
     ctxs = {}
     for n, sym in enumerate(pairs, 1):
         try:
-            bars = klines(sym, "1h", args.months, args.refresh)
+            bars = klines(sym, args.interval, args.months, args.refresh)
             if len(bars) < 500:
                 print(f"  [bỏ] {sym}: {len(bars)} nến", file=sys.stderr)
                 continue
@@ -477,7 +568,7 @@ def main():
         return 1
 
     btc = ctxs["BTCUSDT"]
-    ma200d = sma(btc.c, 200 * 24)   # MA200 ngày, tính trên nến 1h
+    ma200d = sma(btc.c, max(2, 200 * 24 // per))   # MA200 ngày, quy ra số nến của khung
     regime = {btc.t[i]: ("tăng" if (ma200d[i] and btc.c[i] > ma200d[i]) else "giảm")
               for i in range(len(btc.t))}
     calendar = sorted({t for c in ctxs.values() for t in c.t})
@@ -490,7 +581,7 @@ def main():
         ("gốc", dict(EXIT)),
         ("không chốt lời", {**EXIT, "tpPct": None}),
         ("không chốt lời, trail 10%", {**EXIT, "tpPct": None, "trailPct": 10.0}),
-        ("giữ tối đa 240h", {**EXIT, "tpPct": None, "maxHold": 240}),
+        ("giữ tối đa 240h", {**EXIT, "tpPct": None, "maxHold": max(3, 240 // per)}),
     ]
 
     results = []
@@ -514,7 +605,8 @@ def main():
 
     out = {
         "updatedAt": datetime.now(VN_TZ).strftime("%Y-%m-%d %H:%M"),
-        "source": "Binance public klines 1h",
+        "source": f"Binance public klines {args.interval}",
+        "interval": args.interval,
         "pairs": sorted(ctxs),
         "period": {"from": calendar[0], "to": calendar[-1], "bars": len(calendar)},
         "exit": EXIT, "cost": COST, "portfolio": PORT,
