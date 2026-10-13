@@ -239,9 +239,8 @@ def build_buy(it):
 
 def build_sell(it):
     sym = it["symbol"].replace("USDT", "/USDT")
-    ico = "🔴" if it["pnlPct"] < 0 else "🟢"
     return "\n".join([
-        f"{ico} <b>SELL {esc(sym)}</b> · ⚡1h",
+        f"🔴 <b>SELL {esc(sym)}</b> · ⚡1h",
         f"Giá: <b>{fmt(it['exitPrice'])}</b> ({it['pnlPct']:+.2f}%, {it['r']:+.2f}R)",
         f"Đã giữ {it['held'] * PER_H}h · {EXIT_LABEL.get(it['exitReason'], it['exitReason'])}"
         f" · {esc(it['strategy'])}",

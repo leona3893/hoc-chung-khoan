@@ -174,11 +174,26 @@ def build_buy(it):
 
 
 def build_sell(it):
-    ico = "🔴" if (it.get("pnlPct") or 0) < 0 else "🟢"
     return "\n".join([
-        f"{ico} <b>SELL {B.esc(it['symbol'].replace('USDT', '/USDT'))}</b> · 📈1D",
+        f"🔴 <b>SELL {B.esc(it['symbol'].replace('USDT', '/USDT'))}</b> · 📈1D",
         f"Giá: <b>{B.fmt(it['exitPrice'])}</b> ({it['pnlPct']:+.2f}%)",
         f"Đã giữ {it['days']} ngày · xu hướng gãy",
+    ])
+
+
+def build_hold(it):
+    """Nến ngày đóng mà lệnh vẫn sống: báo lãi/lỗ và ngưỡng thoát MỚI.
+
+    Với donchian, ngưỡng thoát là đáy 10 ngày — giá leo thì ngưỡng cũng leo theo,
+    nên tin này cho biết phần lãi đã được khoá tới đâu.
+    """
+    return "\n".join([
+        f"📊 <b>Đang giữ {B.esc(it['symbol'].replace('USDT', '/USDT'))}</b> · 📈1D",
+        f"Giá: <b>{B.fmt(it['lastPrice'])}</b> ({it['pnlPct']:+.2f}%) · vào {B.fmt(it['entry'])}",
+        f"Ngưỡng thoát nay: <b>{B.fmt(it.get('exitLevel'))}</b>"
+        + (f" (dưới giá {abs((it['lastPrice'] / it['exitLevel'] - 1) * 100):.1f}%)"
+           if it.get("exitLevel") else ""),
+        f"Đã giữ {it['days']} ngày · xu hướng còn nguyên",
     ])
 
 
@@ -286,7 +301,9 @@ def main():
             msgs.append((build_buy(e["it"]) if e["kind"] == "buy" else build_sell(e["it"]),
                          chart(e["it"], bars, e["kind"])))
         print(f"Nến ngày mới: {len(events)} sự kiện.", file=sys.stderr)
+        daily_close = True
     else:
+        daily_close = False
         print("Chưa có nến ngày mới — chỉ canh ngưỡng.", file=sys.stderr)
 
     # --- canh trong ngày: giá đã thủng ngưỡng thoát chưa
@@ -305,6 +322,10 @@ def main():
         if lvl and px < lvl and key not in warned:
             msgs.append((build_warn(it, px, lvl), None))
             warned.add(key)
+        elif daily_close and not any(e["it"]["symbol"] == sym for e in events):
+            # Nến ngày đóng, lệnh vẫn sống: báo lãi/lỗ và ngưỡng thoát mới.
+            # Đây là câu trả lời cho "giá vẫn leo thì sao" — không bán, chỉ nâng ngưỡng.
+            msgs.append((build_hold(it), None))
     state["warned"] = sorted(warned)[-20:]
 
     st = stats_of(state)
