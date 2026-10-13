@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       test:
-        description: "Gửi thử một tin mẫu kèm ảnh (nhập mã, vd BTC). Để trống = quét thật."
+        description: "Gửi thử tin mẫu kèm ảnh — nhập một hoặc nhiều mã, vd: btc  hoặc  ltc,ada,avax,dot. Để trống = quét thật."
         required: false
         default: ""
 

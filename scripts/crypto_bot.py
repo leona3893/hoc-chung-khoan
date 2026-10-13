@@ -321,59 +321,76 @@ def tg_send(token, chat, text):
 
 
 # ---------------------------------------------------------------------------
-def send_test(symbol, args):
-    """Gửi một tin mẫu kèm ảnh, dựng từ nến thật mới nhất của một mã.
-
-    Dùng để kiểm tra token Telegram và đường gửi ảnh mà không phải chờ tín hiệu
-    thật xuất hiện. Không ghi gì vào sổ.
-    """
-    symbol = symbol.upper()
+def _test_one(symbol, args, token, chat):
+    """Dựng và gửi một tin mẫu cho một mã. Trả về True nếu xong việc."""
     if not symbol.endswith("USDT"):
         symbol += "USDT"
-    global PER_H
-    PER_H = {"1h": 1, "2h": 2, "4h": 4, "6h": 6, "12h": 12, "1d": 24}.get(CFG["interval"], 1)
     try:
         bars = fetch_recent(symbol, CFG["interval"], CFG["lookback"])
     except Exception as e:  # noqa: BLE001
-        print(f"Không lấy được nến {symbol}: {e}", file=sys.stderr)
-        return 1
+        print(f"  [lỗi] {symbol}: {str(e)[:90]}", file=sys.stderr)
+        return False
     if not bars:
-        print(f"Không có nến cho {symbol}.", file=sys.stderr)
-        return 1
+        print(f"  [lỗi] {symbol}: không có nến", file=sys.stderr)
+        return False
 
     last = bars[-1]
     entry = last[4]
+    sl = entry * (1 - C.EXIT["slPct"] / 100)
     it = {
         "symbol": symbol, "strategy": "gửi thử", "entryTs": last[0], "entry": entry,
-        "stop": entry * (1 - C.EXIT["slPct"] / 100), "stop0": entry * (1 - C.EXIT["slPct"] / 100),
+        "stop": sl, "stop0": sl,
         "tp": entry * (1 + C.EXIT["tpPct"] / 100) if C.EXIT.get("tpPct") else None,
         "held": 0,
     }
     cap = "🧪 <b>GỬI THỬ</b> — không phải tín hiệu thật\n" + build_buy(it)
-    img = None if args.no_chart else chart_for({"kind": "buy", "it": it},
-                                               {symbol: bars},
+    img = None if args.no_chart else chart_for({"kind": "buy", "it": it}, {symbol: bars},
                                                os.path.join(DATA_DIR, "cache", "charts"))
-    print(f"Gửi thử {symbol} · giá {fmt(entry)} · ảnh: {img or 'không'}", file=sys.stderr)
+    print(f"  {symbol:<12} giá {fmt(entry):>12} · ảnh {'có' if img else 'không'}", file=sys.stderr)
+
     if args.dry:
         print(cap)
-        return 0
-
-    token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
-    chat = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
-    if not token or not chat:
-        print("Chưa có TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID — không gửi được.", file=sys.stderr)
-        print(cap)
-        return 1
+        print("-" * 30)
+        return True
     try:
         r = tg_photo(token, chat, img, cap) if img else tg_send(token, chat, cap)
         if r.get("ok"):
-            print("Đã gửi Telegram." + (" (kèm ảnh)" if img else " (chỉ chữ)"), file=sys.stderr)
-            return 0
-        print(f"Telegram trả lỗi: {r}", file=sys.stderr)
-        return 1
+            return True
+        print(f"  [lỗi] {symbol}: Telegram trả {r}", file=sys.stderr)
     except Exception as e:  # noqa: BLE001
-        print(f"Lỗi gửi Telegram: {e}", file=sys.stderr)
+        print(f"  [lỗi] {symbol}: {e}", file=sys.stderr)
+    return False
+
+
+def send_test(spec, args):
+    """Gửi tin mẫu kèm ảnh cho MỘT HOẶC NHIỀU mã, dựng từ nến thật mới nhất.
+
+    Nhận "btc" hoặc "ltc,ada,avax,dot" (phẩy hoặc khoảng trắng đều được). Dùng để
+    kiểm tra token Telegram và đường gửi ảnh mà không phải chờ tín hiệu thật.
+    Không ghi gì vào sổ.
+    """
+    global PER_H
+    PER_H = {"1h": 1, "2h": 2, "4h": 4, "6h": 6, "12h": 12, "1d": 24}.get(CFG["interval"], 1)
+
+    syms = [x.strip().upper() for x in spec.replace(",", " ").split() if x.strip()]
+    if not syms:
+        print("Không có mã nào để gửi thử.", file=sys.stderr)
         return 1
+    print(f"Gửi thử {len(syms)} mã, khung {CFG['interval']}: {', '.join(syms)}", file=sys.stderr)
+
+    token = chat = ""
+    if not args.dry:
+        token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+        chat = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+        if not token or not chat:
+            print("Chưa có TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID — không gửi được.",
+                  file=sys.stderr)
+            return 1
+
+    ok = sum(1 for sym in syms if _test_one(sym, args, token, chat))
+    print(f"Xong: {ok}/{len(syms)} mã." + ("" if args.dry else " Đã gửi Telegram."),
+          file=sys.stderr)
+    return 0 if ok == len(syms) else 1
 
 
 def main():
