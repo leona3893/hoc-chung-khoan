@@ -11,6 +11,7 @@ Ba script, chạy bằng Python chuẩn (không cần `pip install`):
 | `backtest.py` | Chạy lại bộ luật trên 5 năm quá khứ → `data/backtest.json` | Khi sửa luật, hoặc hằng tuần |
 | `crypto.py` | Khung chiến lược crypto: nhiều chiến lược cắm vào một bộ máy, backtest nến Binance/OKX | Khi thêm hoặc sửa chiến lược |
 | `crypto_bot.py` | Bot tín hiệu crypto: quét sàn mỗi nến 4h, ra điểm mua, theo dõi, ra điểm bán | Mỗi 4 giờ, 24/7 |
+| `crypto_chart.py` | Vẽ ảnh chart kèm mỗi tín hiệu (cần Pillow) | Bot tự gọi |
 | `morning.py` | Nhắc trước giờ mở cửa: hôm nay cần đặt lệnh gì, đang giữ gì, cắt lỗ ở đâu | 8:50 mỗi ngày |
 | `intraday.py` | Canh giá so với ngưỡng của kế hoạch phiên trước, nhắn Telegram | Mỗi 30 phút trong phiên |
 | `telegram_setup.py` | Lấy chat id và gửi thử một tin | Một lần, khi bật Telegram |
@@ -355,6 +356,36 @@ nên backtest và bot luôn dùng chung một bộ luật.
 GitHub Actions chạy lúc 00:06, 04:06, 08:06, 12:06, 16:06, 20:06 UTC
 ([crypto-bot.yml](../.github/workflows/crypto-bot.yml)) — sáu phút sau mỗi lần nến 4h đóng.
 Sổ ghi vào `data/crypto-ideas.json` và chỉ commit khi có thay đổi.
+
+### Ảnh chart kèm tín hiệu
+
+Mỗi tin mua/bán gửi kèm một ảnh PNG do `crypto_chart.py` vẽ: 70 nến gần nhất, MA14, vùng chốt
+lời xanh và vùng cắt lỗ đỏ kéo từ nến vào lệnh, **đường cắt lỗ dời bậc thang**, mốc MUA/BÁN,
+khung khối lượng kèm ngưỡng ×2,5. Tin nhắn đi kèm làm chú thích ảnh, ngắn gọn:
+
+```
+🟢 MUA W/USDT
+Vào: 0.00931
+Cắt lỗ: 0.008844 (−5%)
+Chốt lời: 0.010241 (+10%)
+Trailing 7% · Giữ tối đa 72h
+Chiến lược: vcr (−0,012R/lệnh khi backtest)
+⚠️ Sổ giấy, không phải khuyến nghị.
+```
+
+Pillow là **thư viện ngoài duy nhất** của cả repo, và chỉ dùng cho việc vẽ này. Không có nó
+thì bot vẫn chạy bình thường, chỉ gửi chữ (`--no-chart` để tắt hẳn). Gửi ảnh dùng `sendPhoto`
+với multipart tự dựng bằng `urllib`, không thêm thư viện nào.
+
+Xem thử một ảnh mẫu: `python scripts/crypto_chart.py BTCUSDT 4h`
+
+### Lọc token cổ phiếu
+
+Binance niêm yết khoảng 90 cổ phiếu và ETF Mỹ token hoá, đặt tên bằng mã chứng khoán cộng chữ
+"B" (`AAPLB`, `TSLAB`, `NVDAB`, `SPYB`, `SNDKB`…). Giá của chúng bám cổ phiếu cơ sở nên chiến
+lược crypto áp lên đó là so sai thị trường — lần quét thử đầu tiên đã ra tín hiệu mua `SNDKB`
+(SanDisk) trước khi phát hiện. Giờ lọc theo quy tắc đặt tên, trừ vài coin thật cũng kết thúc
+bằng B (`SHIB`, `BNB`); gặp mã mới thì thêm vào `NOT_STOCK` trong `crypto.py`.
 
 ### Nguồn dữ liệu dự phòng
 

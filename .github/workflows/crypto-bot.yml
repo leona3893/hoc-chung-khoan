@@ -28,6 +28,11 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Pillow chỉ để vẽ ảnh chart gửi kèm tín hiệu. Thiếu nó thì bot vẫn chạy,
+      # chỉ gửi tin chữ.
+      - name: Cài Pillow để vẽ chart
+        run: pip install --quiet pillow
+
       - name: Quét tín hiệu crypto
         env:
           PYTHONIOENCODING: utf-8

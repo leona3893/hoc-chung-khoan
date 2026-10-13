@@ -46,6 +46,16 @@ HEADERS = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chr
 STABLE = {"USDC", "FDUSD", "TUSD", "USD1", "RLUSD", "BUSD", "DAI", "USDP", "USDE",
           "EUR", "TRY", "BRL", "ARS", "XUSD", "AEUR"}
 
+# Binance niêm yết ~90 cổ phiếu và ETF Mỹ token hoá, đặt tên bằng mã chứng khoán + "B"
+# (AAPLB, TSLAB, NVDAB, SPYB, SNDKB…). Chúng không phải coin: giá bám cổ phiếu cơ sở,
+# nên chiến lược crypto áp lên đó là so sai thị trường. Lọc theo quy tắc đặt tên, trừ
+# vài coin thật cũng kết thúc bằng B — thêm vào NOT_STOCK nếu gặp mã mới.
+NOT_STOCK = {"SHIB", "BNB", "COMB", "CLUB"}
+
+
+def is_stock_token(base):
+    return base.endswith("B") and len(base) >= 4 and base not in NOT_STOCK
+
 # ---------------------------------------------------------------------------
 # Khối thoát lệnh dùng chung — đúng bộ tham số bot kia in trên chart
 # ---------------------------------------------------------------------------
@@ -256,7 +266,7 @@ def okx_liquid_pairs(limit, min_vol=1e7):
         if not inst.endswith("-USDT"):
             continue
         base = inst[:-5]
-        if base in STABLE:
+        if base in STABLE or is_stock_token(base):
             continue
         try:
             qv = float(x.get("volCcy24h") or 0) * float(x.get("last") or 0)
@@ -295,7 +305,7 @@ def liquid_pairs(limit, min_vol=1e7):
         if not s.endswith("USDT"):
             continue
         base = s[:-4]
-        if base in STABLE or base.endswith("UP") or base.endswith("DOWN"):
+        if base in STABLE or is_stock_token(base) or base.endswith("UP") or base.endswith("DOWN"):
             continue
         qv = float(x["quoteVolume"])
         if qv >= min_vol:

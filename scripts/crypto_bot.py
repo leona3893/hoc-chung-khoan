@@ -31,6 +31,11 @@ from datetime import datetime, timedelta, timezone
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import crypto as C  # noqa: E402
 
+try:
+    import crypto_chart as CH  # noqa: E402
+except Exception:  # noqa: BLE001
+    CH = None
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(ROOT, "data")
 STATE = os.path.join(DATA_DIR, "crypto-ideas.json")
@@ -45,6 +50,8 @@ CFG = {
     "strategies": ["vcr", "rsi_vol_gated"],   # chạy song song, mỗi cặp chỉ một vị thế
     "lookback": 300,          # số nến tải về mỗi lần, đủ cho mọi chỉ báo
 }
+
+PER_H = 4   # số giờ mỗi nến, đặt lại theo --interval
 
 EXIT_LABEL = {
     "stop": "chạm cắt lỗ", "trail": "cắt lỗ dời chạm", "tp": "đạt mục tiêu",
@@ -217,49 +224,94 @@ def stats_of(state):
 
 
 # ---------------------------------------------------------------------------
-def build_message(state, events, st):
+def build_buy(it):
     ex = C.EXIT
-    lines = [f"🪙 <b>Bot crypto · {now_vn():%H:%M %d/%m}</b> · khung {CFG['interval']}"]
-
-    sells = [e for e in events if e["kind"] == "sell"]
-    buys = [e for e in events if e["kind"] == "buy"]
-
-    if sells:
-        lines.append("\n<b>🔻 ĐIỂM BÁN</b>")
-        for e in sells:
-            it = e["it"]
-            lines.append(f"• <b>{esc(it['symbol'])}</b> ra {fmt(it['exitPrice'])} — "
-                         f"{EXIT_LABEL.get(it['exitReason'], it['exitReason'])} "
-                         f"({it['pnlPct']:+.2f}%, {it['r']:+.2f}R) · giữ {it['held']} nến")
-    if buys:
-        lines.append("\n<b>🟢 ĐIỂM MUA</b>")
-        for e in buys:
-            it = e["it"]
-            lines.append(f"• <b>{esc(it['symbol'])}</b> vào {fmt(it['entry'])} · "
-                         f"cắt lỗ {fmt(it['stop'])} (−{ex['slPct']:.0f}%)"
-                         + (f" · mục tiêu {fmt(it['tp'])} (+{ex['tpPct']:.0f}%)" if it.get("tp") else "")
-                         + f" · trailing {ex['trailPct']:.0f}% · giữ tối đa {ex['maxHold']}h")
-            e_ = expectancy(it["strategy"], CFG["interval"])
-            tag = f" · backtest {e_['avgR']:+.3f}R/lệnh" if e_ else ""
-            lines.append(f"  <i>Chiến lược {esc(it['strategy'])}{tag}</i>")
-
-    op = state.get("open", [])
-    if op:
-        lines.append("\n<b>👀 Đang giữ</b>")
-        for it in sorted(op, key=lambda x: -(x.get("pnlPct") or 0)):
-            lines.append(f"• {esc(it['symbol'])} vào {fmt(it['entry'])} · nay {fmt(it['lastPrice'])} "
-                         f"({it['pnlPct']:+.2f}%, {it['r']:+.2f}R) · cắt lỗ {fmt(it['stop'])}"
-                         + (" (đã dời)" if it.get("trailed") else "")
-                         + f" · {it['held']} nến")
-    else:
-        lines.append("\n<b>👀 Đang giữ</b>\nKhông có vị thế nào.")
-
-    if st["closed"]:
-        lines.append(f"\n<i>Thành tích sổ giấy: {st['closed']} lệnh đóng, thắng {st['winRatePct']}%, "
-                     f"tổng {st['totalR']:+.2f}R, trung bình {st['avgR']:+.3f}R/lệnh.</i>")
-    lines.append("<i>Sổ giấy, không đặt lệnh. Backtest 3 năm của chính các chiến lược này đều âm "
-                 "và thua xa mua-giữ BTC — xem data/crypto-backtest.json.</i>")
+    sym = it["symbol"].replace("USDT", "/USDT")
+    lines = [f"🟢 <b>MUA {esc(sym)}</b>",
+             f"Vào: <b>{fmt(it['entry'])}</b>",
+             f"Cắt lỗ: {fmt(it.get('stop0') or it['stop'])} (−{ex['slPct']:.0f}%)"]
+    if it.get("tp"):
+        lines.append(f"Chốt lời: {fmt(it['tp'])} (+{ex['tpPct']:.0f}%)")
+    lines.append(f"Trailing {ex['trailPct']:.0f}% · Giữ tối đa {ex['maxHold']}h")
+    e = expectancy(it["strategy"], CFG["interval"])
+    tag = f" ({e['avgR']:+.3f}R/lệnh khi backtest)" if e else ""
+    lines.append(f"Chiến lược: {esc(it['strategy'])}{tag}")
+    lines.append("⚠️ Sổ giấy, không phải khuyến nghị.")
     return "\n".join(lines)
+
+
+def build_sell(it):
+    sym = it["symbol"].replace("USDT", "/USDT")
+    ico = "🔴" if it["pnlPct"] < 0 else "🟢"
+    return "\n".join([
+        f"{ico} <b>BÁN {esc(sym)}</b>",
+        f"Ra: <b>{fmt(it['exitPrice'])}</b> · {it['pnlPct']:+.2f}% ({it['r']:+.2f}R)",
+        f"Lý do: {EXIT_LABEL.get(it['exitReason'], it['exitReason'])} · giữ {it['held'] * PER_H}h",
+        f"Chiến lược: {esc(it['strategy'])}",
+    ])
+
+
+def build_summary(state, st):
+    """Tin tổng kết ngắn, chỉ gửi khi có cờ --summary."""
+    op = state.get("open", [])
+    lines = [f"🪙 <b>Sổ crypto</b> · {len(op)} đang giữ"]
+    for it in sorted(op, key=lambda x: -(x.get("pnlPct") or 0)):
+        lines.append(f"{esc(it['symbol'].replace('USDT', ''))} {it['pnlPct']:+.2f}% "
+                     f"({it['r']:+.2f}R) · cắt lỗ {fmt(it['stop'])}")
+    if st["closed"]:
+        lines.append(f"\n{st['closed']} lệnh đóng · thắng {st['winRatePct']}% · "
+                     f"{st['avgR']:+.3f}R/lệnh")
+    return "\n".join(lines)
+
+
+def tg_photo(token, chat, path, caption):
+    """sendPhoto bằng multipart/form-data, không cần thư viện ngoài."""
+    bound = "----crypto-bot-" + os.urandom(8).hex()
+    with open(path, "rb") as f:
+        blob = f.read()
+    parts = []
+    for k, v in (("chat_id", chat), ("caption", caption), ("parse_mode", "HTML")):
+        parts.append(f'--{bound}\r\nContent-Disposition: form-data; name="{k}"\r\n\r\n{v}\r\n'
+                     .encode("utf-8"))
+    parts.append(f'--{bound}\r\nContent-Disposition: form-data; name="photo"; '
+                 f'filename="chart.png"\r\nContent-Type: image/png\r\n\r\n'.encode("utf-8"))
+    parts.append(blob)
+    parts.append(f"\r\n--{bound}--\r\n".encode("utf-8"))
+    body = b"".join(parts)
+    req = urllib.request.Request(
+        f"https://api.telegram.org/bot{token}/sendPhoto", data=body, method="POST",
+        headers={"Content-Type": f"multipart/form-data; boundary={bound}",
+                 "Content-Length": str(len(body))})
+    with urllib.request.urlopen(req, timeout=40) as r:
+        return json.load(r)
+
+
+def chart_for(ev, bars_by_sym, charts_dir):
+    """Vẽ ảnh chart cho một sự kiện. Thiếu Pillow hoặc lỗi thì trả None, bot vẫn gửi chữ."""
+    if CH is None or not getattr(CH, "HAVE_PIL", False):
+        return None
+    it = ev["it"]
+    bars = bars_by_sym.get(it["symbol"])
+    if not bars:
+        return None
+    try:
+        window = 70
+        seg = bars[-window:]
+        # vị trí nến vào lệnh trong cửa sổ đang vẽ
+        ei = next((i for i, b in enumerate(seg) if b[0] >= it["entryTs"]), len(seg) - 1)
+        meta = {
+            "symbol": it["symbol"], "interval": CFG["interval"],
+            "side": "BUY" if ev["kind"] == "buy" else "SELL",
+            "strategy": it["strategy"], "entry": it["entry"],
+            "stop0": it.get("stop0"), "tp": it.get("tp"), "entryIdx": ei,
+            "exits": {**C.EXIT, "maxHold": C.EXIT["maxHold"]},
+            "exitPrice": it.get("exitPrice"), "pnlPct": it.get("pnlPct"),
+        }
+        path = os.path.join(charts_dir, f"{it['symbol']}-{it['entryTs']}-{ev['kind']}.png")
+        return CH.render(bars, meta, path, window=window)
+    except Exception as e:  # noqa: BLE001
+        print(f"  [chart] {it['symbol']}: {e}", file=sys.stderr)
+        return None
 
 
 def tg_send(token, chat, text):
@@ -279,6 +331,8 @@ def main():
     ap.add_argument("--no-send", action="store_true")
     ap.add_argument("--interval", default=CFG["interval"])
     ap.add_argument("--pairs", type=int, default=CFG["pairs"])
+    ap.add_argument("--summary", action="store_true", help="gửi kèm một tin tổng kết ngắn")
+    ap.add_argument("--no-chart", action="store_true", help="không vẽ ảnh, chỉ gửi chữ")
     args = ap.parse_args()
 
     if args.reset:
@@ -288,6 +342,8 @@ def main():
         return 0
 
     CFG["interval"], CFG["pairs"] = args.interval, args.pairs
+    global PER_H
+    PER_H = {"1h": 1, "2h": 2, "4h": 4, "6h": 6, "12h": 12, "1d": 24}.get(args.interval, 1)
     state = load(STATE, {"open": [], "closed": []}) or {"open": [], "closed": []}
 
     try:
@@ -328,32 +384,54 @@ def main():
             print(f"  [BÁN ] {it['symbol']:<12} {fmt(it['exitPrice'])} "
                   f"{it['exitReason']} {it['pnlPct']:+.2f}% {it['r']:+.2f}R", file=sys.stderr)
 
-    msg = build_message(state, events, st)
+    charts_dir = os.path.join(DATA_DIR, "cache", "charts")
+    msgs = []
+    for e in events:
+        cap = build_buy(e["it"]) if e["kind"] == "buy" else build_sell(e["it"])
+        img = None if args.no_chart else chart_for(e, bars_by_sym, charts_dir)
+        msgs.append((cap, img))
+    if args.summary:
+        msgs.append((build_summary(state, st), None))
     if args.dry:
         print("\n--- Tin nhắn ---\n", file=sys.stderr)
-        print(msg)
+        if not msgs:
+            print("(không có tín hiệu nào)")
+        for cap, img in msgs:
+            print(cap)
+            print(f"[ảnh: {img}]" if img else "[không có ảnh]")
+            print("-" * 30)
         return 0
 
     with open(STATE, "w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, separators=(",", ":"))
     print("Đã ghi data/crypto-ideas.json", file=sys.stderr)
 
-    if args.no_send or not events:
-        if not events:
-            print("Không có sự kiện mới nên không gửi tin.", file=sys.stderr)
+    if args.no_send or not msgs:
+        if not msgs:
+            print("Không có tín hiệu mới nên không gửi tin.", file=sys.stderr)
         return 0
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
     chat = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
     if not token or not chat:
         print("Chưa có TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID — chỉ ghi file.", file=sys.stderr)
         return 0
-    try:
-        r = tg_send(token, chat, msg)
-        print("Đã gửi Telegram." if r.get("ok") else f"Telegram trả lỗi: {r}", file=sys.stderr)
-    except Exception as e:  # noqa: BLE001
-        print(f"Lỗi gửi Telegram: {e}", file=sys.stderr)
-        return 1
-    return 0
+    sent = 0
+    for cap, img in msgs:
+        try:
+            r = tg_photo(token, chat, img, cap) if img else tg_send(token, chat, cap)
+            sent += 1 if r.get("ok") else 0
+            if not r.get("ok"):
+                print(f"Telegram trả lỗi: {r}", file=sys.stderr)
+        except Exception as e:  # noqa: BLE001
+            print(f"Lỗi gửi Telegram: {e}", file=sys.stderr)
+            if img:   # ảnh hỏng thì vẫn cố gửi phần chữ
+                try:
+                    if tg_send(token, chat, cap).get("ok"):
+                        sent += 1
+                except Exception:  # noqa: BLE001
+                    pass
+    print(f"Đã gửi {sent}/{len(msgs)} tin.", file=sys.stderr)
+    return 0 if sent == len(msgs) else 1
 
 
 if __name__ == "__main__":
