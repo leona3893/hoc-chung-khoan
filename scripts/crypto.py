@@ -141,6 +141,8 @@ class Ctx:
         self.sma14 = sma(self.c, 14)
         self.sma20 = sma(self.c, 20)
         self.sma50 = sma(self.c, 50)
+        self.sma100 = sma(self.c, 100)
+        self.sma200 = sma(self.c, 200)
         self.rsi14 = rsi(self.c, 14)
         self.vavg20 = sma(self.v, 20)
         sd = stdev(self.c, 20)
@@ -201,7 +203,66 @@ def s_bb_bounce(x, i, p):
     return x.c[i - 1] < x.bbLo[i - 1] and x.c[i] > x.c[i - 1]
 
 
+# --- Nhóm theo xu hướng: vào khi giá đã lên, ra khi xu hướng gãy.
+#     Ngược hẳn nhóm bắt đáy ở trên, và thoát bằng luật chứ không chốt lời cứng.
+def s_above_ma200(x, i, p):
+    """Giá vượt lên trên MA200 — bộ lọc xu hướng kinh điển nhất."""
+    if i < 1 or None in (x.sma200[i], x.sma200[i - 1]):
+        return False
+    return x.c[i - 1] <= x.sma200[i - 1] and x.c[i] > x.sma200[i]
+
+
+def e_below_ma200(x, i, p):
+    return x.sma200[i] is not None and x.c[i] < x.sma200[i]
+
+
+def s_golden(x, i, p):
+    """MA50 cắt lên MA200."""
+    if i < 1 or None in (x.sma50[i], x.sma200[i], x.sma50[i - 1], x.sma200[i - 1]):
+        return False
+    return x.sma50[i - 1] <= x.sma200[i - 1] and x.sma50[i] > x.sma200[i]
+
+
+def e_death(x, i, p):
+    if None in (x.sma50[i], x.sma200[i]):
+        return False
+    return x.sma50[i] < x.sma200[i]
+
+
+def s_donchian(x, i, p):
+    """Phá đỉnh N nến — luật của nhóm Turtle."""
+    n = p.get("inn", 20)
+    if i < n + 1:
+        return False
+    return x.c[i] > max(x.h[i - n:i])
+
+
+def e_donchian(x, i, p):
+    n = p.get("out", 10)
+    if i < n + 1:
+        return False
+    return x.c[i] < min(x.l[i - n:i])
+
+
+def s_ma100(x, i, p):
+    if i < 1 or None in (x.sma100[i], x.sma100[i - 1]):
+        return False
+    return x.c[i - 1] <= x.sma100[i - 1] and x.c[i] > x.sma100[i]
+
+
+def e_ma100(x, i, p):
+    return x.sma100[i] is not None and x.c[i] < x.sma100[i]
+
+
 STRATEGIES = {
+    "ma200": {"fn": s_above_ma200, "exitFn": e_below_ma200, "params": {},
+              "label": "Vượt lên MA200, ra khi mất MA200 (theo xu hướng)"},
+    "ma100": {"fn": s_ma100, "exitFn": e_ma100, "params": {},
+              "label": "Vượt lên MA100, ra khi mất MA100 (theo xu hướng)"},
+    "golden": {"fn": s_golden, "exitFn": e_death, "params": {},
+               "label": "MA50 cắt lên MA200, ra khi cắt xuống (theo xu hướng)"},
+    "donchian": {"fn": s_donchian, "exitFn": e_donchian, "params": {"inn": 20, "out": 10},
+                 "label": "Phá đỉnh 20 nến, ra khi thủng đáy 10 nến (Turtle)"},
     "vcr": {"fn": s_vcr, "params": {"drop": 3.0, "volx": 2.5},
             "label": "Xả mạnh + khối lượng đột biến (bắt đáy)"},
     "rsi_vol_gated": {"fn": s_rsi_vol, "params": {"rsi": 25.0, "volx": 2.0},
@@ -428,13 +489,18 @@ def simulate(name, strat, ctxs, calendar, regime, exits):
                     p["stop"] = t_stop
                     p["trailed"] = True
             px = reason = None
-            if x.l[i] <= p["stop"]:
+            exit_fn = strat.get("exitFn")
+            if p["stop"] and x.l[i] <= p["stop"]:
                 px = min(x.o[i], p["stop"])
                 reason = "trail" if p["trailed"] else "stop"
-            elif exits.get("tpPct") and x.h[i] >= p["tp"]:
+            elif exits.get("tpPct") and p.get("tp") and x.h[i] >= p["tp"]:
                 px = max(x.o[i], p["tp"])
                 reason = "tp"
-            elif p["held"] >= exits["maxHold"]:
+            elif exit_fn and exit_fn(x, i, params):
+                # Chiến lược theo xu hướng tự quyết lúc nào ra, không chốt lời cứng
+                px = x.c[i]
+                reason = "rule"
+            elif exits.get("maxHold") and p["held"] >= exits["maxHold"]:
                 px = x.c[i]
                 reason = "max_hold"
             if px is None:
@@ -475,9 +541,11 @@ def simulate(name, strat, ctxs, calendar, regime, exits):
                     break
                 x = ctxs[sym]
                 fill = x.o[j] * (1 + COST["slip"])
-                stop = fill * (1 - exits["slPct"] / 100)
+                stop = fill * (1 - exits["slPct"] / 100) if exits.get("slPct") else None
                 risk_money = equity * PORT["riskPct"] / 100
-                qty = risk_money / (fill - stop)
+                # Không có cắt lỗ cứng (chiến lược theo xu hướng) thì chia đều vốn
+                qty = (risk_money / (fill - stop) if stop
+                       else (equity / PORT["maxOpen"]) / fill)
                 cost = fill * qty * (1 + COST["fee"])
                 if cost > cash:
                     qty = cash / (fill * (1 + COST["fee"]))
@@ -487,7 +555,7 @@ def simulate(name, strat, ctxs, calendar, regime, exits):
                 cash -= cost
                 open_pos[sym] = {
                     "qty": qty, "fill": fill, "cost": cost, "ts": ts, "held": 0,
-                    "stop": stop, "stop0": stop, "trailed": False, "peak": x.h[j],
+                    "stop": stop, "stop0": stop or fill * 0.9, "trailed": False, "peak": x.h[j],
                     "tp": fill * (1 + exits["tpPct"] / 100) if exits.get("tpPct") else None,
                     "regime": regime.get(ts, "?"),
                 }
