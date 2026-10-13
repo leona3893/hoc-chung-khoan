@@ -9,6 +9,7 @@ Ba script, chạy bằng Python chuẩn (không cần `pip install`):
 | `ideas.py` | **Tầng 3** — mở ý tưởng khi có điểm buy, theo dõi tới điểm sell → `data/ideas.json` | Sau `signals.py` |
 | `signals.py` | So bảng điểm phiên mới với phiên trước, tìm những gì vừa đổi → `data/signals.json` + gửi Telegram | Ngay sau `fetch_ssi.py` |
 | `backtest.py` | Chạy lại bộ luật trên 5 năm quá khứ → `data/backtest.json` | Khi sửa luật, hoặc hằng tuần |
+| `crypto.py` | Khung chiến lược crypto: nhiều chiến lược cắm vào một bộ máy, backtest nến 1h Binance | Khi thêm hoặc sửa chiến lược |
 | `morning.py` | Nhắc trước giờ mở cửa: hôm nay cần đặt lệnh gì, đang giữ gì, cắt lỗ ở đâu | 8:50 mỗi ngày |
 | `intraday.py` | Canh giá so với ngưỡng của kế hoạch phiên trước, nhắn Telegram | Mỗi 30 phút trong phiên |
 | `telegram_setup.py` | Lấy chat id và gửi thử một tin | Một lần, khi bật Telegram |
@@ -269,6 +270,70 @@ dõi sổ ý tưởng chạy tiến về phía trước đủ lâu. Đừng đ�
 - Không mô phỏng được việc không khớp đủ khối lượng ở mã thanh khoản thấp.
 
 ---
+
+## Khung chiến lược crypto
+
+`crypto.py` là bộ máy riêng cho crypto, tách đúng ba phần như mọi bot tín hiệu nên làm:
+
+```
+[ ĐIỀU KIỆN VÀO ]   mỗi chiến lược là một hàm ~15 dòng trong STRATEGIES
+[ KHỐI THOÁT LỆNH ] cắt lỗ / chốt lời / trailing / giữ tối đa — dùng chung
+[ MÔ PHỎNG + BÁO ]  phí, trượt giá, trần vị thế, thống kê R — dùng chung
+```
+
+Thêm một chiến lược = viết một hàm `def s_xyz(x, i, p)` trả về True/False rồi khai báo trong
+`STRATEGIES`. Mọi thứ còn lại dùng lại được ngay.
+
+```bash
+python scripts/crypto.py --list                 # danh sách chiến lược
+python scripts/crypto.py --pairs 30 --months 36 # backtest đủ, ~6 phút
+python scripts/crypto.py --strategy vcr         # chạy một cái
+```
+
+Năm chiến lược có sẵn, trong đó hai cái dựng lại từ một kênh tín hiệu công khai (`vcr` =
+xả mạnh kèm khối lượng đột biến, `rsi_vol_gated` = RSI quá bán kèm khối lượng), dùng đúng khối
+thoát lệnh mà kênh đó in trên chart: SL 5% / TP 10% / trailing 7% / giữ tối đa 72 giờ.
+
+### Kết quả: cả năm đều lỗ nặng
+
+30 cặp USDT thanh khoản nhất, nến 1h, 13/10/2023 → 13/10/2026 (26.300 nến), phí 0,1% mỗi chiều
++ trượt giá 0,05%:
+
+| Chiến lược | Lệnh | Thắng | R trung bình | Lãi cả kỳ |
+| --- | --- | --- | --- | --- |
+| vcr (bắt đáy theo khối lượng) | 1.371 | 34,9% | −0,085 | −77,6% |
+| rsi_vol_gated (RSI quá bán) | 1.240 | 34,4% | −0,187 | −92,2% |
+| ma_cross (theo xu hướng) | 2.352 | 33,3% | −0,157 | −98,0% |
+| breakout | 3.196 | 34,3% | −0,107 | −97,8% |
+| bb_bounce | 3.290 | 34,7% | −0,137 | −99,3% |
+| **Mua và giữ BTC** | — | — | — | **+212,5%** |
+
+Bốn phép kiểm chứng để chắc đây không phải lỗi mô phỏng:
+
+1. **Vào lệnh ngẫu nhiên** với cùng khối thoát lệnh cho R trung bình **−0,067** — tức `vcr`
+   (−0,085) và `rsi_vol_gated` (−0,187) đều **tệ hơn vào lệnh bừa**. Điều kiện vào không những
+   không có lợi thế, nó còn chọn đúng lúc xấu.
+2. **Bỏ hết phí**: `vcr` lên −0,028R, `rsi_vol_gated` lên −0,128R — vẫn âm. Phí chịu khoảng
+   0,06R mỗi lệnh (0,3% vòng mua-bán chia cho cắt lỗ 5%), phần còn lại là do chính tín hiệu.
+3. **Tách theo chế độ thị trường**: `vcr` đạt −0,02R khi BTC dưới MA200 ngày và −0,16R khi BTC
+   trên MA200 — không có chế độ nào cứu được nó.
+4. **Quét tham số**: 12 tổ hợp ngưỡng rơi × bội số khối lượng cho `vcr` đều âm (−0,047 đến
+   −0,164R); bốn ngưỡng RSI đều âm; nới cắt lỗ lên 8–12% vẫn âm. Kết luận không phụ thuộc vào
+   con số nào cụ thể.
+
+Nguyên nhân gộp lại: tỷ lệ 2:1 (TP 10% / SL 5%) cần thắng trên 33% mới hoà **trước phí**. Cả
+năm chiến lược đều quanh 33–35%, tức đúng mức hoà vốn — rồi phí nhân với 1.300–3.300 lệnh kéo
+tất cả xuống. Giao dịch khung 1h với tần suất này thì **phí là đối thủ lớn nhất**, không phải
+thị trường.
+
+### Những gì kết quả này không chứng minh
+
+- Tham số thật của kênh tín hiệu kia có thể khác bản dựng lại (ngưỡng rơi, bộ lọc cặp, có lọc
+  xu hướng BTC hay không). Hình dạng chiến lược thì chắc, con số cụ thể thì không.
+- Rổ cặp là những cặp thanh khoản nhất **hôm nay** — thiên lệch người sống sót rất nặng với
+  crypto. Kết quả thật nhiều khả năng còn tệ hơn, không khá hơn.
+- Nến 1h không cho biết trong một nến giá chạm cắt lỗ trước hay chốt lời trước; ở đây luôn giả
+  định chạm cắt lỗ trước.
 
 ## Sửa bộ luật
 
