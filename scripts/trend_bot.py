@@ -61,6 +61,13 @@ LABEL = {"donchian": "phá đỉnh 20 ngày, ra khi thủng đáy 10 ngày",
          "golden": "MA50 cắt lên MA200, ra khi cắt xuống"}
 
 
+def chat_id():
+    """Mặc định gửi chung chat với bot bắt đáy. Muốn tách riêng thì thêm secret
+    TELEGRAM_CHAT_ID_TREND — vẫn dùng chung token, chỉ khác chat."""
+    return (os.environ.get("TELEGRAM_CHAT_ID_TREND", "").strip()
+            or os.environ.get("TELEGRAM_CHAT_ID", "").strip())
+
+
 def now_vn():
     return datetime.now(VN_TZ)
 
@@ -159,7 +166,7 @@ def stats_of(state):
 # ---------------------------------------------------------------------------
 def build_buy(it):
     return "\n".join([
-        f"🟢 <b>BUY {B.esc(it['symbol'].replace('USDT', '/USDT'))}</b>",
+        f"🟢 <b>BUY {B.esc(it['symbol'].replace('USDT', '/USDT'))}</b> · 📈1D",
         f"Giá: <b>{B.fmt(it['entry'])}</b>",
         f"Ra khi thủng {B.fmt(it['exitLevel'])}" if it.get("exitLevel") else "Ra theo luật",
         f"Khung ngày · {LABEL.get(it['strategy'], it['strategy'])}",
@@ -169,7 +176,7 @@ def build_buy(it):
 def build_sell(it):
     ico = "🔴" if (it.get("pnlPct") or 0) < 0 else "🟢"
     return "\n".join([
-        f"{ico} <b>SELL {B.esc(it['symbol'].replace('USDT', '/USDT'))}</b>",
+        f"{ico} <b>SELL {B.esc(it['symbol'].replace('USDT', '/USDT'))}</b> · 📈1D",
         f"Giá: <b>{B.fmt(it['exitPrice'])}</b> ({it['pnlPct']:+.2f}%)",
         f"Đã giữ {it['days']} ngày · xu hướng gãy",
     ])
@@ -177,7 +184,7 @@ def build_sell(it):
 
 def build_warn(it, px, lvl):
     return "\n".join([
-        f"⚠️ <b>{B.esc(it['symbol'].replace('USDT', '/USDT'))} đang thủng ngưỡng thoát</b>",
+        f"⚠️ <b>{B.esc(it['symbol'].replace('USDT', '/USDT'))} đang thủng ngưỡng thoát</b> · 📈1D",
         f"Giá {B.fmt(px)} · ngưỡng {B.fmt(lvl)}",
         f"Luật chỉ chốt theo nến ngày, nên sổ chưa đóng lệnh. "
         f"Nếu nến hôm nay đóng dưới mức này thì sáng mai có tin SELL.",
@@ -256,8 +263,7 @@ def main():
         if args.dry:
             print(cap)
             return 0
-        tok, chat = (os.environ.get("TELEGRAM_BOT_TOKEN", "").strip(),
-                     os.environ.get("TELEGRAM_CHAT_ID", "").strip())
+        tok, chat = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip(), chat_id()
         if not tok or not chat:
             print("Chưa có token Telegram.", file=sys.stderr)
             print(cap)
@@ -329,8 +335,7 @@ def main():
 
     if args.no_send or not msgs:
         return 0
-    tok, chat = (os.environ.get("TELEGRAM_BOT_TOKEN", "").strip(),
-                 os.environ.get("TELEGRAM_CHAT_ID", "").strip())
+    tok, chat = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip(), chat_id()
     if not tok or not chat:
         print("Chưa có token Telegram — chỉ ghi sổ.", file=sys.stderr)
         return 0

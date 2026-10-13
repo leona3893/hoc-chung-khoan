@@ -229,7 +229,7 @@ def build_buy(it):
     ex = C.EXIT
     sym = it["symbol"].replace("USDT", "/USDT")
     return "\n".join([
-        f"🟢 <b>BUY {esc(sym)}</b>",
+        f"🟢 <b>BUY {esc(sym)}</b> · ⚡1h",
         f"Giá: <b>{fmt(it['entry'])}</b>",
         f"Cắt lỗ {fmt(it.get('stop0') or it['stop'])}"
         + (f" · Chốt lời {fmt(it['tp'])}" if it.get("tp") else ""),
@@ -241,7 +241,7 @@ def build_sell(it):
     sym = it["symbol"].replace("USDT", "/USDT")
     ico = "🔴" if it["pnlPct"] < 0 else "🟢"
     return "\n".join([
-        f"{ico} <b>SELL {esc(sym)}</b>",
+        f"{ico} <b>SELL {esc(sym)}</b> · ⚡1h",
         f"Giá: <b>{fmt(it['exitPrice'])}</b> ({it['pnlPct']:+.2f}%, {it['r']:+.2f}R)",
         f"Đã giữ {it['held'] * PER_H}h · {EXIT_LABEL.get(it['exitReason'], it['exitReason'])}"
         f" · {esc(it['strategy'])}",
