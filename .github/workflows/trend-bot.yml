@@ -1,0 +1,68 @@
+name: Bot theo xu hướng (khung ngày)
+
+# Luật tính trên NẾN NGÀY, nhưng chạy mỗi giờ:
+#   • quyết định vào/ra chỉ xảy ra khi nến ngày vừa đóng (07:00 giờ VN)
+#   • những giờ còn lại chỉ canh, báo khi giá thủng ngưỡng thoát ngay trong ngày
+# Không đặt lệnh, không giữ khoá API sàn.
+
+on:
+  schedule:
+    - cron: "8 * * * *"
+  workflow_dispatch:
+    inputs:
+      test:
+        description: "Gửi thử tin mẫu kèm ảnh (nhập mã, vd BTC). Để trống = chạy thật."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: trend-bot
+  cancel-in-progress: false
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cài Pillow để vẽ chart
+        run: pip install --quiet pillow
+
+      - name: Chạy bot xu hướng
+        env:
+          PYTHONIOENCODING: utf-8
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          if [ -n "${{ github.event.inputs.test }}" ]; then
+            python scripts/trend_bot.py --test "${{ github.event.inputs.test }}"
+          else
+            python scripts/trend_bot.py
+          fi
+
+      # Chỉ commit khi nến ngày đóng và có lệnh vào/ra, không commit mỗi giờ.
+      - name: Commit sổ khi có lệnh vào hoặc ra
+        if: github.event.inputs.test == ''
+        run: |
+          if [ ! -f data/cache/trend-events.flag ]; then
+            echo "Không có lệnh vào/ra."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/trend-ideas.json
+          if git diff --cached --quiet; then
+            echo "Sổ không đổi."
+            exit 0
+          fi
+          git pull --rebase --autostash origin main
+          git commit -m "Sổ xu hướng $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push

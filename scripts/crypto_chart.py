@@ -122,11 +122,23 @@ def render(bars, meta, path, window=70):
         head += f" · ra {fmt(meta.get('exitPrice'))} · {meta.get('pnlPct', 0):+.2f}%"
     d.text((PAD_L + d.textlength(f"{side} {sym}", font=f_title) + 14, 16), head,
            font=f_sub, fill=MUTED)
+    # Chiến lược theo xu hướng không có cắt lỗ %, chốt lời hay hạn giữ — chỉ ghi
+    # những phần thực sự có, đừng định dạng giá trị rỗng.
     ex = meta.get("exits", {})
-    sub = (f"SL −{ex.get('slPct', 5):.0f}%"
-           + (f" · TP +{ex.get('tpPct'):.0f}%" if ex.get("tpPct") else "")
-           + f" · trail {ex.get('trailPct', 7):.0f}% · giữ tối đa {ex.get('maxHold', 72)}h"
-           + f" · {meta.get('strategy', '')}")
+    bits = []
+    if ex.get("slPct"):
+        bits.append(f"SL −{ex['slPct']:.0f}%")
+    if ex.get("tpPct"):
+        bits.append(f"TP +{ex['tpPct']:.0f}%")
+    if ex.get("trailPct"):
+        bits.append(f"trail {ex['trailPct']:.0f}%")
+    if ex.get("maxHold"):
+        bits.append(f"giữ tối đa {ex['maxHold']}h")
+    if sl and entry:
+        bits.append(f"ra khi thủng {fmt(sl)}") if not ex.get("slPct") else None
+    if meta.get("strategy"):
+        bits.append(str(meta["strategy"]))
+    sub = " · ".join(b for b in bits if b)
     d.text((PAD_L, 34), sub, font=f_sm, fill=MUTED)
 
     d.rectangle([PAD_L, y0, W - PAD_R, y1], fill=PANEL)
