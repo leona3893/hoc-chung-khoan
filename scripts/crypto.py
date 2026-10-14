@@ -279,7 +279,49 @@ def s_donchian_btc(x, i, p):
     return s_donchian(x, i, p)
 
 
+# --- Cấu hình vcr thật của bot Hội Coin (lấy từ màn hình cấu hình của họ):
+#     z-score khối lượng 96 nến >= 2,5, rơi >= 2%, chờ nến xanh xác nhận trong 3 nến,
+#     thoát khi giá về lại trung bình 24 nến. Chạy song song để so với vcr của mình.
+def _vol_z(x):
+    if getattr(x, "_vz", None) is None:
+        z = [None] * len(x.v)
+        for i in range(96, len(x.v)):
+            w = x.v[i - 96:i]
+            m = sum(w) / 96
+            sd = math.sqrt(sum((a - m) ** 2 for a in w) / 96)
+            z[i] = (x.v[i] - m) / sd if sd else 0.0
+        x._vz = z
+    return x._vz
+
+
+def _sma24(x):
+    if getattr(x, "_sma24", None) is None:
+        x._sma24 = sma(x.c, 24)
+    return x._sma24
+
+
+def s_vcr_peak(x, i, p):
+    z, m = _vol_z(x), _sma24(x)
+    if i < 100 or m[i] is None:
+        return False
+
+    def climax(j):
+        return j > 0 and z[j] is not None and z[j] >= p["z"] and x.drop(j) <= -p["drop"]
+
+    if not any(climax(j) for j in range(i - p["confirm"], i)):
+        return False
+    return x.c[i] > x.o[i] and x.c[i] < m[i]      # nến xác nhận xanh, vẫn dưới trung bình
+
+
+def e_vcr_peak(x, i, p):
+    m = _sma24(x)
+    return m[i] is not None and x.c[i] >= m[i]
+
+
 STRATEGIES = {
+    "vcr_peak": {"fn": s_vcr_peak, "exitFn": e_vcr_peak,
+                 "params": {"z": 2.5, "drop": 2.0, "confirm": 3},
+                 "label": "vcr theo đúng cấu hình bot Hội Coin (bắt đáy, thoát khi về trung bình 24h)"},
     "momentum": {"fn": s_momentum, "exitFn": e_momentum, "params": {"look": 90},
                  "label": "Giá vượt giá 90 ngày trước, ra khi thủng lại (động lượng)"},
     "donchian_btc": {"fn": s_donchian_btc, "exitFn": e_donchian, "params": {"inn": 20, "out": 10},

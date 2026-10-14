@@ -48,13 +48,14 @@ CFG = {
     "pairs": 30,              # quét bao nhiêu cặp thanh khoản nhất
     "maxOpen": 5,             # tối đa bao nhiêu vị thế giấy cùng lúc — bằng đúng trần
                               # trong backtest, để hai bộ số so thẳng được với nhau
-    "strategies": ["vcr", "rsi_vol_gated"],   # chạy song song, mỗi cặp chỉ một vị thế
+    "strategies": ["vcr", "rsi_vol_gated", "vcr_peak"],   # chạy song song, mỗi cặp một vị thế
     "lookback": 300,          # số nến tải về mỗi lần, đủ cho mọi chỉ báo
 }
 
 PER_H = 1   # số giờ mỗi nến, đặt lại theo --interval
 
 EXIT_LABEL = {
+    "strategy": "giá hồi về trung bình 24h",
     "stop": "chạm cắt lỗ", "trail": "cắt lỗ dời chạm", "tp": "đạt mục tiêu",
     "max_hold": "hết hạn giữ",
 }
@@ -129,6 +130,11 @@ def step(state, bars_by_sym, events):
             continue
         new = [b for b in bars if b[0] > it["lastTs"]]
         exited = False
+        # Chiến lược có luật thoát riêng (vd vcr_peak: về trung bình 24h là chốt).
+        # Chỉ xét trên nến ĐÃ ĐÓNG — nến cuối còn đang chạy thì bỏ qua.
+        strat = C.STRATEGIES.get(it["strategy"], {})
+        exit_fn = strat.get("exitFn")
+        xctx = C.Ctx(bars) if exit_fn else None
         for b in new:
             it["held"] += 1
             it["lastTs"] = b[0]
@@ -151,6 +157,13 @@ def step(state, bars_by_sym, events):
             exited = True
             break
         if exited:
+            continue
+        # Luật thoát riêng xét trên nến vừa ĐÓNG (bars[-2]), khớp ở giá hiện tại.
+        # Không xét trong vòng lặp trên vì nến mới nhất lúc nào cũng là nến đang chạy.
+        k = len(bars) - 2
+        if (exit_fn and k > 0 and bars[k][0] >= it["entryTs"]
+                and exit_fn(xctx, k, strat.get("params", {}))):
+            close_it(it, state, events, bars[-1][0], bars[-1][1], "strategy")
             continue
         last = bars[-1]
         it["lastPrice"] = last[4]
