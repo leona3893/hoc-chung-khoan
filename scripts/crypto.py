@@ -39,7 +39,9 @@ CACHE_DIR = os.path.join(DATA_DIR, "cache", "crypto")
 OUT_PATH = os.path.join(DATA_DIR, "crypto-backtest.json")
 
 VN_TZ = timezone(timedelta(hours=7))
-HOSTS = ["https://api.binance.com", "https://data-api.binance.vision"]
+# data-api.binance.vision là tên miền chỉ phục vụ dữ liệu thị trường công khai của
+# Binance, không bị chặn theo vùng như api.binance.com — nên thử nó trước.
+HOSTS = ["https://data-api.binance.vision", "https://api.binance.com"]
 HEADERS = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0 Safari/537.36"}
 
 # Stablecoin và token đòn bẩy — bỏ, vì nến của chúng không phải giá tài sản thật
@@ -354,22 +356,32 @@ class GeoBlocked(RuntimeError):
     """Binance trả 451 — vùng này bị chặn, phải dùng nguồn khác."""
 
 
+_HOST_LOGGED = set()
+
+
 def get(url, retries=3):
     last = None
     for k in range(retries):
+        blocked = 0
         for host in HOSTS:
             try:
                 req = urllib.request.Request(host + url, headers=HEADERS)
                 with urllib.request.urlopen(req, timeout=30) as r:
-                    return json.load(r)
+                    data = json.load(r)
+                if host not in _HOST_LOGGED:
+                    _HOST_LOGGED.add(host)
+                    print(f"[nguồn] Binance qua {host}", file=sys.stderr)
+                return data
             except urllib.error.HTTPError as e:
                 last = e
-                if e.code == 451:
-                    # Binance chặn một số vùng, trong đó có dải IP của GitHub Actions.
-                    # Không retry vô ích — để bên gọi chuyển sang nguồn dự phòng.
-                    raise GeoBlocked(f"Binance chặn vùng này (451)")
+                if e.code in (451, 403):
+                    blocked += 1        # host này chặn vùng, thử host kế tiếp
             except Exception as e:  # noqa: BLE001
                 last = e
+        if blocked == len(HOSTS):
+            # Mọi host Binance đều chặn vùng này (vd dải IP của GitHub Actions).
+            # Không retry vô ích — để bên gọi chuyển sang nguồn dự phòng.
+            raise GeoBlocked("Binance chặn vùng này (451)")
         time.sleep(1.5 * (k + 1))
     raise RuntimeError(f"Không lấy được {url}: {last}")
 
