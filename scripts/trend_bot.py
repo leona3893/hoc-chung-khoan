@@ -125,7 +125,7 @@ def step(state, data, events):
             it.update(status="closed", exitTs=bars[i][0], exitPrice=bars[i][4],
                       exitReason="rule")
             state.setdefault("closed", []).insert(0, it)
-            state["closed"] = state["closed"][:200]
+            # Giữ toàn bộ lịch sử: trang so-lenh.html cần đủ mọi lệnh để tính thành tích.
             events.append({"kind": "sell", "it": it})
             continue
         still.append(it)

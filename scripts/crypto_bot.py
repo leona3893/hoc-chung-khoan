@@ -219,7 +219,7 @@ def close_it(it, state, events, ts, px, reason):
               pnlPct=round((px / it["entry"] - 1) * 100, 2),
               r=round((px - it["entry"]) / (it["entry"] - it["stop0"]), 2))
     state.setdefault("closed", []).insert(0, it)
-    state["closed"] = state["closed"][:200]
+    # Giữ toàn bộ lịch sử: trang so-lenh.html cần đủ mọi lệnh để tính thành tích.
     events.append({"kind": "sell", "it": it})
 
 
