@@ -46,11 +46,15 @@ VN_TZ = timezone(timedelta(hours=7))
 CFG = {
     "interval": "1h",         # khung nến bot làm việc
     "pairs": 30,              # quét bao nhiêu cặp thanh khoản nhất
-    "maxOpen": 5,             # tối đa bao nhiêu vị thế giấy cùng lúc — bằng đúng trần
-                              # trong backtest, để hai bộ số so thẳng được với nhau
-    "strategies": ["vcr", "rsi_vol_gated", "vcr_peak"],   # chạy song song, mỗi cặp một vị thế
+    # Mỗi chiến lược có suất lệnh riêng, chạy như một bot độc lập: chiến lược này đầy
+    # suất không chiếm chỗ của chiến lược kia, và hai chiến lược được giữ cùng một cặp.
+    # Trước đây 5 suất dùng chung nên vcr_peak (luôn báo trễ hơn vcr 1–3 nến, trên cùng
+    # coin vừa bị xả) không bao giờ giành được chỗ.
+    "slots": {"vcr": 2, "rsi_vol_gated": 2, "vcr_peak": 2},
     "lookback": 300,          # số nến tải về mỗi lần, đủ cho mọi chỉ báo
 }
+CFG["strategies"] = list(CFG["slots"])
+CFG["maxOpen"] = sum(CFG["slots"].values())
 
 PER_H = 1   # số giờ mỗi nến, đặt lại theo --interval
 
@@ -173,35 +177,39 @@ def step(state, bars_by_sym, events):
     state["open"] = still
 
     # --- tín hiệu mới ở nến vừa đóng
-    held = {i["symbol"] for i in still}
-    room = CFG["maxOpen"] - len(still)
-    if room <= 0:
+    held = {(i["strategy"], i["symbol"]) for i in still}
+    room = {n: k - sum(1 for i in still if i["strategy"] == n) for n, k in CFG["slots"].items()}
+    if all(v <= 0 for v in room.values()):
         return state
     cands = []
     for sym, bars in bars_by_sym.items():
-        if sym in held or len(bars) < 80:
+        if len(bars) < 80:
             continue
         x = C.Ctx(bars)
         i = len(bars) - 2          # nến vừa ĐÓNG (nến cuối còn đang chạy)
         for name in CFG["strategies"]:
             st = C.STRATEGIES.get(name)
-            if not st:
+            if not st or room.get(name, 0) <= 0 or (name, sym) in held:
                 continue
             try:
                 if st["fn"](x, i, st["params"]):
                     cands.append((x.volx(i), sym, name, bars))
-                    break
             except Exception:  # noqa: BLE001
                 continue
-    cands.sort(reverse=True)
+    cands.sort(key=lambda c: c[0], reverse=True)
+    picked = []
+    for c in cands:
+        if room[c[2]] > 0:
+            room[c[2]] -= 1
+            picked.append(c)
 
-    for _, sym, name, bars in cands[:room]:
+    for _, sym, name, bars in picked:
         last = bars[-1]
         entry = last[4]                       # giá hiện tại ≈ mở cửa nến đang chạy
         stop = entry * (1 - C.EXIT["slPct"] / 100)
         tp = entry * (1 + C.EXIT["tpPct"] / 100) if C.EXIT.get("tpPct") else None
         it = {
-            "id": f"{sym}-{last[0]}",
+            "id": f"{name}-{sym}-{last[0]}",
             "symbol": sym, "strategy": name,
             "entryTs": last[0], "entry": entry,
             "stop": stop, "stop0": stop, "tp": tp,
