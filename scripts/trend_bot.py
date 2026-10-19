@@ -23,6 +23,9 @@ Vậy "chạy mỗi giờ" ở đây nghĩa là gì:
     python scripts/trend_bot.py                # chạy thật
     python scripts/trend_bot.py --test BTC     # gửi thử một tin kèm ảnh
     python scripts/trend_bot.py --reset        # xoá sổ
+
+Đặt lệnh thật: bật LIVE_TRADING=testnet|live, xem scripts/exchange.py. Sổ giấy vẫn là
+nơi ra quyết định, exchange.py chỉ làm theo — và bạn chốt tay được mà không làm rối bot.
 """
 
 import argparse
@@ -34,6 +37,7 @@ from datetime import datetime, timedelta, timezone
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import crypto as C  # noqa: E402
 import crypto_bot as B  # noqa: E402  (dùng lại phần gửi Telegram và vẽ ảnh)
+import exchange as X  # noqa: E402  (đặt lệnh thật — chỉ chạy khi LIVE_TRADING bật)
 
 try:
     import crypto_chart as CH  # noqa: E402
@@ -42,7 +46,9 @@ except Exception:  # noqa: BLE001
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(ROOT, "data")
-STATE = os.path.join(DATA_DIR, "trend-ideas.json")
+# Trên VPS nên trỏ sổ ra ngoài repo (TREND_STATE) để `git pull` không đụng file
+# mà GitHub Actions cũng đang commit.
+STATE = os.environ.get("TREND_STATE") or os.path.join(DATA_DIR, "trend-ideas.json")
 
 VN_TZ = timezone(timedelta(hours=7))
 
@@ -362,6 +368,17 @@ def main():
             # Đây là câu trả lời cho "giá vẫn leo thì sao" — không bán, chỉ nâng ngưỡng.
             msgs.append((build_hold(it), None))
     state["warned"] = sorted(warned)[-20:]
+
+    # --- đặt lệnh thật theo sổ giấy (mặc định tắt)
+    if X.enabled():
+        try:
+            live = X.sync(state, {s: d[0][-1][0] for s, d in data.items()},
+                          {s: d[0][-1][4] for s, d in data.items()},
+                          CFG["capital"], CFG["maxOpen"], dry=args.dry)
+            msgs += [(m, None) for m in live]
+        except Exception as e:  # noqa: BLE001
+            print(f"  [sàn] LỖI: {e}", file=sys.stderr)
+            msgs.append((f"❗ <b>Lỗi đặt lệnh</b>: {B.esc(str(e)[:300])}", None))
 
     st = stats_of(state)
     state.update(updatedAt=now_vn().strftime("%Y-%m-%d %H:%M"), strategy=CFG["strategy"],

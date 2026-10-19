@@ -425,3 +425,66 @@ python scripts/backtest.py --refresh    # bắt buộc: cache điểm cũ không
 
 So R trung bình trước và sau. Nếu không cải thiện, đừng giữ thay đổi đó — kể cả khi nó "nghe
 hợp lý hơn".
+
+## Đặt lệnh thật cho bot xu hướng
+
+`exchange.py` cho `trend_bot.py` tự đặt lệnh trên Binance Spot. **Mặc định tắt**, chỉ chạy khi
+có biến `LIVE_TRADING=testnet` hoặc `LIVE_TRADING=live`. GitHub Actions không đặt biến này
+nên trên Actions bot vẫn chỉ ghi sổ giấy.
+
+Sổ giấy vẫn là nơi ra quyết định, file này chỉ làm theo:
+
+| Sổ giấy | Tài khoản thật |
+| --- | --- |
+| Mở lệnh trong nến ngày hôm nay | Mua `capital / maxOpen` USDT (mặc định 30) bằng lệnh market |
+| Đóng lệnh theo luật | Bán đúng số coin **bot đã mua**, không đụng coin bạn có sẵn |
+| Lệnh giấy mở từ hôm trước (bot bật giữa chừng) | Không mua — không vào lệnh trễ |
+| Không còn lệnh đó (sổ bị reset) | **Không tự bán**, chỉ nhắn bạn |
+
+### Chốt tay không làm rối bot
+
+Bạn bán tay trên app Binance lúc nào cũng được. Mỗi lần chạy, bot so số dư trên sàn với số coin
+nó đã mua. Nếu thấy hụt, nó tìm lệnh bán của bạn để lấy giá, ghi vào sổ là *chốt tay* kèm
+lời/lỗ, rồi thôi theo dõi lệnh đó. Bot **không mua lại** mã đó cho tới khi sổ giấy ra một tín
+hiệu mới. Bán một phần cũng được: phần còn lại bot vẫn giữ và bán theo luật.
+
+Lý do không bao giờ bị kẹt:
+
+- Bot **không đặt lệnh chờ** (cắt lỗ/chốt lời) trên sàn, nên coin không bị khoá. Luật thoát tính
+  trên nến ngày đóng, đúng như backtest.
+- Bot **không huỷ hay sửa lệnh của bạn**. Nếu bạn đặt lệnh chốt lời chờ mà luật bảo bán, bot chỉ
+  nhắn rằng coin đang khoá trong lệnh của bạn.
+- Mã lệnh của bot cố định theo từng lệnh giấy (`tb-BTCUSDT-<ngày>-B`), nên chạy lại hay chạy trùng
+  cũng không mua hai lần.
+
+Một giới hạn: nếu bạn **đã có sẵn** đúng coin đó, bot không phân biệt được bạn đang bán coin
+của mình hay của nó. Nó coi phần của nó vẫn còn chừng nào số dư còn đủ. Muốn rạch ròi thì tạo
+một **sub-account** riêng cho bot.
+
+### Bật lên
+
+1. **Testnet trước.** Vào <https://testnet.binance.vision>, đăng nhập GitHub, *Generate HMAC_SHA256 Key*.
+   Tiền ảo có sẵn. Lưu ý: giá testnet lệch giá thật, và testnet thỉnh thoảng bị reset — khi đó
+   bot báo "số dư biến mất" và đóng lệnh.
+2. Đặt biến môi trường rồi kiểm tra:
+
+   ```bash
+   export LIVE_TRADING=testnet BINANCE_API_KEY=... BINANCE_API_SECRET=...
+   python scripts/exchange.py check     # số dư, quyền của key
+   python scripts/trend_bot.py --dry    # xem bot định mua/bán gì, không đặt lệnh
+   python scripts/trend_bot.py          # chạy thật
+   python scripts/exchange.py status    # lệnh bot đang giữ, lời/lỗ
+   ```
+
+3. **Tiền thật** chỉ khi testnet chạy êm vài tuần. Tạo key trên Binance chỉ bật *Spot Trading*,
+   **tắt Withdrawals**, khoá theo IP của VPS. Bot **từ chối đặt lệnh** nếu key có quyền rút tiền.
+   Đổi `LIVE_TRADING=live`.
+
+Sổ thật nằm ở `data/cache/live-trend.json` (không commit). Trên VPS nên trỏ cả hai sổ ra ngoài
+repo để `git pull` không đụng file mà Actions đang commit:
+
+```bash
+export TREND_STATE=~/botdata/trend-ideas.json LIVE_STATE=~/botdata/live-trend.json
+```
+
+Khẩn cấp: `python scripts/exchange.py panic --yes` bán hết coin **bot** đang giữ.
