@@ -56,13 +56,16 @@ STABLE = {"USDC", "FDUSD", "TUSD", "USD1", "RLUSD", "BUSD", "DAI", "USDP", "USDE
 # Không sàn nào đánh dấu chúng trong metadata, nên chỉ còn cách lọc theo tên. Nhầm một
 # token cổ phiếu tốn kém hơn nhiều so với bỏ sót một coin, nên lọc theo hướng thận
 # trọng: loại hết, trừ các coin thật trong hai danh sách dưới. Gặp mã mới thì thêm vào.
-NOT_STOCK_B = {"SHIB", "BNB", "COMB", "CLUB", "JOB"}
+# Mã 3 ký tự cũng có cổ phiếu: MUB (Micron), GSB (Goldman Sachs)... nên coin thật 3 ký tự
+# đuôi B phải nằm ở đây, không thì bị loại.
+NOT_STOCK_B = {"SHIB", "BNB", "COMB", "CLUB", "JOB",
+               "ARB", "TRB", "CKB", "DGB", "MOB", "PHB", "VIB", "AMB"}
 NOT_STOCK_X = {"XRP", "XLM", "XMR", "XTZ", "XCH", "XEC", "XDC", "XVG", "XNO",
                "XAUT", "XCN", "XYO", "XAI", "XPL", "XDB", "XMT"}
 
 
 def is_stock_token(base):
-    if base.endswith("B") and len(base) >= 4 and base not in NOT_STOCK_B:
+    if base.endswith("B") and len(base) >= 3 and base not in NOT_STOCK_B:
         return True
     if base.startswith("X") and len(base) >= 3 and base not in NOT_STOCK_X:
         return True
