@@ -382,15 +382,109 @@ def _test_one(symbol, args, token, chat):
     return False
 
 
+def replay_last_signal(name):
+    """Tìm tín hiệu THẬT gần nhất của một chiến lược trên rổ đang quét, rồi chạy tiếp
+    lệnh đó theo đúng luật thoát của bot tới hiện tại. Trả về (buy_it, sell_it|None, bars)."""
+    st = C.STRATEGIES[name]
+    exit_fn, ex = st.get("exitFn"), C.EXIT
+    best = None
+    for sym in C.universe(CFG["pairs"]):
+        try:
+            bars = fetch_recent(sym, CFG["interval"], CFG["lookback"])
+        except Exception:  # noqa: BLE001
+            continue
+        if len(bars) < 120:
+            continue
+        x = C.Ctx(bars)
+        for i in range(len(bars) - 2, 99, -1):          # chỉ nến đã đóng
+            if st["fn"](x, i, st["params"]):
+                if best is None or bars[i][0] > best[1][best[2]][0]:
+                    best = (sym, bars, i, x)
+                break
+    if best is None:
+        return None, None, None
+    sym, bars, i, x = best
+    e = bars[i + 1]                                     # vào ở mở cửa nến sau tín hiệu
+    stop = e[1] * (1 - ex["slPct"] / 100)
+    it = {"symbol": sym, "strategy": name, "entryTs": e[0], "entry": e[1],
+          "stop": stop, "stop0": stop, "tp": e[1] * (1 + ex["tpPct"] / 100) if ex.get("tpPct") else None,
+          "peak": e[1], "trailed": False, "held": 0}
+    buy = dict(it)
+    for k in range(i + 1, len(bars)):
+        b = bars[k]
+        it["held"] += 1
+        it["peak"] = max(it["peak"], b[2])
+        if ex.get("trailPct"):
+            t = it["peak"] * (1 - ex["trailPct"] / 100)
+            if t > it["stop"]:
+                it["stop"], it["trailed"] = t, True
+        px = reason = None
+        if b[3] <= it["stop"]:
+            px, reason, ts = min(b[1], it["stop"]), ("trail" if it["trailed"] else "stop"), b[0]
+        elif it["tp"] and b[2] >= it["tp"]:
+            px, reason, ts = max(b[1], it["tp"]), "tp", b[0]
+        elif it["held"] >= ex["maxHold"]:
+            px, reason, ts = b[4], "max_hold", b[0]
+        elif exit_fn and k < len(bars) - 1 and exit_fn(x, k, st["params"]):
+            px, reason, ts = bars[k + 1][1], "strategy", bars[k + 1][0]
+        if px is not None:
+            it.update(exitPrice=px, exitTs=ts, exitReason=reason,
+                      pnlPct=round((px / it["entry"] - 1) * 100, 2),
+                      r=round((px - it["entry"]) / (it["entry"] - it["stop0"]), 2))
+            return buy, it, bars
+    it["lastPrice"] = bars[-1][4]
+    it["pnlPct"] = round((bars[-1][4] / it["entry"] - 1) * 100, 2)
+    return buy, None, bars
+
+
+def send_strategy_test(name, args, token, chat):
+    """--test vcr_peak: gửi lại tín hiệu thật gần nhất của chiến lược, đúng mẫu tin thật."""
+    buy, sell, bars = replay_last_signal(name)
+    if buy is None:
+        print(f"Không tìm thấy tín hiệu {name} nào trong {CFG['lookback']} nến gần nhất.", file=sys.stderr)
+        return 1
+    when = datetime.fromtimestamp(buy["entryTs"] / 1000, VN_TZ).strftime("%H:%M %d/%m")
+    head = f"🧪 <b>GỬI THỬ {esc(name)}</b> — tín hiệu thật gần nhất, vào lúc {when}\n"
+    msgs = []
+    seg = [b for b in bars if b[0] <= buy["entryTs"]]
+    cdir = os.path.join(DATA_DIR, "cache", "charts")
+    img = None if args.no_chart else chart_for({"kind": "buy", "it": buy}, {buy["symbol"]: seg}, cdir)
+    msgs.append((head + build_buy(buy), img))
+    if sell:
+        seg = [b for b in bars if b[0] <= sell["exitTs"]]
+        img = None if args.no_chart else chart_for({"kind": "sell", "it": sell}, {sell["symbol"]: seg}, cdir)
+        msgs.append(("🧪 <b>GỬI THỬ</b> — lệnh trên đã đóng như sau\n" + build_sell(sell), img))
+    else:
+        msgs.append((f"🧪 Lệnh {esc(buy['symbol'])} vẫn đang mở: {buy['entry']:.6g} → "
+                     f"{bars[-1][4]:.6g} ({(bars[-1][4] / buy['entry'] - 1) * 100:+.2f}%)", None))
+    for cap, im in msgs:
+        print(cap, f"\n[ảnh: {im}]" if im else "", "\n" + "-" * 30)
+        if not args.dry:
+            r = tg_photo(token, chat, im, cap) if im else tg_send(token, chat, cap)
+            if not r.get("ok"):
+                print(f"[lỗi] Telegram trả {r}", file=sys.stderr)
+                return 1
+    return 0
+
+
 def send_test(spec, args):
     """Gửi tin mẫu kèm ảnh cho MỘT HOẶC NHIỀU mã, dựng từ nến thật mới nhất.
 
     Nhận "btc" hoặc "ltc,ada,avax,dot" (phẩy hoặc khoảng trắng đều được). Dùng để
     kiểm tra token Telegram và đường gửi ảnh mà không phải chờ tín hiệu thật.
+    Nhận cả tên chiến lược ("vcr_peak") — khi đó gửi lại tín hiệu thật gần nhất của nó.
     Không ghi gì vào sổ.
     """
     global PER_H
     PER_H = {"1h": 1, "2h": 2, "4h": 4, "6h": 6, "12h": 12, "1d": 24}.get(CFG["interval"], 1)
+
+    if spec.strip().lower() in C.STRATEGIES:
+        token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+        chat = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+        if not args.dry and (not token or not chat):
+            print("Chưa có TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID — không gửi được.", file=sys.stderr)
+            return 1
+        return send_strategy_test(spec.strip().lower(), args, token, chat)
 
     syms = [x.strip().upper() for x in spec.replace(",", " ").split() if x.strip()]
     if not syms:
