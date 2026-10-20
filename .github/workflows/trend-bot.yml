@@ -41,6 +41,13 @@ jobs:
           PYTHONIOENCODING: utf-8
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          # Đặt lệnh trên TESTNET (tiền ảo): bật bằng Variable LIVE_TRADING=testnet.
+          # Actions chỉ được chạy testnet — api.binance.com chặn IP Mỹ của GitHub và
+          # không khoá key theo IP được. Tiền thật phải chạy trên máy riêng.
+          LIVE_TRADING: ${{ vars.LIVE_TRADING == 'testnet' && 'testnet' || 'off' }}
+          BINANCE_API_KEY: ${{ secrets.BINANCE_TESTNET_KEY }}
+          BINANCE_API_SECRET: ${{ secrets.BINANCE_TESTNET_SECRET }}
+          LIVE_STATE: data/live-trend.json
           # Tuỳ chọn: thêm secret này nếu muốn bot xu hướng gửi vào chat riêng.
           # Không có thì nó gửi chung chat với bot bắt đáy.
           TELEGRAM_CHAT_ID_TREND: ${{ secrets.TELEGRAM_CHAT_ID_TREND }}
@@ -52,18 +59,20 @@ jobs:
           fi
 
       # Chỉ commit khi nến ngày đóng và có lệnh vào/ra, không commit mỗi giờ.
-      - name: Commit sổ khi có lệnh vào hoặc ra
+      - name: Commit sổ khi có lệnh vào hoặc ra (giấy và testnet)
         if: github.event.inputs.test == ''
         run: |
-          if [ ! -f data/cache/trend-events.flag ]; then
-            echo "Không có lệnh vào/ra."
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/trend-ideas.json
+          if [ -f data/cache/trend-events.flag ]; then
+            git add data/trend-ideas.json
+          fi
+          # Sổ lệnh testnet: commit khi có thay đổi thật (bỏ qua dòng updatedAt đổi mỗi giờ).
+          if [ -f data/live-trend.json ] && { ! git ls-files --error-unmatch data/live-trend.json >/dev/null 2>&1 || ! git diff --quiet -I '"updatedAt"' -- data/live-trend.json; }; then
+            git add data/live-trend.json
+          fi
           if git diff --cached --quiet; then
-            echo "Sổ không đổi."
+            echo "Không có lệnh vào/ra."
             exit 0
           fi
           git pull --rebase --autostash origin main
