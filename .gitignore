@@ -16,3 +16,6 @@ scripts/__pycache__/
 
 # Ảnh mẫu dựng tay, không phải output của bot
 anh-mau/
+
+# Khoá API sàn và token — không bao giờ commit
+.env

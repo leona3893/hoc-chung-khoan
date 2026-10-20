@@ -488,3 +488,40 @@ export TREND_STATE=~/botdata/trend-ideas.json LIVE_STATE=~/botdata/live-trend.js
 ```
 
 Khẩn cấp: `python scripts/exchange.py panic --yes` bán hết coin **bot** đang giữ.
+
+## Đặt lệnh thật cho bot bắt đáy (1h)
+
+`live_dip.py` cho `crypto_bot.py` tự đặt lệnh. Bật cùng biến `LIVE_TRADING` như bot xu hướng.
+Vốn ở `CFG["capital"]` (mặc định 120 USDT), chia đều cho 6 suất, tức 20 USDT mỗi lệnh.
+
+Khác bot xu hướng ở chỗ **lệnh bảo vệ nằm sẵn trên sàn** (OCO), vì cắt lỗ 5% / chốt lời 10% /
+trailing 7% xảy ra trong giờ, đợi lần chạy sau mới bán là trễ:
+
+| Sổ giấy | Trên sàn |
+| --- | --- |
+| Mở lệnh trong **giờ này** | Mua market, đặt ngay OCO: chốt lời LIMIT_MAKER + cắt lỗ STOP_LOSS (market) |
+| Mở lệnh từ giờ trước | Không mua (vào trễ sau cú xả là vào giá khác) |
+| Dời cắt lỗ lên (trailing) ≥ 0,2% | Huỷ OCO cũ, đặt OCO mới |
+| Giá chạm mức | Sàn tự khớp ngay, không chờ bot. Lần chạy sau bot ghi lời/lỗ theo giá khớp thật |
+| Đóng vì về trung bình 24h / hết hạn giữ | Huỷ OCO, bán market |
+
+Mức trên sàn = mức sổ giấy × (giá khớp thật / giá vào sổ giấy), nên lệnh thật đi đúng % như sổ
+giấy. Trên testnet giá lệch hẳn giá thật vẫn chạy đúng.
+
+**Chốt tay = huỷ OCO của lệnh đó trên app, rồi bán.** Coin nằm trong OCO bị khoá nên phải huỷ
+trước. Bot thấy OCO bị huỷ không phải do nó thì **nhường hẳn lệnh đó cho bạn**: không đặt lại
+OCO, không bán theo luật. Khi bạn bán, nó ghi lời/lỗ. Bot ghi cờ trước mỗi lần tự thay OCO, nên
+lỡ chết giữa chừng nó cũng không nhầm thành bạn giành quyền.
+
+```bash
+python scripts/live_dip.py test ENA            # testnet: mua + đặt OCO
+python scripts/live_dip.py test ENA            # chạy lại: không mua trùng
+python scripts/live_dip.py test ENA --trail    # sổ giấy dời cắt lỗ → bot thay OCO
+python scripts/live_dip.py test ENA --manual   # giả làm bạn huỷ OCO rồi bán
+python scripts/live_dip.py test ENA --rule     # (lệnh khác) sổ giấy đóng → bot huỷ OCO, bán
+python scripts/live_dip.py status
+python scripts/live_dip.py panic --yes         # huỷ OCO, bán hết lệnh bot giữ (lệnh bạn đã giành thì không đụng)
+```
+
+Lệnh `test` dùng sổ riêng (`data/cache/live-dip-test.json`). Sổ thật ở `data/cache/live-dip.json`.
+Trên VPS trỏ ra ngoài repo bằng `CRYPTO_STATE` và `LIVE_DIP_STATE`.

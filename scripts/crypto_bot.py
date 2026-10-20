@@ -38,7 +38,8 @@ except Exception:  # noqa: BLE001
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_DIR = os.path.join(ROOT, "data")
-STATE = os.path.join(DATA_DIR, "crypto-ideas.json")
+# Trên VPS nên trỏ sổ ra ngoài repo (CRYPTO_STATE) để `git pull` không đụng file Actions commit.
+STATE = os.environ.get("CRYPTO_STATE") or os.path.join(DATA_DIR, "crypto-ideas.json")
 BACKTEST = os.path.join(DATA_DIR, "crypto-backtest.json")
 
 VN_TZ = timezone(timedelta(hours=7))
@@ -52,6 +53,8 @@ CFG = {
     # coin vừa bị xả) không bao giờ giành được chỗ.
     "slots": {"vcr": 2, "rsi_vol_gated": 2, "vcr_peak": 2},
     "lookback": 300,          # số nến tải về mỗi lần, đủ cho mọi chỉ báo
+    "capital": 120,           # vốn thật cho bot này (USDT) khi bật LIVE_TRADING —
+                              # chia đều cho tổng số suất: 120 / 6 = 20 USDT mỗi lệnh
 }
 CFG["strategies"] = list(CFG["slots"])
 CFG["maxOpen"] = sum(CFG["slots"].values())
@@ -580,6 +583,17 @@ def main():
         msgs.append((cap, img))
     if args.summary:
         msgs.append((build_summary(state, st), None))
+
+    # Đặt lệnh thật theo sổ giấy (mặc định tắt). Xem scripts/live_dip.py.
+    import live_dip as LD      # nạp exchange.py, tức là đọc luôn .env
+    if LD.X.enabled():
+        try:
+            live = LD.sync(state, {s: b[-1][0] for s, b in bars_by_sym.items() if b},
+                           CFG["capital"], CFG["slots"], dry=args.dry)
+            msgs += [(m, None) for m in live]
+        except Exception as e:  # noqa: BLE001
+            print(f"  [sàn] LỖI: {e}", file=sys.stderr)
+            msgs.append((f"❗ <b>Lỗi đặt lệnh</b>: {esc(str(e)[:300])}", None))
     if args.dry:
         print("\n--- Tin nhắn ---\n", file=sys.stderr)
         if not msgs:

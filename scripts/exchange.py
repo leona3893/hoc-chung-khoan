@@ -42,7 +42,24 @@ from datetime import datetime, timedelta, timezone
 from decimal import ROUND_DOWN, Decimal
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-LEDGER = os.environ.get("LIVE_STATE") or os.path.join(ROOT, "data", "cache", "live-trend.json")
+
+
+def load_env(path=os.path.join(ROOT, ".env")):
+    """Đọc KEY=VALUE từ .env ở gốc repo (đã gitignore). Biến đã đặt sẵn thì giữ nguyên."""
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            k = k.strip().removeprefix("export ").strip()
+            os.environ.setdefault(k, v.strip().strip('"').strip("'"))
+
+
+load_env()
+LEDGER =os.environ.get("LIVE_STATE") or os.path.join(ROOT, "data", "cache", "live-trend.json")
 
 HOSTS = {"testnet": "https://testnet.binance.vision", "live": "https://api.binance.com"}
 QUOTE = "USDT"
@@ -120,6 +137,7 @@ class Binance:
                 "step": Decimal(f["LOT_SIZE"]["stepSize"]),
                 "minQty": Decimal(f["LOT_SIZE"]["minQty"]),
                 "minNotional": float(notional.get("minNotional", 5)),
+                "tick": Decimal(f["PRICE_FILTER"]["tickSize"]),
             }
         return self._info[symbol]
 
@@ -161,6 +179,35 @@ class Binance:
             p["startTime"] = start_ms
         return self._call("GET", "/api/v3/myTrades", p, signed=True)
 
+    # --- lệnh chờ bảo vệ (OCO: chốt lời LIMIT_MAKER phía trên + cắt lỗ STOP_LOSS phía dưới)
+    def oco(self, symbol, qty, tp, stop, cid):
+        """Cắt lỗ là STOP_LOSS loại market: chạm là khớp chắc, kể cả lúc giá lao."""
+        return self._call("POST", "/api/v3/orderList/oco", {
+            "symbol": symbol, "side": "SELL", "quantity": qty,
+            "aboveType": "LIMIT_MAKER", "abovePrice": tp,
+            "belowType": "STOP_LOSS", "belowStopPrice": stop,
+            "listClientOrderId": cid, "newOrderRespType": "FULL"}, signed=True)
+
+    def stop_order(self, symbol, qty, stop, cid):
+        """Chỉ cắt lỗ, khi chiến lược không có chốt lời."""
+        return self._call("POST", "/api/v3/order", {
+            "symbol": symbol, "side": "SELL", "type": "STOP_LOSS", "quantity": qty,
+            "stopPrice": stop, "newClientOrderId": cid}, signed=True)
+
+    def order_list(self, list_id):
+        return self._call("GET", "/api/v3/orderList", {"orderListId": list_id}, signed=True)
+
+    def order(self, symbol, order_id):
+        return self._call("GET", "/api/v3/order", {"symbol": symbol, "orderId": order_id}, signed=True)
+
+    def cancel_list(self, symbol, list_id):
+        return self._call("DELETE", "/api/v3/orderList",
+                          {"symbol": symbol, "orderListId": list_id}, signed=True)
+
+    def cancel_order(self, symbol, order_id):
+        return self._call("DELETE", "/api/v3/order", {"symbol": symbol, "orderId": order_id},
+                          signed=True)
+
 
 # ---------------------------------------------------------------------------
 def floor_qty(qty, step):
@@ -193,19 +240,21 @@ def key_of(it):
     return f"{it['symbol']}-{it['entryTs']}"
 
 
-def load_ledger():
-    if os.path.exists(LEDGER):
-        with open(LEDGER, encoding="utf-8") as f:
+def load_ledger(path=None):
+    path = path or LEDGER
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     return {"open": [], "closed": []}
 
 
-def save_ledger(led):
-    os.makedirs(os.path.dirname(LEDGER), exist_ok=True)
-    tmp = LEDGER + ".tmp"
+def save_ledger(led, path=None):
+    path = path or LEDGER
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    tmp = path + ".tmp"
     with open(tmp, "w", encoding="utf-8") as f:
         json.dump(led, f, ensure_ascii=False, indent=1)
-    os.replace(tmp, LEDGER)
+    os.replace(tmp, path)
 
 
 def now_vn():
@@ -243,6 +292,16 @@ def close_pos(led, pos, reason, qty, quote, msgs, tag):
          if reason == "manual" else [])))
 
 
+def guard(c, log):
+    """Sàn thật: từ chối chạy nếu key có quyền rút tiền."""
+    r = c.restrictions()
+    if r.get("enableWithdrawals"):
+        raise RuntimeError("Key đang bật quyền RÚT TIỀN — tắt quyền đó trên Binance rồi chạy lại. "
+                           "Bot không đặt lệnh với key này.")
+    if not r.get("ipRestrict"):
+        log("cảnh báo: key chưa khoá theo IP.")
+
+
 # ---------------------------------------------------------------------------
 def sync(paper, bar_open, prices, capital, max_open, client=None, dry=False):
     """Đưa tài khoản thật về khớp với sổ giấy. Trả về danh sách tin nhắn.
@@ -256,12 +315,7 @@ def sync(paper, bar_open, prices, capital, max_open, client=None, dry=False):
     msgs, log = [], (lambda s: print(f"  [sàn] {s}", file=sys.stderr))
 
     if c.mode == "live" and not dry:
-        r = c.restrictions()
-        if r.get("enableWithdrawals"):
-            raise RuntimeError("Key đang bật quyền RÚT TIỀN — tắt quyền đó trên Binance rồi chạy lại. "
-                               "Bot không đặt lệnh với key này.")
-        if not r.get("ipRestrict"):
-            log("cảnh báo: key chưa khoá theo IP.")
+        guard(c, log)
 
     led = load_ledger()
     led["mode"] = c.mode
@@ -444,16 +498,73 @@ def cmd_panic(c):
     print("\n".join(msgs) or "Không có gì để bán.")
 
 
+def cmd_test(c, sym, action):
+    """Thử trọn vòng trên testnet, không cần chờ tín hiệu thật.
+
+    Dùng sổ riêng (live-test.json) nên không lẫn với sổ của bot thật.
+        test BTC            bot mua, như khi sổ giấy vừa mở lệnh hôm nay
+        test BTC --manual   giả làm BẠN bán tay một nửa (lệnh không mang mã của bot)
+        test BTC --rule     sổ giấy đóng lệnh theo luật → bot bán phần còn lại
+    """
+    global LEDGER
+    if c.mode != "testnet":
+        print("Lệnh test chỉ chạy với LIVE_TRADING=testnet.", file=sys.stderr)
+        return 1
+    LEDGER = os.path.join(os.path.dirname(LEDGER), "live-test.json")
+    sym = sym.upper() + ("" if sym.upper().endswith(QUOTE) else QUOTE)
+    px = c.price(sym)
+    day = int(time.time() // 86400) * 86400000
+    pos = next((p for p in load_ledger()["open"] if p["symbol"] == sym), None)
+    it = {"symbol": sym, "entryTs": pos["entryTs"] if pos else day, "entry": px}
+
+    if action == "manual":
+        if not pos:
+            print(f"Bot chưa giữ {sym}. Chạy 'test {sym[:-4]}' trước.")
+            return 1
+        f = c.filters(sym)
+        qty = floor_qty(pos["qty"] / 2, f["step"])
+        o = c.market(sym, "SELL", f"user-{int(time.time())}", qty=qty)
+        print(f"Bạn bán tay {qty} {f['base']} (lệnh {o['orderId']}, không phải mã của bot).")
+        paper = {"open": [it]}
+    elif action == "rule":
+        if not pos:
+            print(f"Bot chưa giữ {sym}.")
+            return 1
+        paper = {"open": [], "closed": [it]}
+    else:
+        if pos:
+            print(f"Bot đang giữ {sym} rồi — chạy lại không mua trùng:")
+        paper = {"open": [it]}
+
+    msgs = sync(paper, {sym: it["entryTs"]}, {sym: px}, 150, 5, client=c)
+    print("\n\n".join(msgs) if msgs else "(bot không làm gì — đúng nếu không có gì thay đổi)")
+    tok, chat = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip(), os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+    if msgs and tok and chat:
+        import crypto_bot as B
+        for m in msgs:
+            B.tg_send(tok, chat, "🧪 <b>THỬ</b>\n" + m)
+        print(f"(đã gửi {len(msgs)} tin Telegram)")
+    return 0
+
+
 def main():
+    # Console Windows mặc định cp1252, in tiếng Việt là crash.
+    for s in (sys.stdout, sys.stderr):
+        s.reconfigure(encoding="utf-8", errors="replace")
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["check", "status", "panic"])
+    ap.add_argument("cmd", choices=["check", "status", "panic", "test"])
+    ap.add_argument("symbol", nargs="?", default="BTC", help="cho lệnh test")
     ap.add_argument("--yes", action="store_true", help="xác nhận cho panic")
+    ap.add_argument("--manual", action="store_true", help="test: giả làm bạn bán tay một nửa")
+    ap.add_argument("--rule", action="store_true", help="test: luật bảo bán")
     args = ap.parse_args()
     try:
         c = Binance()
     except RuntimeError as e:
         print(e, file=sys.stderr)
         return 1
+    if args.cmd == "test":
+        return cmd_test(c, args.symbol, "manual" if args.manual else "rule" if args.rule else "buy")
     if args.cmd == "check":
         cmd_check(c)
     elif args.cmd == "status":
