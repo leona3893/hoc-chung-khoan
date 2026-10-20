@@ -375,6 +375,10 @@ def main():
             live = X.sync(state, {s: d[0][-1][0] for s, d in data.items()},
                           {s: d[0][-1][4] for s, d in data.items()},
                           CFG["capital"], CFG["maxOpen"], dry=args.dry)
+            # Trên VPS đặt TG_ONLY_LIVE=1: tin sổ giấy đã có GitHub Actions gửi,
+            # máy này chỉ nhắn chuyện lệnh trên sàn để không trùng tin.
+            if os.environ.get("TG_ONLY_LIVE"):
+                msgs = []
             msgs += [(m, None) for m in live]
         except Exception as e:  # noqa: BLE001
             print(f"  [sàn] LỖI: {e}", file=sys.stderr)

@@ -590,6 +590,10 @@ def main():
         try:
             live = LD.sync(state, {s: b[-1][0] for s, b in bars_by_sym.items() if b},
                            CFG["capital"], CFG["slots"], dry=args.dry)
+            # Trên VPS đặt TG_ONLY_LIVE=1: tin sổ giấy đã có GitHub Actions gửi,
+            # máy này chỉ nhắn chuyện lệnh trên sàn để không trùng tin.
+            if os.environ.get("TG_ONLY_LIVE"):
+                msgs = []
             msgs += [(m, None) for m in live]
         except Exception as e:  # noqa: BLE001
             print(f"  [sàn] LỖI: {e}", file=sys.stderr)
