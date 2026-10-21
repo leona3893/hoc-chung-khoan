@@ -27,7 +27,11 @@ apt-get install -yq python3 python3-pil git curl ufw unattended-upgrades
 dpkg-reconfigure -f noninteractive unattended-upgrades
 
 echo "== 2. Tường lửa: chỉ mở SSH"
-ufw allow OpenSSH >/dev/null
+# Nhiều nhà cung cấp VN để SSH ở cổng khác 22 — mở đúng cổng đang dùng, kẻo tự khoá mình ngoài.
+for p in $(sshd -T 2>/dev/null | awk '/^port /{print $2}') 22; do
+  ufw allow "$p/tcp" >/dev/null
+  echo "   mở cổng SSH $p"
+done
 ufw --force enable >/dev/null
 
 echo "== 3. Kiểm tra Binance có chặn IP máy này không"
