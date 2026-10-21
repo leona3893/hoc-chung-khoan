@@ -353,13 +353,13 @@ def sync(paper, bar_open, capital, slots, client=None, dry=False, path=None):
             led["open"].remove(pos)
             sell_market(c, led, pos, hit, msgs, tag)
             continue
-        msgs.append("\n".join([
+        msgs.append(X.with_buttons("\n".join([
             f"✅ <b>ĐÃ MUA {X.pair(sym)}</b>{tag} · {it['strategy']}",
             f"{X.num(q)} coin · giá {X.num(fill)} · {cost:.2f} USDT",
             f"OCO trên sàn: chốt lời {X.num(tp)} · cắt lỗ {X.num(stop)}" if tp
             else f"Cắt lỗ trên sàn: {X.num(stop)}",
-            "Muốn tự chốt: huỷ OCO của lệnh này trên app rồi bán — bot sẽ nhường lệnh cho bạn.",
-        ]))
+            "Muốn chốt sớm: bấm Đóng bên dưới (hoặc huỷ OCO trên app rồi tự bán).",
+        ]), X.close_buttons("d", pid)))
 
     if not dry:
         led["updatedAt"] = X.now_vn()
@@ -381,6 +381,37 @@ def cmd_status(c, path):
     cl = led["closed"]
     if cl:
         print(f"  đã đóng {len(cl)} lệnh · tổng {sum(x.get('pnlUsdt') or 0 for x in cl):+.2f} USDT")
+
+
+def close_one(c, key, path=None):
+    """Đóng ngay một lệnh bắt đáy theo yêu cầu của bạn (nút Đóng trên Telegram):
+    huỷ OCO nếu còn, bán market phần coin của lệnh. Trả về tin nhắn; rỗng nếu lệnh
+    không còn mở (vd OCO vừa khớp xong)."""
+    path = path or LEDGER
+    led = X.load_ledger(path)
+    pos = next((p for p in led["open"] if p["key"] == key), None)
+    if not pos:
+        return []
+    tag = " · 🧪testnet" if c.mode == "testnet" else ""
+    msgs = []
+    if pos.get("protect"):
+        # OCO có thể vừa khớp ngay trước khi bạn bấm — khi đó ghi theo giá sàn đã khớp.
+        st, filled = protect_status(c, pos)
+        if st == "filled":
+            f = c.filters(pos["symbol"])
+            q = quote = 0.0
+            for o in filled:
+                a, b = X.fill_of(c, pos["symbol"], o, f["base"])
+                q, quote = q + a, quote + b
+            led["open"].remove(pos)
+            X.close_pos(led, pos, filled_reason(pos, filled), q, quote, msgs, tag)
+            X.save_ledger(led, path)
+            return msgs
+        cancel_protect(c, pos)
+    led["open"].remove(pos)
+    sell_market(c, led, pos, "tg", msgs, tag)
+    X.save_ledger(led, path)
+    return msgs
 
 
 def cmd_panic(c, path):

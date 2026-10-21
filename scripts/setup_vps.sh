@@ -84,8 +84,9 @@ echo "== 6. Script chạy bot"
 cat > $HOME_BOT/run.sh <<'EOF'
 #!/usr/bin/env bash
 # Mỗi giờ: lấy code mới nhất, chạy bot bắt đáy rồi bot xu hướng. Không chạy chồng.
+# Dùng chung khoá với tg_control.py: đang đóng lệnh qua Telegram thì chờ xong mới chạy.
 exec 9>/tmp/bot.lock
-flock -n 9 || { echo "$(date -u) lần trước chưa xong, bỏ qua"; exit 0; }
+flock -w 600 9 || { echo "$(date -u) chờ khoá quá 10 phút, bỏ qua lần này"; exit 0; }
 cd /home/bot/hoc-chung-khoan || exit 1
 # Máy này không sửa file nào trong repo (sổ ở botdata/), nên luôn khớp đúng bản trên GitHub.
 git fetch -q origin main && git reset -q --hard origin/main
@@ -98,8 +99,24 @@ EOF
 chown bot:bot $HOME_BOT/run.sh
 chmod 700 $HOME_BOT/run.sh
 
-echo "== 7. Lịch chạy: phút 05 mỗi giờ"
-echo "5 * * * * /home/bot/run.sh >> /home/bot/logs/bot.log 2>&1" | crontab -u bot -
+cat > $HOME_BOT/tgctl.sh <<'EOF'
+#!/usr/bin/env bash
+# Mỗi phút: đọc nút bấm / lệnh bạn gõ trong Telegram. Không chạy chồng chính nó.
+exec 8>/tmp/tgctl.lock
+flock -n 8 || exit 0
+cd /home/bot/hoc-chung-khoan || exit 1
+set -a; . ./.env; set +a
+export PYTHONIOENCODING=utf-8
+python3 scripts/tg_control.py
+EOF
+chown bot:bot $HOME_BOT/tgctl.sh
+chmod 700 $HOME_BOT/tgctl.sh
+
+echo "== 7. Lịch chạy: bot phút 05 mỗi giờ, điều khiển Telegram mỗi phút"
+crontab -u bot - <<'EOF'
+5 * * * * /home/bot/run.sh >> /home/bot/logs/bot.log 2>&1
+* * * * * /home/bot/tgctl.sh >> /home/bot/logs/tg.log 2>&1
+EOF
 
 cat > /etc/logrotate.d/bot <<'EOF'
 /home/bot/logs/*.log {

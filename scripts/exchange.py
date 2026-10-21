@@ -59,15 +59,40 @@ def load_env(path=os.path.join(ROOT, ".env")):
 
 
 load_env()
-LEDGER =os.environ.get("LIVE_STATE") or os.path.join(ROOT, "data", "cache", "live-trend.json")
+LEDGER = os.environ.get("LIVE_STATE") or os.path.join(ROOT, "data", "cache", "live-trend.json")
 
 HOSTS = {"testnet": "https://testnet.binance.vision", "live": "https://api.binance.com"}
 QUOTE = "USDT"
 VN_TZ = timezone(timedelta(hours=7))
 
 EXIT_LABEL = {"rule": "xu hướng gãy (luật)", "manual": "bạn chốt tay",
+              "tg": "bạn đóng qua Telegram",
               "panic": "bán khẩn cấp", "dust": "còn quá ít để bán",
               "gone": "số dư biến mất"}
+BY_USER = ("manual", "tg")
+
+
+class Msg(str):
+    """Tin nhắn kèm nút Telegram. Vẫn là chuỗi — chỗ nào dùng chuỗi đều dùng được;
+    hàm gửi tin thấy .buttons thì gắn thêm bàn phím nút bên dưới tin."""
+    buttons = None
+
+
+def with_buttons(text, rows):
+    m = Msg(text)
+    m.buttons = rows
+    return m
+
+
+def sid(key):
+    """Mã ngắn của một lệnh, đủ gọn để nhét vào nút Telegram (tối đa 64 byte)."""
+    return hashlib.md5(key.encode()).hexdigest()[:10]
+
+
+def close_buttons(bot, key):
+    """bot: "d" = bắt đáy, "t" = xu hướng."""
+    return [[{"text": "🔴 Đóng lệnh này", "callback_data": f"c:{bot}:{sid(key)}"},
+             {"text": "📊 Lệnh đang mở", "callback_data": "l"}]]
 
 
 def mode():
@@ -284,12 +309,36 @@ def close_pos(led, pos, reason, qty, quote, msgs, tag):
                pnlUsdt=round(pnl, 4), pnlPct=round(pnl / cost * 100, 2) if cost else None)
     led["closed"].insert(0, rec)
     msgs.append("\n".join([
-        f"{'🙋' if reason == 'manual' else '✅'} <b>ĐÃ BÁN {pair(pos['symbol'])}</b>{tag}",
+        f"{'🙋' if reason in BY_USER else '✅'} <b>ĐÃ BÁN {pair(pos['symbol'])}</b>{tag}",
         f"{num(qty)} coin · giá {num(rec['exitPrice'])} · vốn vào {num(pos['entryPrice'])}",
         f"Lời/lỗ: <b>{pnl:+.2f} USDT</b> ({rec['pnlPct'] or 0:+.2f}%)",
         f"Lý do: {EXIT_LABEL.get(reason, reason)}",
     ] + (["Bot thôi theo dõi lệnh này, không mua lại mã này tới tín hiệu mới."]
-         if reason == "manual" else [])))
+         if reason in BY_USER else [])))
+
+
+def close_one(c, key, path=None):
+    """Đóng ngay một lệnh xu hướng theo yêu cầu của bạn (nút Đóng trên Telegram).
+    Trả về danh sách tin nhắn; rỗng nếu lệnh không còn mở."""
+    led = load_ledger(path)
+    pos = next((p for p in led["open"] if p["key"] == key), None)
+    if not pos:
+        return []
+    tag = " · 🧪testnet" if c.mode == "testnet" else ""
+    msgs = []
+    f = c.filters(pos["symbol"])
+    free = c.balances().get(f["base"], (0.0, 0.0))[0]
+    qty = floor_qty(min(pos["qty"], free), f["step"])
+    px = c.price(pos["symbol"])
+    led["open"].remove(pos)
+    if float(qty) * px < f["minNotional"]:
+        close_pos(led, pos, "dust", float(qty) or pos["qty"], (float(qty) or pos["qty"]) * px, msgs, tag)
+    else:
+        o = c.market(pos["symbol"], "SELL", cid_for(pos, "M"), qty=qty)
+        q, quote = fill_of(c, pos["symbol"], o, f["base"])
+        close_pos(led, pos, "tg", q, quote, msgs, tag)
+    save_ledger(led, path)
+    return msgs
 
 
 def guard(c, log):
@@ -440,11 +489,11 @@ def sync(paper, bar_open, prices, capital, max_open, client=None, dry=False):
                "botOrderIds": [o["orderId"]], "status": "open"}
         led["open"].append(pos)
         bal[QUOTE] = (usdt - cost, bal.get(QUOTE, (0, 0))[1])
-        msgs.append("\n".join([
-            f"✅ <b>ĐÃ MUA {pair(it['symbol'])}</b>{tag}",
+        msgs.append(with_buttons("\n".join([
+            f"✅ <b>ĐÃ MUA {pair(it['symbol'])}</b>{tag} · xu hướng",
             f"{num(q)} coin · giá {num(pos['entryPrice'])} · {cost:.2f} USDT",
-            "Bán theo luật khi nến ngày đóng dưới ngưỡng thoát. Bạn có thể chốt tay bất cứ lúc nào.",
-        ]))
+            "Bán theo luật khi nến ngày đóng dưới ngưỡng thoát. Muốn chốt sớm: bấm Đóng bên dưới.",
+        ]), close_buttons("t", k)))
 
     if not dry:
         led["updatedAt"] = now_vn()

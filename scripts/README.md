@@ -525,3 +525,26 @@ python scripts/live_dip.py panic --yes         # huỷ OCO, bán hết lệnh bo
 
 Lệnh `test` dùng sổ riêng (`data/cache/live-dip-test.json`). Sổ thật ở `data/cache/live-dip.json`.
 Trên VPS trỏ ra ngoài repo bằng `CRYPTO_STATE` và `LIVE_DIP_STATE`.
+
+## Điều khiển qua Telegram
+
+`tg_control.py` chạy **mỗi phút** trên VPS, đọc lệnh bạn gõ và nút bạn bấm trong chat Telegram:
+
+| Bạn làm | Bot làm |
+| --- | --- |
+| Bấm **🔴 Đóng lệnh này** dưới tin ĐÃ MUA | Hỏi xác nhận → huỷ OCO (nếu có) → bán market |
+| Gõ `/lenh` | Liệt kê lệnh đang mở của cả hai bot: giá vào, giá nay, lời/lỗ, cắt lỗ/chốt lời, mỗi lệnh một nút Đóng |
+| Gõ `/dong ENA` | Hỏi xác nhận rồi đóng lệnh ENA (có nhiều lệnh ENA thì cho chọn) |
+| Gõ `/dongall` | Hỏi xác nhận rồi đóng tất cả |
+
+Lệnh đóng qua Telegram được ghi lý do *bạn đóng qua Telegram*, và bot **không mua lại** lệnh đó.
+
+An toàn:
+- Chỉ nhận lệnh từ đúng `TELEGRAM_CHAT_ID`. Người khác nhắn bot thì bị lờ đi.
+- VPS **không mở cổng nào**: máy tự hỏi Telegram (`getUpdates`), không ai gọi vào được.
+- Mọi lệnh đóng phải bấm xác nhận lần hai.
+- Dùng chung khoá `/tmp/bot.lock` với `run.sh`, nên không bao giờ sửa sổ cùng lúc với bot.
+- Lần chạy đầu bỏ qua mọi tin tồn đọng, không làm theo lệnh cũ.
+
+Chậm nhất khoảng 1 phút sau khi bấm thì lệnh được đóng. Nếu đúng lúc bot đang chạy (phút :05), phải chờ bot chạy xong.
+Log ở `/home/bot/logs/tg.log`.

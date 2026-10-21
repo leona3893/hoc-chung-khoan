@@ -335,8 +335,10 @@ def chart_for(ev, bars_by_sym, charts_dir):
 
 
 def tg_send(token, chat, text):
-    data = urllib.parse.urlencode({"chat_id": chat, "text": text, "parse_mode": "HTML",
-                                   "disable_web_page_preview": "true"}).encode()
+    q = {"chat_id": chat, "text": text, "parse_mode": "HTML", "disable_web_page_preview": "true"}
+    if getattr(text, "buttons", None):     # tin của exchange.with_buttons: gắn nút bên dưới
+        q["reply_markup"] = json.dumps({"inline_keyboard": text.buttons})
+    data = urllib.parse.urlencode(q).encode()
     req = urllib.request.Request(f"https://api.telegram.org/bot{token}/sendMessage",
                                  data=data, method="POST")
     with urllib.request.urlopen(req, timeout=20) as r:
