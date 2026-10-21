@@ -99,24 +99,39 @@ EOF
 chown bot:bot $HOME_BOT/run.sh
 chmod 700 $HOME_BOT/run.sh
 
-cat > $HOME_BOT/tgctl.sh <<'EOF'
-#!/usr/bin/env bash
-# Mỗi phút: đọc nút bấm / lệnh bạn gõ trong Telegram. Không chạy chồng chính nó.
-exec 8>/tmp/tgctl.lock
-flock -n 8 || exit 0
-cd /home/bot/hoc-chung-khoan || exit 1
-set -a; . ./.env; set +a
-export PYTHONIOENCODING=utf-8
-python3 scripts/tg_control.py
-EOF
-chown bot:bot $HOME_BOT/tgctl.sh
-chmod 700 $HOME_BOT/tgctl.sh
+rm -f $HOME_BOT/tgctl.sh     # bản cũ chạy mỗi phút, nay thay bằng dịch vụ chạy liên tục
 
-echo "== 7. Lịch chạy: bot phút 05 mỗi giờ, điều khiển Telegram mỗi phút"
-crontab -u bot - <<'EOF'
-5 * * * * /home/bot/run.sh >> /home/bot/logs/bot.log 2>&1
-* * * * * /home/bot/tgctl.sh >> /home/bot/logs/tg.log 2>&1
+echo "== 6b. Điều khiển Telegram: dịch vụ chạy liên tục, phản hồi tức thì"
+cat > /etc/systemd/system/bot-tg.service <<'EOF'
+[Unit]
+Description=Dieu khien bot qua Telegram (nut Dong, /lenh)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=bot
+WorkingDirectory=/home/bot/hoc-chung-khoan
+EnvironmentFile=/home/bot/hoc-chung-khoan/.env
+Environment=PYTHONIOENCODING=utf-8
+ExecStart=/usr/bin/python3 scripts/tg_control.py --loop
+Restart=always
+RestartSec=5
+# Khởi động lại mỗi giờ để nạp code mới mà run.sh vừa kéo về.
+RuntimeMaxSec=3600
+StandardOutput=append:/home/bot/logs/tg.log
+StandardError=append:/home/bot/logs/tg.log
+
+[Install]
+WantedBy=multi-user.target
 EOF
+systemctl daemon-reload
+systemctl enable bot-tg >/dev/null 2>&1
+systemctl restart bot-tg
+sleep 3
+systemctl is-active --quiet bot-tg && echo "   bot-tg đang chạy" || echo "   bot-tg CHƯA chạy — xem: journalctl -u bot-tg -n 30"
+
+echo "== 7. Lịch chạy: bot phút 05 mỗi giờ"
+echo "5 * * * * /home/bot/run.sh >> /home/bot/logs/bot.log 2>&1" | crontab -u bot -
 
 cat > /etc/logrotate.d/bot <<'EOF'
 /home/bot/logs/*.log {

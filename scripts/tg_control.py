@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Điều khiển bot đặt lệnh qua Telegram. Chạy mỗi phút trên VPS (cron), hỏi Telegram xem
-bạn vừa gõ gì / bấm nút nào, rồi làm:
+Điều khiển bot đặt lệnh qua Telegram. Trên VPS chạy liên tục (systemd, --loop) bằng long
+polling: giữ một kết nối chờ Telegram, có tin là nhận ngay — bấm nút là phản hồi tức thì.
+Đọc bạn vừa gõ gì / bấm nút nào, rồi làm:
 
     /lenh              lệnh đang mở của cả hai bot, mỗi lệnh một nút Đóng
     /dong ENA          đóng lệnh ENA (hỏi xác nhận)
@@ -18,6 +19,7 @@ An toàn:
     • Dùng chung khoá /tmp/bot.lock với run.sh nên không bao giờ đụng sổ cùng lúc.
 
     python3 scripts/tg_control.py          # một lượt: xử lý tin mới rồi thoát
+    python3 scripts/tg_control.py --loop   # chạy liên tục (dịch vụ bot-tg trên VPS)
 """
 
 import html
@@ -48,12 +50,12 @@ HELP = ("🤖 <b>Điều khiển bot</b>\n"
         "Mọi lệnh đóng đều hỏi xác nhận trước.")
 
 
-def api(method, **params):
+def api(method, _timeout=30, **params):
     tok = os.environ["TELEGRAM_BOT_TOKEN"].strip()
     req = urllib.request.Request(f"https://api.telegram.org/bot{tok}/{method}",
                                  data=json.dumps(params).encode(),
                                  headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=30) as r:
+    with urllib.request.urlopen(req, timeout=_timeout) as r:
         return json.load(r)
 
 
@@ -244,23 +246,20 @@ def handle(u, chat_id):
         on_message(chat_id, m["text"])
 
 
-def main():
-    for s in (sys.stdout, sys.stderr):
-        s.reconfigure(encoding="utf-8", errors="replace")
-    chat = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
-    if not os.environ.get("TELEGRAM_BOT_TOKEN", "").strip() or not chat:
-        print("Chưa có TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID.", file=sys.stderr)
-        return 1
+def save_offset(n):
+    os.makedirs(os.path.dirname(OFFSET), exist_ok=True)
+    with open(OFFSET, "w", encoding="utf-8") as f:
+        json.dump({"offset": n}, f)
 
+
+def poll(chat, wait=0):
+    """Một lượt: lấy tin mới rồi xử lý. wait > 0 = long polling: Telegram giữ kết nối
+    tới `wait` giây và trả về NGAY khi có tin — nên bấm nút là bot phản hồi tức thì."""
     first = not os.path.exists(OFFSET)
     off = 0 if first else json.load(open(OFFSET, encoding="utf-8")).get("offset", 0)
-    ups = api("getUpdates", offset=off, timeout=0,
+    ups = api("getUpdates", _timeout=wait + 15, offset=off, timeout=0 if first else wait,
               allowed_updates=["message", "callback_query"]).get("result", [])
-
-    def save(n):
-        os.makedirs(os.path.dirname(OFFSET), exist_ok=True)
-        with open(OFFSET, "w", encoding="utf-8") as f:
-            json.dump({"offset": n}, f)
+    save = save_offset
 
     if first:
         # Lần đầu: đăng ký menu lệnh, bỏ qua tin cũ tồn đọng (không làm theo lệnh của hôm qua).
@@ -285,6 +284,25 @@ def main():
             except Exception:  # noqa: BLE001
                 pass
     return 0
+
+
+def main():
+    for s in (sys.stdout, sys.stderr):
+        s.reconfigure(encoding="utf-8", errors="replace")
+    chat = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
+    if not os.environ.get("TELEGRAM_BOT_TOKEN", "").strip() or not chat:
+        print("Chưa có TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID.", file=sys.stderr)
+        return 1
+    if "--loop" not in sys.argv:
+        return poll(chat)
+    # Chạy liên tục (systemd giữ cho sống, khởi động lại mỗi giờ để nạp code mới).
+    print("Điều khiển Telegram: đang lắng nghe.", file=sys.stderr, flush=True)
+    while True:
+        try:
+            poll(chat, wait=50)
+        except Exception as e:  # noqa: BLE001 — mất mạng, Telegram lỗi: nghỉ chút rồi thử lại
+            print(f"  [tg] mất kết nối: {str(e)[:120]}", file=sys.stderr, flush=True)
+            time.sleep(5)
 
 
 if __name__ == "__main__":

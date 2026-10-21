@@ -379,6 +379,16 @@ với multipart tự dựng bằng `urllib`, không thêm thư viện nào.
 
 Xem thử một ảnh mẫu: `python scripts/crypto_chart.py BTCUSDT 4h`
 
+**Gửi thử một tin thật** (kiểm tra token Telegram và đường gửi ảnh mà không phải chờ tín hiệu):
+
+```bash
+python scripts/crypto_bot.py --test BTC        # gửi một tin mẫu kèm ảnh
+python scripts/crypto_bot.py --test BTC --dry  # chỉ in ra, không gửi
+```
+
+Trên GitHub: **Actions → Bot tín hiệu crypto → Run workflow**, điền mã vào ô *test* (vd `BTC`).
+Để trống ô đó thì nó quét thật như bình thường. Lần chạy thử không ghi gì vào sổ.
+
 **Gửi thử một tin thật** — kiểm tra token Telegram và đường gửi ảnh mà không phải chờ tín hiệu:
 
 ```bash
@@ -528,7 +538,7 @@ Trên VPS trỏ ra ngoài repo bằng `CRYPTO_STATE` và `LIVE_DIP_STATE`.
 
 ## Điều khiển qua Telegram
 
-`tg_control.py` chạy **mỗi phút** trên VPS, đọc lệnh bạn gõ và nút bạn bấm trong chat Telegram:
+`tg_control.py` chạy **liên tục** trên VPS (dịch vụ `bot-tg`, phản hồi tức thì), đọc lệnh bạn gõ và nút bạn bấm trong chat Telegram:
 
 | Bạn làm | Bot làm |
 | --- | --- |
@@ -546,5 +556,5 @@ An toàn:
 - Dùng chung khoá `/tmp/bot.lock` với `run.sh`, nên không bao giờ sửa sổ cùng lúc với bot.
 - Lần chạy đầu bỏ qua mọi tin tồn đọng, không làm theo lệnh cũ.
 
-Chậm nhất khoảng 1 phút sau khi bấm thì lệnh được đóng. Nếu đúng lúc bot đang chạy (phút :05), phải chờ bot chạy xong.
-Log ở `/home/bot/logs/tg.log`.
+Bấm là bot phản hồi trong 1–2 giây. Nếu đúng lúc bot đang chạy (phút :05), lệnh đóng chờ bot chạy xong.
+Log ở `/home/bot/logs/tg.log`. Xem trạng thái: `systemctl status bot-tg`.
