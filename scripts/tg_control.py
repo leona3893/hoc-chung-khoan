@@ -63,6 +63,13 @@ def client():
     return X.Binance()
 
 
+def real_price(sym):
+    """Giá thị trường thật (API công khai, không cần khoá), bất kể bot đang ở testnet hay không."""
+    url = f"https://data-api.binance.vision/api/v3/ticker/price?symbol={sym}"
+    with urllib.request.urlopen(url, timeout=10) as r:
+        return float(json.load(r)["price"])
+
+
 def send(chat, text, rows=None):
     p = {"chat_id": chat, "text": text, "parse_mode": "HTML", "disable_web_page_preview": True}
     if rows:
@@ -122,13 +129,25 @@ def list_view():
     if not ps:
         return "📭 Không có lệnh nào đang mở.", None
     c = client()
-    tag = " · 🧪testnet" if c.mode == "testnet" else ""
-    lines, rows = [f"📊 <b>Lệnh đang mở ({len(ps)})</b>{tag}"], []
+    test = c.mode == "testnet"
+    lines, rows = [f"📊 <b>Lệnh đang mở ({len(ps)})</b>" + (" · 🧪testnet" if test else "")], []
     for b, p in ps:
+        entry = p["entryPrice"]
         try:
-            px = c.price(p["symbol"])
-            pnl = p["qty"] * px - p["cost"]
-            now = f"nay {X.num(px)} · <b>{pnl:+.2f} USDT ({pnl / p['cost'] * 100:+.2f}%)</b>"
+            if test:
+                # Giá testnet chỉ nhúc nhích khi có người khớp lệnh trên testnet — có giờ
+                # không ai giao dịch, giá đứng im. Nên lấy GIÁ THẬT để bạn so với chart,
+                # tính % theo giá vào của sổ giấy (giá thật lúc có tín hiệu).
+                real = real_price(p["symbol"])
+                base = entry = p.get("paperEntry") or p["entryPrice"]
+                tpx = c.price(p["symbol"])
+                tpnl = p["qty"] * tpx - p["cost"]
+                now = (f"giá thật {X.num(real)} · <b>{(real / base - 1) * 100:+.2f}%</b>\n"
+                       f"<i>testnet {X.num(tpx)} · {tpnl:+.2f} USDT</i>")
+            else:
+                px = c.price(p["symbol"])
+                pnl = p["qty"] * px - p["cost"]
+                now = f"nay {X.num(px)} · <b>{pnl:+.2f} USDT ({pnl / p['cost'] * 100:+.2f}%)</b>"
         except Exception:  # noqa: BLE001
             now = "chưa lấy được giá"
         if p.get("status") == "user":
@@ -138,7 +157,7 @@ def list_view():
         else:
             extra = ""
         lines.append(f"\n{name(b, p)}" + (f" · {p['strategy']}" if b == "d" else "")
-                     + f"\nvào {X.num(p['entryPrice'])} · {now}" + (f"\n{extra}" if extra else "")
+                     + f"\nvào {X.num(entry)} · {now}" + (f"\n{extra}" if extra else "")
                      + f"\n{X.chart_link(p['symbol'])}")
         rows.append([{"text": f"🔴 Đóng {p['symbol'].replace(X.QUOTE, '')} ({BOT[b]})",
                       "callback_data": f"c:{b}:{X.sid(p['key'])}"}])
