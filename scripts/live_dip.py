@@ -359,7 +359,7 @@ def sync(paper, bar_open, capital, slots, client=None, dry=False, path=None):
             f"OCO trên sàn: chốt lời {X.num(tp)} · cắt lỗ {X.num(stop)}" if tp
             else f"Cắt lỗ trên sàn: {X.num(stop)}",
             "Muốn chốt sớm: bấm Đóng bên dưới (hoặc huỷ OCO trên app rồi tự bán).",
-        ]), X.close_buttons("d", pid)))
+        ]), X.close_buttons("d", pid, sym)))
 
     if not dry:
         led["updatedAt"] = X.now_vn()

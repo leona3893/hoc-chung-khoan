@@ -89,10 +89,21 @@ def sid(key):
     return hashlib.md5(key.encode()).hexdigest()[:10]
 
 
-def close_buttons(bot, key):
+def chart_url(sym):
+    base = sym[:-len(QUOTE)] if sym.endswith(QUOTE) else sym
+    return f"https://www.binance.com/vi/trade/{base}_{QUOTE}?type=spot"
+
+
+def chart_link(sym):
+    """Link mở thẳng chart trên Binance — điện thoại có app Binance thì mở trong app."""
+    return f'<a href="{chart_url(sym)}">📈 Chart {sym.replace(QUOTE, "")} trên Binance</a>'
+
+
+def close_buttons(bot, key, sym):
     """bot: "d" = bắt đáy, "t" = xu hướng."""
     return [[{"text": "🔴 Đóng lệnh này", "callback_data": f"c:{bot}:{sid(key)}"},
-             {"text": "📊 Lệnh đang mở", "callback_data": "l"}]]
+             {"text": "📈 Chart", "url": chart_url(sym)}],
+            [{"text": "📊 Lệnh đang mở", "callback_data": "l"}]]
 
 
 def mode():
@@ -314,7 +325,7 @@ def close_pos(led, pos, reason, qty, quote, msgs, tag):
         f"Lời/lỗ: <b>{pnl:+.2f} USDT</b> ({rec['pnlPct'] or 0:+.2f}%)",
         f"Lý do: {EXIT_LABEL.get(reason, reason)}",
     ] + (["Bot thôi theo dõi lệnh này, không mua lại mã này tới tín hiệu mới."]
-         if reason in BY_USER else [])))
+         if reason in BY_USER else []) + [chart_link(pos["symbol"])]))
 
 
 def close_one(c, key, path=None):
@@ -493,7 +504,7 @@ def sync(paper, bar_open, prices, capital, max_open, client=None, dry=False):
             f"✅ <b>ĐÃ MUA {pair(it['symbol'])}</b>{tag} · xu hướng",
             f"{num(q)} coin · giá {num(pos['entryPrice'])} · {cost:.2f} USDT",
             "Bán theo luật khi nến ngày đóng dưới ngưỡng thoát. Muốn chốt sớm: bấm Đóng bên dưới.",
-        ]), close_buttons("t", k)))
+        ]), close_buttons("t", k, it["symbol"])))
 
     if not dry:
         led["updatedAt"] = now_vn()

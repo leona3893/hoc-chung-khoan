@@ -249,6 +249,12 @@ def stats_of(state):
 
 
 # ---------------------------------------------------------------------------
+def chart_link(symbol):
+    """Link mở thẳng chart cặp này trên Binance — điện thoại có app Binance thì mở trong app."""
+    base = symbol[:-4] if symbol.endswith("USDT") else symbol
+    return f'<a href="https://www.binance.com/vi/trade/{base}_USDT?type=spot">📈 Chart {base} trên Binance</a>'
+
+
 def build_buy(it):
     ex = C.EXIT
     sym = it["symbol"].replace("USDT", "/USDT")
@@ -258,6 +264,7 @@ def build_buy(it):
         f"Cắt lỗ {fmt(it.get('stop0') or it['stop'])}"
         + (f" · Chốt lời {fmt(it['tp'])}" if it.get("tp") else ""),
         f"Giữ tối đa {ex['maxHold']}h · {esc(it['strategy'])}",
+        chart_link(it["symbol"]),
     ])
 
 
@@ -268,6 +275,7 @@ def build_sell(it):
         f"Giá: <b>{fmt(it['exitPrice'])}</b> ({it['pnlPct']:+.2f}%, {it['r']:+.2f}R)",
         f"Đã giữ {it['held'] * PER_H}h · {EXIT_LABEL.get(it['exitReason'], it['exitReason'])}"
         f" · {esc(it['strategy'])}",
+        chart_link(it["symbol"]),
     ])
 
 

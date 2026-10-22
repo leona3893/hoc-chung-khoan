@@ -198,6 +198,7 @@ def build_buy(it):
         *size_line(it),
         f"Ra khi thủng {B.fmt(it['exitLevel'])}" if it.get("exitLevel") else "Ra theo luật",
         f"Khung ngày · {LABEL.get(it['strategy'], it['strategy'])}",
+        B.chart_link(it["symbol"]),
     ])
 
 
@@ -206,6 +207,7 @@ def build_sell(it):
         f"🔴 <b>SELL {B.esc(it['symbol'].replace('USDT', '/USDT'))}</b> · 📈1D",
         f"Giá: <b>{B.fmt(it['exitPrice'])}</b> ({it['pnlPct']:+.2f}%)",
         f"Đã giữ {it['days']} ngày · xu hướng gãy",
+        B.chart_link(it["symbol"]),
     ])
 
 
@@ -222,6 +224,7 @@ def build_hold(it):
         + (f" (dưới giá {abs((it['lastPrice'] / it['exitLevel'] - 1) * 100):.1f}%)"
            if it.get("exitLevel") else ""),
         f"Đã giữ {it['days']} ngày · xu hướng còn nguyên",
+        B.chart_link(it["symbol"]),
     ])
 
 
@@ -231,6 +234,7 @@ def build_warn(it, px, lvl):
         f"Giá {B.fmt(px)} · ngưỡng {B.fmt(lvl)}",
         f"Luật chỉ chốt theo nến ngày, nên sổ chưa đóng lệnh. "
         f"Nếu nến hôm nay đóng dưới mức này thì sáng mai có tin SELL.",
+        B.chart_link(it["symbol"]),
     ])
 
 

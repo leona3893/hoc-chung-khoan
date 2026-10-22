@@ -138,7 +138,8 @@ def list_view():
         else:
             extra = ""
         lines.append(f"\n{name(b, p)}" + (f" · {p['strategy']}" if b == "d" else "")
-                     + f"\nvào {X.num(p['entryPrice'])} · {now}" + (f"\n{extra}" if extra else ""))
+                     + f"\nvào {X.num(p['entryPrice'])} · {now}" + (f"\n{extra}" if extra else "")
+                     + f"\n{X.chart_link(p['symbol'])}")
         rows.append([{"text": f"🔴 Đóng {p['symbol'].replace(X.QUOTE, '')} ({BOT[b]})",
                       "callback_data": f"c:{b}:{X.sid(p['key'])}"}])
     if len(ps) > 1:
