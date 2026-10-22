@@ -174,17 +174,48 @@ def confirm_one(chat, b, p):
 
 
 def close(items):
-    """Đóng các lệnh [(bot, pos)]. Trả về tin nhắn kết quả."""
+    """Đóng các lệnh [(bot, pos)]. Trả về [(bot, tin nhắn)]."""
     c = client()
-    msgs = []
+    out = []
     with bot_lock():
         for b, p in items:
             try:
                 r = LD.close_one(c, p["key"]) if b == "d" else X.close_one(c, p["key"])
-                msgs += r or [f"ℹ️ {name(b, p)} không còn mở (sàn vừa khớp hoặc đã đóng)."]
+                out += [(b, m) for m in r] or [
+                    (b, f"ℹ️ {name(b, p)} không còn mở (sàn vừa khớp hoặc đã đóng).")]
             except Exception as e:  # noqa: BLE001
-                msgs.append(f"❗ Không đóng được {name(b, p)}: {html.escape(str(e)[:200])}")
-    return msgs
+                out.append((b, f"❗ Không đóng được {name(b, p)}: {html.escape(str(e)[:200])}"))
+    return out
+
+
+def render(b, m):
+    """Ảnh chart cho tin ĐÃ BÁN, giống tin của sổ giấy. Lỗi thì trả None, vẫn gửi chữ."""
+    ev = getattr(m, "chart", None)
+    if not ev:
+        return None
+    try:
+        import crypto_bot as B
+        sym = ev["it"]["symbol"]
+        if b == "d":
+            charts = os.path.join(os.path.dirname(LD.LEDGER), "charts")
+            return B.chart_for(ev, {sym: B.fetch_recent(sym, "1h", 300)}, charts)
+        import trend_bot as TB
+        return TB.chart(dict(ev["it"], note=ev.get("note")), B.fetch_recent(sym, "1d", 120), ev["kind"])
+    except Exception as e:  # noqa: BLE001
+        print(f"  [tg] không vẽ được chart: {e}", file=sys.stderr)
+        return None
+
+
+def send_result(chat, b, m):
+    img = render(b, m)
+    if img:
+        try:
+            import crypto_bot as B
+            if B.tg_photo(os.environ["TELEGRAM_BOT_TOKEN"].strip(), chat, img, m).get("ok"):
+                return
+        except Exception as e:  # noqa: BLE001 — gửi ảnh hỏng thì vẫn gửi chữ
+            print(f"  [tg] gửi ảnh lỗi: {e}", file=sys.stderr)
+    send(chat, m)
 
 
 # ---------------------------------------------------------------------------
@@ -233,8 +264,11 @@ def on_callback(chat, msg_id, data):
                {"text": "Huỷ", "callback_data": "n"}]])
     elif data == "Y":
         edit(chat, msg_id, "⏳ Đang đóng tất cả…")
-        for m in close(positions()) or ["📭 Không có lệnh nào đang mở."]:
-            send(chat, m)
+        res = close(positions())
+        if not res:
+            send(chat, "📭 Không có lệnh nào đang mở.")
+        for b, m in res:
+            send_result(chat, b, m)
     elif data[:2] in ("c:", "y:"):
         _, b, s = data.split(":")
         hit = find(b, s)
@@ -244,8 +278,8 @@ def on_callback(chat, msg_id, data):
             confirm_one(chat, *hit)
         else:
             edit(chat, msg_id, f"⏳ Đang đóng {name(*hit)}…")
-            for m in close([hit]):
-                send(chat, m)
+            for b2, m in close([hit]):
+                send_result(chat, b2, m)
 
 
 def handle(u, chat_id):

@@ -40,6 +40,7 @@ from decimal import ROUND_DOWN, Decimal
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import exchange as X  # noqa: E402
+import crypto as C  # noqa: E402  (khối thoát lệnh dùng chung với sổ giấy: trailing, giữ tối đa)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE = os.path.join(ROOT, "data", "cache")
@@ -337,6 +338,7 @@ def sync(paper, bar_open, capital, slots, client=None, dry=False, path=None):
         pos = {"key": pid, "symbol": sym, "strategy": it["strategy"], "entryTs": it["entryTs"],
                "entryMs": o.get("transactTime") or o.get("time"), "entryTime": X.now_vn(),
                "qty": q, "cost": cost, "entryPrice": fill, "paperEntry": it["entry"],
+               "paperStop0": it["stop"], "paperTp": it.get("tp"),
                "k": fill / it["entry"], "botOrderIds": [o["orderId"]], "status": "bot",
                "protect": None}
         stop = it["stop"] * pos["k"]
@@ -353,13 +355,19 @@ def sync(paper, bar_open, capital, slots, client=None, dry=False, path=None):
             led["open"].remove(pos)
             sell_market(c, led, pos, hit, msgs, tag)
             continue
+        st = C.STRATEGIES.get(it["strategy"], {})
         msgs.append(X.with_buttons("\n".join([
-            f"✅ <b>ĐÃ MUA {X.pair(sym)}</b>{tag} · {it['strategy']}",
+            f"✅ <b>ĐÃ MUA {X.pair(sym)}</b>{tag} · ⚡1h · {it['strategy']}",
             f"{X.num(q)} coin · giá {X.num(fill)} · {cost:.2f} USDT",
             f"OCO trên sàn: chốt lời {X.num(tp)} · cắt lỗ {X.num(stop)}" if tp
             else f"Cắt lỗ trên sàn: {X.num(stop)}",
+            f"Trailing {C.EXIT['trailPct']:g}% · Giữ tối đa {C.EXIT['maxHold']}h"
+            + (" · hoặc tới khi giá hồi về trung bình 24h" if st.get("exitFn") else ""),
             "Muốn chốt sớm: bấm Đóng bên dưới (hoặc huỷ OCO trên app rồi tự bán).",
-        ]), X.close_buttons("d", pid, sym)))
+            X.chart_link(sym),
+        ]), X.close_buttons("d", pid, sym),
+            {"kind": "buy", "note": X.note(), "it": {"symbol": sym, "strategy": it["strategy"], "entryTs": it["entryTs"],
+                                   "entry": it["entry"], "stop0": it["stop"], "tp": it.get("tp")}}))
 
     if not dry:
         led["updatedAt"] = X.now_vn()

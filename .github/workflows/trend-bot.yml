@@ -55,7 +55,7 @@ jobs:
           if [ -n "${{ github.event.inputs.test }}" ]; then
             python scripts/trend_bot.py --test "${{ github.event.inputs.test }}"
           else
-            python scripts/trend_bot.py
+            python scripts/trend_bot.py --no-send    # sổ giấy chỉ ghi file cho trang web; tin Telegram do bot trên VPS gửi
           fi
 
       # Chỉ commit khi nến ngày đóng và có lệnh vào/ra, không commit mỗi giờ.

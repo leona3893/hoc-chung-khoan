@@ -54,7 +54,7 @@ jobs:
           if [ -n "${{ github.event.inputs.test }}" ]; then
             python scripts/crypto_bot.py --test "${{ github.event.inputs.test }}"
           else
-            python scripts/crypto_bot.py
+            python scripts/crypto_bot.py --no-send   # sổ giấy chỉ ghi file cho trang web; tin Telegram do bot trên VPS gửi
           fi
 
       # Chạy mỗi giờ nên chỉ commit khi thực sự có lệnh vào hoặc ra, không commit

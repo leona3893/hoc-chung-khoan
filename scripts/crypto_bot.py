@@ -298,7 +298,10 @@ def tg_photo(token, chat, path, caption):
     with open(path, "rb") as f:
         blob = f.read()
     parts = []
-    for k, v in (("chat_id", chat), ("caption", caption), ("parse_mode", "HTML")):
+    fields = [("chat_id", chat), ("caption", caption), ("parse_mode", "HTML")]
+    if getattr(caption, "buttons", None):     # tin của exchange.with_buttons: gắn nút dưới ảnh
+        fields.append(("reply_markup", json.dumps({"inline_keyboard": caption.buttons})))
+    for k, v in fields:
         parts.append(f'--{bound}\r\nContent-Disposition: form-data; name="{k}"\r\n\r\n{v}\r\n'
                      .encode("utf-8"))
     parts.append(f'--{bound}\r\nContent-Disposition: form-data; name="photo"; '
@@ -335,6 +338,8 @@ def chart_for(ev, bars_by_sym, charts_dir):
             "exits": {**C.EXIT, "maxHold": C.EXIT["maxHold"]},
             "exitPrice": it.get("exitPrice"), "pnlPct": it.get("pnlPct"),
         }
+        if ev.get("note"):
+            meta["note"] = ev["note"]
         path = os.path.join(charts_dir, f"{it['symbol']}-{it['entryTs']}-{ev['kind']}.png")
         return CH.render(bars, meta, path, window=window)
     except Exception as e:  # noqa: BLE001
@@ -600,11 +605,12 @@ def main():
         try:
             live = LD.sync(state, {s: b[-1][0] for s, b in bars_by_sym.items() if b},
                            CFG["capital"], CFG["slots"], dry=args.dry)
-            # Trên VPS đặt TG_ONLY_LIVE=1: tin sổ giấy đã có GitHub Actions gửi,
-            # máy này chỉ nhắn chuyện lệnh trên sàn để không trùng tin.
+            # Trên VPS đặt TG_ONLY_LIVE=1: chỉ nhắn chuyện lệnh trên sàn, không nhắn sổ giấy.
             if os.environ.get("TG_ONLY_LIVE"):
                 msgs = []
-            msgs += [(m, None) for m in live]
+            # Lệnh trên sàn luôn kèm ảnh chart (kể cả khi --no-chart, cờ đó chỉ cho sổ giấy).
+            msgs += [(m, chart_for(m.chart, bars_by_sym, charts_dir) if getattr(m, "chart", None)
+                      else None) for m in live]
         except Exception as e:  # noqa: BLE001
             print(f"  [sàn] LỖI: {e}", file=sys.stderr)
             msgs.append((f"❗ <b>Lỗi đặt lệnh</b>: {esc(str(e)[:300])}", None))

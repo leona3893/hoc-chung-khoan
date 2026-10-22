@@ -73,15 +73,30 @@ BY_USER = ("manual", "tg")
 
 
 class Msg(str):
-    """Tin nhắn kèm nút Telegram. Vẫn là chuỗi — chỗ nào dùng chuỗi đều dùng được;
-    hàm gửi tin thấy .buttons thì gắn thêm bàn phím nút bên dưới tin."""
+    """Tin nhắn kèm nút Telegram và/hoặc ảnh chart. Vẫn là chuỗi — chỗ nào dùng chuỗi đều
+    dùng được. Hàm gửi tin thấy .buttons thì gắn bàn phím nút; bot thấy .chart thì vẽ ảnh
+    (cần nến, nên bot vẽ chứ không phải file này)."""
     buttons = None
+    chart = None      # {"kind": "buy"|"sell", "it": {symbol, strategy, entry, stop0, tp, ...}}
 
 
-def with_buttons(text, rows):
+def with_buttons(text, rows, chart=None):
     m = Msg(text)
     m.buttons = rows
+    m.chart = chart
     return m
+
+
+def with_chart(text, chart):
+    m = Msg(text)
+    m.chart = chart
+    return m
+
+
+def real_px(pos, px):
+    """Đổi giá trên sàn đang chạy về giá thị trường thật để vẽ lên chart nến thật.
+    Testnet lệch giá thật; k = giá khớp / giá sổ giấy lúc mua (sàn thật thì k = 1)."""
+    return px / pos.get("k", 1) if px else px
 
 
 def sid(key):
@@ -113,6 +128,11 @@ def mode():
 
 def enabled():
     return mode() != "off"
+
+
+def note():
+    """Chú thích cuối ảnh chart của lệnh trên sàn (ảnh sổ giấy ghi "sổ giấy")."""
+    return "lệnh của bot · testnet, tiền ảo" if mode() == "testnet" else "lệnh tiền thật của bot"
 
 
 class ApiError(Exception):
@@ -319,13 +339,19 @@ def close_pos(led, pos, reason, qty, quote, msgs, tag):
                exitQty=qty, exitPrice=(quote / qty if qty else None),
                pnlUsdt=round(pnl, 4), pnlPct=round(pnl / cost * 100, 2) if cost else None)
     led["closed"].insert(0, rec)
-    msgs.append("\n".join([
+    msgs.append(with_chart("\n".join([
         f"{'🙋' if reason in BY_USER else '✅'} <b>ĐÃ BÁN {pair(pos['symbol'])}</b>{tag}",
         f"{num(qty)} coin · giá {num(rec['exitPrice'])} · vốn vào {num(pos['entryPrice'])}",
         f"Lời/lỗ: <b>{pnl:+.2f} USDT</b> ({rec['pnlPct'] or 0:+.2f}%)",
         f"Lý do: {EXIT_LABEL.get(reason, reason)}",
     ] + (["Bot thôi theo dõi lệnh này, không mua lại mã này tới tín hiệu mới."]
-         if reason in BY_USER else []) + [chart_link(pos["symbol"])]))
+         if reason in BY_USER else []) + [chart_link(pos["symbol"])]),
+        {"kind": "sell", "note": note(), "it": {
+            "symbol": pos["symbol"], "strategy": pos.get("strategy", "trend"),
+            "entryTs": pos["entryTs"], "entry": pos.get("paperEntry") or pos["entryPrice"],
+            "stop0": pos.get("paperStop0") or pos.get("exitLevel"), "tp": pos.get("paperTp"),
+            "exitLevel": pos.get("exitLevel"),
+            "exitPrice": real_px(pos, rec["exitPrice"]), "pnlPct": rec["pnlPct"]}}))
 
 
 def close_one(c, key, path=None):
@@ -497,14 +523,23 @@ def sync(paper, bar_open, prices, capital, max_open, client=None, dry=False):
         pos = {"key": k, "symbol": it["symbol"], "entryTs": it["entryTs"],
                "entryMs": o.get("transactTime") or o.get("time"), "entryTime": now_vn(),
                "qty": q, "cost": cost, "entryPrice": cost / q if q else None,
+               "paperEntry": it["entry"], "k": (cost / q) / it["entry"] if q else 1,
+               "exitLevel": it.get("exitLevel"),
                "botOrderIds": [o["orderId"]], "status": "open"}
         led["open"].append(pos)
         bal[QUOTE] = (usdt - cost, bal.get(QUOTE, (0, 0))[1])
+        lvl = it.get("exitLevel")
         msgs.append(with_buttons("\n".join([
-            f"✅ <b>ĐÃ MUA {pair(it['symbol'])}</b>{tag} · xu hướng",
+            f"✅ <b>ĐÃ MUA {pair(it['symbol'])}</b>{tag} · xu hướng 📈1D",
             f"{num(q)} coin · giá {num(pos['entryPrice'])} · {cost:.2f} USDT",
-            "Bán theo luật khi nến ngày đóng dưới ngưỡng thoát. Muốn chốt sớm: bấm Đóng bên dưới.",
-        ]), close_buttons("t", k, it["symbol"])))
+            (f"Ra khi nến ngày đóng dưới {num(lvl)} ({(lvl / it['entry'] - 1) * 100:+.1f}%) — "
+             f"ngưỡng dời lên theo giá" if lvl else "Ra khi nến ngày đóng dưới ngưỡng thoát"),
+            "Không giới hạn thời gian giữ — giữ tới khi xu hướng gãy.",
+            chart_link(it["symbol"]),
+        ]), close_buttons("t", k, it["symbol"]),
+            {"kind": "buy", "note": note(), "it": {"symbol": it["symbol"], "strategy": it.get("strategy", "trend"),
+                                   "entryTs": it["entryTs"], "entry": it["entry"],
+                                   "exitLevel": lvl, "stop0": lvl}}))
 
     if not dry:
         led["updatedAt"] = now_vn()
