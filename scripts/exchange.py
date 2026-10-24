@@ -371,9 +371,16 @@ def close_one(c, key, path=None):
     if float(qty) * px < f["minNotional"]:
         close_pos(led, pos, "dust", float(qty) or pos["qty"], (float(qty) or pos["qty"]) * px, msgs, tag)
     else:
-        o = c.market(pos["symbol"], "SELL", cid_for(pos, "M"), qty=qty)
-        q, quote = fill_of(c, pos["symbol"], o, f["base"])
-        close_pos(led, pos, "tg", q, quote, msgs, tag)
+        o = c.market(pos["symbol"], "SELL", f"{cid_for(pos, 'M')}{int(time.time()) % 10000}", qty=qty)
+        if float(o.get("executedQty") or 0) <= 0:
+            # Không ai mua (sổ lệnh mỏng, hay gặp trên testnet): giữ nguyên lệnh trong sổ.
+            led["open"].append(pos)
+            msgs.append(f"⚠️ Bán {pair(pos['symbol'])} không khớp — sổ lệnh"
+                        f"{' testnet' if c.mode == 'testnet' else ''} không có người mua. "
+                        f"Lệnh vẫn mở, bấm Đóng lại sau.{tag}")
+        else:
+            q, quote = fill_of(c, pos["symbol"], o, f["base"])
+            close_pos(led, pos, "tg", q, quote, msgs, tag)
     save_ledger(led, path)
     return msgs
 
@@ -487,10 +494,15 @@ def sync(paper, bar_open, prices, capital, max_open, client=None, dry=False):
         if dry:
             still.append(pos)
             continue
-        cid = cid_for(pos, "S")
+        # Mã lệnh đổi theo số lần thử: lần trước hết hạn không khớp thì đặt lệnh MỚI,
+        # còn lần trước đã khớp (bot chết trước khi ghi sổ) thì nhận lại đúng lệnh đó.
+        cid = cid_for(pos, "S") + (str(pos["sellTry"]) if pos.get("sellTry") else "")
         o = c.order_by_cid(pos["symbol"], cid) or c.market(pos["symbol"], "SELL", cid, qty=qty)
         if o.get("status") != "FILLED":
-            msgs.append(f"⚠️ Lệnh bán {pair(pos['symbol'])} chưa khớp hết ({o.get('status')}).{tag}")
+            pos["sellTry"] = pos.get("sellTry", 0) + 1
+            if pos["sellTry"] == 1:
+                msgs.append(f"⚠️ Bán {pair(pos['symbol'])} theo luật không khớp ({o.get('status')}) — "
+                            f"sổ lệnh không có người mua. Bot thử bán lại mỗi giờ.{tag}")
             still.append(pos)
             continue
         q, quote = fill_of(c, pos["symbol"], o, f["base"])

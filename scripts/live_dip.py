@@ -97,19 +97,27 @@ def place_protect(c, pos, f, stop, tp):
 
 
 def protect_status(c, pos):
-    """("active" | "filled" | "canceled", [lệnh đã khớp])"""
+    """("active" | "filled" | "canceled" | "expired", [lệnh đã khớp])
+
+    canceled = có người huỷ (CANCELED) — bạn, hoặc chính bot lúc thay OCO.
+    expired  = sàn cho hết hạn mà không khớp: cắt lỗ đã kích hoạt nhưng lệnh market
+               không có người mua (sổ lệnh mỏng — hay gặp trên testnet). KHÔNG phải bạn huỷ.
+    """
     p = pos["protect"]
     if "list" in p:
         if c.order_list(p["list"])["listOrderStatus"] != "ALL_DONE":
             return "active", []
-    filled = []
+    filled, statuses = [], []
     for oid in p["orders"]:
         o = c.order(pos["symbol"], oid)
         if o["status"] in ("NEW", "PARTIALLY_FILLED") and "list" not in p:
             return "active", []
+        statuses.append(o["status"])
         if float(o["executedQty"]) > 0:
             filled.append(o)
-    return ("filled", filled) if filled else ("canceled", [])
+    if filled:
+        return "filled", filled
+    return ("canceled", []) if "CANCELED" in statuses else ("expired", [])
 
 
 def cancel_protect(c, pos):
@@ -135,9 +143,19 @@ def sell_market(c, led, pos, reason, msgs, tag):
     if float(qty) * px < f["minNotional"]:
         X.close_pos(led, pos, "dust", float(qty) or pos["qty"], (float(qty) or pos["qty"]) * px, msgs, tag)
         return
-    o = c.market(pos["symbol"], "SELL", f"{short(pos['key'])}S", qty=qty)
+    o = c.market(pos["symbol"], "SELL", f"{short(pos['key'])}S{pos.get('sellTry', 0)}", qty=qty)
+    if float(o.get("executedQty") or 0) <= 0:
+        # Không ai mua (sổ lệnh mỏng). Giữ lệnh trong sổ, lần chạy sau thử bán lại.
+        # Mã lệnh bán đổi theo số lần thử, vì sàn không nhận lại mã của lệnh vừa hết hạn.
+        pos["sellTry"] = pos.get("sellTry", 0) + 1
+        if pos["sellTry"] == 1:
+            msgs.append(f"⚠️ Bán {X.pair(pos['symbol'])} ({X.EXIT_LABEL.get(reason, reason)}) "
+                        f"không khớp — sổ lệnh{' testnet' if c.mode == 'testnet' else ''} không có "
+                        f"người mua. Bot giữ lệnh và thử bán lại mỗi giờ.{tag}")
+        return False
     q, quote = X.fill_of(c, pos["symbol"], o, f["base"])
     X.close_pos(led, pos, reason, q, quote, msgs, tag)
+    return True
 
 
 def filled_reason(pos, orders):
@@ -193,6 +211,17 @@ def sync(paper, bar_open, capital, slots, client=None, dry=False, path=None):
                 else:
                     still.append(pos)
                 continue
+            if st == "expired":
+                # Cắt lỗ đã chạm và kích hoạt, nhưng lệnh market không khớp. Bán lại ngay.
+                reason = "trail" if pos.get("trailed") else "stop"
+                log(f"{sym}: cắt lỗ kích hoạt nhưng không khớp → bán market lại")
+                if dry:
+                    still.append(pos)
+                    continue
+                pos["protect"] = None
+                if not sell_market(c, led, pos, reason, msgs, tag):
+                    still.append(pos)
+                continue
             if st == "canceled":
                 if pos.get("replacing"):
                     pos["protect"] = None            # bot huỷ dở lần trước, đặt lại bên dưới
@@ -224,7 +253,8 @@ def sync(paper, bar_open, capital, slots, client=None, dry=False, path=None):
                 still.append(pos)
                 continue
             cancel_protect(c, pos)
-            sell_market(c, led, pos, reason, msgs, tag)
+            if not sell_market(c, led, pos, reason, msgs, tag):
+                still.append(pos)
             continue
 
         # Sổ giấy còn giữ: đặt OCO nếu chưa có, hoặc thay khi cắt lỗ đã dời lên.
@@ -253,8 +283,9 @@ def sync(paper, bar_open, capital, slots, client=None, dry=False, path=None):
             pos.pop("replacing", None)
             if hit:
                 log(f"{sym}: giá đã vượt mức {hit} → bán market")
-                sell_market(c, led, pos, hit if hit == "tp" else ("trail" if pos["trailed"] else "stop"),
-                            msgs, tag)
+                if not sell_market(c, led, pos, hit if hit == "tp" else ("trail" if pos["trailed"] else "stop"),
+                                   msgs, tag):
+                    still.append(pos)
                 continue
         still.append(pos)
     led["open"] = still
@@ -353,7 +384,8 @@ def sync(paper, bar_open, capital, slots, client=None, dry=False, path=None):
             continue
         if hit:
             led["open"].remove(pos)
-            sell_market(c, led, pos, hit, msgs, tag)
+            if not sell_market(c, led, pos, hit, msgs, tag):
+                led["open"].append(pos)
             continue
         st = C.STRATEGIES.get(it["strategy"], {})
         msgs.append(X.with_buttons("\n".join([
@@ -417,7 +449,8 @@ def close_one(c, key, path=None):
             return msgs
         cancel_protect(c, pos)
     led["open"].remove(pos)
-    sell_market(c, led, pos, "tg", msgs, tag)
+    if not sell_market(c, led, pos, "tg", msgs, tag):
+        led["open"].append(pos)      # chưa bán được: vẫn giữ, giờ sau bot thử lại theo luật
     X.save_ledger(led, path)
     return msgs
 
@@ -431,7 +464,8 @@ def cmd_panic(c, path):
             continue
         cancel_protect(c, pos)
         led["open"].remove(pos)
-        sell_market(c, led, pos, "panic", msgs, "")
+        if not sell_market(c, led, pos, "panic", msgs, ""):
+            led["open"].append(pos)
     X.save_ledger(led, path)
     print("\n".join(msgs) or "Không có gì để bán.")
 
