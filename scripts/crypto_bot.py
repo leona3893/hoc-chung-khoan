@@ -180,7 +180,9 @@ def step(state, bars_by_sym, events):
     state["open"] = still
 
     # --- tín hiệu mới ở nến vừa đóng
-    held = {(i["strategy"], i["symbol"]) for i in still}
+    # Mỗi coin chỉ một lệnh, dù chiến lược nào. Hai chiến lược cùng bắt một cú xả trên
+    # cùng coin là cùng một cược đặt gấp đôi tiền — suất trống nhường cho coin khác.
+    held = {i["symbol"] for i in still}
     room = {n: k - sum(1 for i in still if i["strategy"] == n) for n, k in CFG["slots"].items()}
     if all(v <= 0 for v in room.values()):
         return state
@@ -192,7 +194,7 @@ def step(state, bars_by_sym, events):
         i = len(bars) - 2          # nến vừa ĐÓNG (nến cuối còn đang chạy)
         for name in CFG["strategies"]:
             st = C.STRATEGIES.get(name)
-            if not st or room.get(name, 0) <= 0 or (name, sym) in held:
+            if not st or room.get(name, 0) <= 0 or sym in held:
                 continue
             try:
                 if st["fn"](x, i, st["params"]):
@@ -202,8 +204,9 @@ def step(state, bars_by_sym, events):
     cands.sort(key=lambda c: c[0], reverse=True)
     picked = []
     for c in cands:
-        if room[c[2]] > 0:
+        if room[c[2]] > 0 and c[1] not in held:
             room[c[2]] -= 1
+            held.add(c[1])         # coin này đã có lệnh — chiến lược khác không lấy nữa
             picked.append(c)
 
     for _, sym, name, bars in picked:
