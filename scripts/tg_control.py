@@ -25,6 +25,7 @@ An toàn:
 import html
 import json
 import os
+import subprocess
 import sys
 import time
 import urllib.request
@@ -185,7 +186,20 @@ def close(items):
                     (b, f"ℹ️ {name(b, p)} không còn mở (sàn vừa khớp hoặc đã đóng).")]
             except Exception as e:  # noqa: BLE001
                 out.append((b, f"❗ Không đóng được {name(b, p)}: {html.escape(str(e)[:200])}"))
+        push_ledger()          # trang Sổ lệnh thấy ngay lệnh vừa đóng, khỏi chờ tới giờ sau
     return out
+
+
+def push_ledger():
+    """Đẩy sổ lệnh lên GitHub (scripts/vps_push.sh). Chỉ chạy trên VPS; lỗi thì bỏ qua —
+    run.sh mỗi giờ sẽ đẩy lại."""
+    sh = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vps_push.sh")
+    if fcntl is None or not os.path.isdir("/home/bot/botdata"):
+        return
+    try:
+        subprocess.run(["bash", sh], timeout=90, check=False)
+    except Exception as e:  # noqa: BLE001
+        print(f"  [tg] không đẩy được sổ: {e}", file=sys.stderr)
 
 
 def render(b, m):

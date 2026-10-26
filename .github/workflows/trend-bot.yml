@@ -5,9 +5,10 @@ name: Bot theo xu hướng (khung ngày)
 #   • những giờ còn lại chỉ canh, báo khi giá thủng ngưỡng thoát ngay trong ngày
 # Không đặt lệnh, không giữ khoá API sàn.
 
+# Từ 26/10/2026 bot chạy trên VPS (Binance chặn IP của GitHub): VPS ghi cả sổ giấy lẫn
+# lệnh trên sàn rồi đẩy lên repo. Workflow này chỉ còn để GỬI THỬ tin mẫu bằng tay —
+# không chạy theo lịch, không ghi sổ, để không giẫm lên sổ do VPS đẩy lên.
 on:
-  schedule:
-    - cron: "8 * * * *"
   workflow_dispatch:
     inputs:
       test:
@@ -55,12 +56,12 @@ jobs:
           if [ -n "${{ github.event.inputs.test }}" ]; then
             python scripts/trend_bot.py --test "${{ github.event.inputs.test }}"
           else
-            python scripts/trend_bot.py --no-send    # sổ giấy chỉ ghi file cho trang web; tin Telegram do bot trên VPS gửi
+            echo "Sổ giấy giờ chạy trên VPS. Nhập mã vào ô test để gửi thử tin mẫu."
           fi
 
       # Chỉ commit khi nến ngày đóng và có lệnh vào/ra, không commit mỗi giờ.
       - name: Commit sổ khi có lệnh vào hoặc ra (giấy và testnet)
-        if: github.event.inputs.test == ''
+        if: false   # VPS đẩy sổ lên repo; workflow này không ghi sổ nữa
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

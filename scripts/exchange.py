@@ -337,6 +337,7 @@ def close_pos(led, pos, reason, qty, quote, msgs, tag):
     pnl = quote - cost
     rec = dict(pos, status="closed", exitReason=reason, exitTime=now_vn(),
                exitQty=qty, exitPrice=(quote / qty if qty else None),
+               exitMs=int(time.time() * 1000),
                pnlUsdt=round(pnl, 4), pnlPct=round(pnl / cost * 100, 2) if cost else None)
     led["closed"].insert(0, rec)
     msgs.append(with_chart("\n".join([

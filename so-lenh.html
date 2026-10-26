@@ -90,7 +90,7 @@ table.ledger tr:last-child td{ border-bottom:0 }
       <div class="fact"><dt>Bắt đáy 1h</dt><dd id="f-c">—</dd></div>
       <div class="fact"><dt>Xu hướng ngày</dt><dd id="f-t">—</dd></div>
       <div class="fact"><dt>Giá đang mở</dt><dd>Binance, trực tiếp</dd></div>
-      <div class="fact"><dt>Tiền thật</dt><dd>Không. Đây là sổ giấy</dd></div>
+      <div class="fact"><dt>Tiền thật</dt><dd id="f-money">—</dd></div>
     </dl>
   </div>
 </header>
@@ -121,15 +121,19 @@ table.ledger tr:last-child td{ border-bottom:0 }
       <p class="lab-status is-wait" id="stt">đang tải…</p>
 
       <div class="toolbar">
+        <div class="chips" id="f-src" role="group" aria-label="Nguồn sổ">
+          <button type="button" class="chip on" data-v="live">Lệnh của bot (trên sàn)</button>
+          <button type="button" class="chip" data-v="paper">Sổ giấy (theo luật)</button>
+        </div>
         <div class="chips" id="f-bot" role="group" aria-label="Lọc theo bot">
           <button type="button" class="chip on" data-v="">Cả hai bot</button>
           <button type="button" class="chip" data-v="crypto">Bắt đáy 1h</button>
           <button type="button" class="chip" data-v="trend">Xu hướng ngày</button>
         </div>
         <select id="f-strat" aria-label="Lọc theo chiến lược"><option value="">Mọi chiến lược</option></select>
-        <label>USDT/lệnh bắt đáy <input type="number" id="sz-c" min="1" step="1" value="19"></label>
-        <label>USDT/lệnh xu hướng <input type="number" id="sz-t" min="1" step="1" value="30"></label>
-        <label><input type="checkbox" id="fee" checked> Trừ phí 0,1% mỗi chiều</label>
+        <label class="paper-only">USDT/lệnh bắt đáy <input type="number" id="sz-c" min="1" step="1" value="19"></label>
+        <label class="paper-only">USDT/lệnh xu hướng <input type="number" id="sz-t" min="1" step="1" value="30"></label>
+        <label class="paper-only"><input type="checkbox" id="fee" checked> Trừ phí 0,1% mỗi chiều</label>
       </div>
 
       <dl class="breadth" id="cards"></dl>
@@ -197,8 +201,8 @@ table.ledger tr:last-child td{ border-bottom:0 }
         <li><b>So với cột Backtest.</b> Sổ thật tệ hơn backtest một chút là bình thường (trượt giá, nguồn nến khác). Tệ hơn nhiều và kéo dài qua 50 lệnh nghĩa là chiến lược đã mất tác dụng — lúc đó mới là lúc sửa.</li>
         <li><b>Nhìn cột Lý do thoát.</b> Nếu gần như mọi lệnh thua đều là “chạm cắt lỗ” ngay trong vài giờ đầu, điểm vào đang quá sớm. Nếu lệnh thắng toàn là “hết hạn giữ” với mức lời nhỏ, luật thoát đang để tiền nằm yên quá lâu.</li>
       </ol>
-      <p class="warn"><b>Con số USDT là ước tính</b>Bot ghi lời lỗ theo % giá vào/ra. Trang quy ra USDT bằng số tiền mỗi lệnh bạn nhập ở trên, và trừ phí 0,1% mỗi chiều nếu bật. Lệnh khớp thật trên sàn sẽ lệch một chút vì trượt giá.</p>
-      <p class="disclaimer">Sổ lệnh do bot tự ghi từ giá công khai của Binance (hoặc OKX khi Binance chặn vùng chạy bot), phục vụ mục đích học tập. Không có lệnh nào được đặt trên sàn. Kết quả quá khứ, kể cả trên giấy, không bảo đảm cho tương lai.</p>
+      <p class="warn"><b>Hai nguồn, hai câu hỏi khác nhau</b><b>Lệnh của bot</b> là những gì bot thật sự làm trên sàn: giá khớp thật, lời lỗ USDT thật (đã gồm phí sàn), kể cả lệnh bạn tự đóng qua Telegram. <b>Sổ giấy</b> là những gì luật của chiến lược nói, không có bạn can thiệp: lời lỗ theo % giá vào/ra, quy ra USDT bằng số tiền mỗi lệnh bạn nhập và trừ phí 0,1% mỗi chiều nếu bật. So hai sổ để biết bạn can thiệp tay giúp hay hại. Trên testnet, giá được quy về giá thị trường thật để so được với chart Binance.</p>
+      <p class="disclaimer">Sổ lệnh do bot tự ghi từ giá công khai của Binance (hoặc OKX khi Binance chặn vùng chạy bot), phục vụ mục đích học tập. Lệnh của bot hiện chạy trên Binance testnet (tiền ảo). Kết quả quá khứ, kể cả trên giấy, không bảo đảm cho tương lai.</p>
     </section>
   </main>
 </div>

@@ -95,6 +95,8 @@ export PYTHONIOENCODING=utf-8
 echo "===== $(date -u '+%F %T UTC')"
 python3 scripts/crypto_bot.py --no-chart
 python3 scripts/trend_bot.py
+# Đẩy sổ lệnh lên GitHub cho trang so-lenh.html (cần deploy key, xem bước 7b).
+bash scripts/vps_push.sh
 EOF
 chown bot:bot $HOME_BOT/run.sh
 chmod 700 $HOME_BOT/run.sh
@@ -143,6 +145,28 @@ cat > /etc/logrotate.d/bot <<'EOF'
   copytruncate
 }
 EOF
+
+echo "== 7b. Khoá đẩy sổ lệnh lên GitHub (deploy key, chỉ ghi được vào repo này)"
+if [ ! -f $HOME_BOT/.ssh/deploy_key ]; then
+  sudo -u bot mkdir -p $HOME_BOT/.ssh
+  sudo -u bot chmod 700 $HOME_BOT/.ssh
+  sudo -u bot ssh-keygen -q -t ed25519 -N "" -f $HOME_BOT/.ssh/deploy_key -C "vps-bot@hoc-chung-khoan"
+fi
+sudo -u bot tee $HOME_BOT/.ssh/config >/dev/null <<'EOF'
+Host github.com
+  IdentityFile /home/bot/.ssh/deploy_key
+  IdentitiesOnly yes
+EOF
+sudo -u bot chmod 600 $HOME_BOT/.ssh/config
+grep -q github.com $HOME_BOT/.ssh/known_hosts 2>/dev/null || \
+  sudo -u bot bash -c "ssh-keyscan -t ed25519 github.com >> $HOME_BOT/.ssh/known_hosts 2>/dev/null"
+if sudo -u bot ssh -o BatchMode=yes -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+  echo "   GitHub đã nhận khoá — VPS đẩy được sổ lệnh."
+else
+  echo "   CHƯA đẩy được lên GitHub. Thêm dòng sau vào repo → Settings → Deploy keys"
+  echo "   (tick 'Allow write access'):"
+  echo "   $(cat $HOME_BOT/.ssh/deploy_key.pub)"
+fi
 
 echo "== 8. Đăng nhập SSH"
 if [ -s /root/.ssh/authorized_keys ]; then

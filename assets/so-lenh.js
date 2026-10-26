@@ -1,22 +1,28 @@
-/* Sổ lệnh bot: đọc sổ của hai bot crypto (data/crypto-ideas.json, data/trend-ideas.json),
-   quy lời lỗ ra USDT theo số tiền mỗi lệnh người xem nhập, lấy giá trực tiếp cho lệnh đang mở,
-   và so thành tích từng chiến lược với backtest (data/crypto-backtest.json). */
+/* Sổ lệnh bot, hai nguồn:
+   • Lệnh của bot (data/live-dip.json, data/live-trend.json): những gì bot thật sự làm trên sàn,
+     lời lỗ USDT thật, kể cả lệnh bạn đóng qua Telegram. VPS đẩy lên GitHub mỗi giờ.
+   • Sổ giấy (data/crypto-ideas.json, data/trend-ideas.json): những gì luật nói, quy lời lỗ ra
+     USDT theo số tiền mỗi lệnh người xem nhập.
+   Giá trực tiếp cho lệnh đang mở, so từng chiến lược với backtest (data/crypto-backtest.json). */
 (function(){
   'use strict';
   var $ = function(id){ return document.getElementById(id); };
 
   var BOTS = {
-    crypto: { file: 'data/crypto-ideas.json', label: 'Bắt đáy 1h', size: 'sz-c' },
-    trend:  { file: 'data/trend-ideas.json',  label: 'Xu hướng ngày', size: 'sz-t' }
+    crypto: { file: 'data/crypto-ideas.json', live: 'data/live-dip.json', label: 'Bắt đáy 1h', size: 'sz-c' },
+    trend:  { file: 'data/trend-ideas.json',  live: 'data/live-trend.json', label: 'Xu hướng ngày', size: 'sz-t' }
   };
   var REASON = {
     stop: ['Chạm cắt lỗ', 'c-down'], trail: ['Cắt lỗ dời chạm', ''], tp: ['Đạt mục tiêu', 'c-up'],
-    max_hold: ['Hết hạn giữ', ''], strategy: ['Về trung bình 24h', ''], rule: ['Thủng đáy 10 ngày', '']
+    max_hold: ['Hết hạn giữ', ''], strategy: ['Về trung bình 24h', ''], rule: ['Thủng đáy 10 ngày', ''],
+    tg: ['Bạn đóng qua Telegram', ''], manual: ['Bạn chốt tay', ''], panic: ['Bán khẩn cấp', ''],
+    gone: ['Số dư biến mất', ''], dust: ['Còn quá ít để bán', '']
   };
   var PX_HOSTS = ['https://data-api.binance.vision', 'https://api.binance.com'];
   var FEE = 0.001;
 
   var CLOSED = [], OPEN = [], BT = {}, META = {}, LIVE = {}, liveAt = null;
+  var DATA = { live: { CLOSED: [], OPEN: [], META: {} }, paper: { CLOSED: [], OPEN: [], META: {} } };
   var F = { bot: '', strat: '', res: '' }, sortKey = 'exitTs', sortAsc = false;
 
   /* ---------- định dạng ---------- */
@@ -52,7 +58,15 @@
     var g = exit / entry;
     return ($('fee').checked ? g * (1 - FEE) / (1 + FEE) : g) - 1;
   }
-  function money(t, exit){ var n = net(t.entry, exit); return { pct: n * 100, usdt: n * size(t.bot) }; }
+  function money(t, exit){
+    if (t.real){
+      // Lệnh của bot: lệnh đã đóng dùng lời lỗ sàn ghi (đã gồm phí); đang mở thì tạm tính theo vốn bỏ ra.
+      if (t.usdtReal != null && exit === t.exitPrice) return { pct: t.pctReal, usdt: t.usdtReal };
+      var g = exit / t.entry - 1;
+      return { pct: g * 100, usdt: g * (t.cost || 0) };
+    }
+    var n = net(t.entry, exit); return { pct: n * 100, usdt: n * size(t.bot) };
+  }
 
   /* ---------- nạp dữ liệu ---------- */
   function getJSON(url){
@@ -67,37 +81,79 @@
     };
   }
 
+  // "2026-10-26 07:10" (giờ VN, cách sổ trên sàn ghi) → mốc thời gian
+  function vnTime(s){ var t = s ? Date.parse(s.replace(' ', 'T') + ':00+07:00') : NaN; return isNaN(t) ? null : t; }
+
+  // Lệnh trên sàn → cùng dạng với lệnh sổ giấy. Trên testnet giá khớp lệch giá thật, nên mọi
+  // mức giá được quy về giá thị trường thật (chia cho k = giá khớp / giá sổ giấy lúc mua)
+  // để so được với giá Binance trực tiếp và chart.
+  function normLive(bot, p){
+    var k = p.k || 1, e = p.paperEntry || p.entryPrice;
+    return {
+      bot: bot, symbol: p.symbol, strategy: p.strategy || (bot === 'trend' ? 'donchian_btc' : '—'),
+      entryTs: p.entryMs || p.entryTs, entry: e, fill: p.entryPrice,
+      exitTs: p.exitMs || vnTime(p.exitTime), exitPrice: p.exitPrice ? p.exitPrice / k : null, exitFill: p.exitPrice,
+      reason: p.exitReason, real: true, usdtReal: p.pnlUsdt, pctReal: p.pnlPct, cost: p.cost,
+      stop: p.liveStop ? p.liveStop / k : p.exitLevel, tp: p.liveTp ? p.liveTp / k : null, exitLevel: p.exitLevel,
+      r: p.pnlPct != null && p.paperStop0 && e ? p.pnlPct / 100 / (1 - p.paperStop0 / e) : null,
+      user: p.status === 'user', lastPrice: null
+    };
+  }
+
   Promise.all([
     getJSON(BOTS.crypto.file).catch(function(){ return null; }),
     getJSON(BOTS.trend.file).catch(function(){ return null; }),
+    getJSON(BOTS.crypto.live).catch(function(){ return null; }),
+    getJSON(BOTS.trend.live).catch(function(){ return null; }),
     getJSON('data/crypto-backtest.json').catch(function(){ return null; })
   ]).then(function(res){
     ['crypto', 'trend'].forEach(function(bot, k){
-      var d = res[k];
-      META[bot] = d;
-      if (!d) return;
-      (d.closed || []).forEach(function(it){ if (it.exitPrice && it.entry) CLOSED.push(norm(bot, it)); });
-      (d.open || []).forEach(function(it){ OPEN.push(norm(bot, it)); });
+      var d = res[k], L = res[k + 2];
+      DATA.paper.META[bot] = d;
+      DATA.live.META[bot] = L;
+      if (d){
+        (d.closed || []).forEach(function(it){ if (it.exitPrice && it.entry) DATA.paper.CLOSED.push(norm(bot, it)); });
+        (d.open || []).forEach(function(it){ DATA.paper.OPEN.push(norm(bot, it)); });
+      }
+      if (L){
+        (L.closed || []).forEach(function(p){ if (p.exitPrice) DATA.live.CLOSED.push(normLive(bot, p)); });
+        (L.open || []).forEach(function(p){ DATA.live.OPEN.push(normLive(bot, p)); });
+      }
     });
-    ((res[2] && res[2].results) || []).forEach(function(r){
+    ((res[4] && res[4].results) || []).forEach(function(r){
       if (r.variant === 'gốc' || (!r.variant && !BT[r.name])) BT[r.name] = r;
     });
+    var src = store('solenh.src') === 'paper' ? 'paper' : 'live';
+    // Chưa có sổ trên sàn (bot chưa đẩy lên) thì mở sổ giấy, khỏi thấy trang trống.
+    if (src === 'live' && !res[2] && !res[3]) src = 'paper';
+    setSource(src);
+    setInterval(refreshPrices, 30000);
+  });
 
+  var SRC = 'live';
+  function setSource(src){
+    SRC = src;
+    var D = DATA[src];
+    CLOSED = D.CLOSED; OPEN = D.OPEN; META = D.META;
+    [].forEach.call($('f-src').querySelectorAll('.chip'), function(x){ x.classList.toggle('on', x.getAttribute('data-v') === src); });
+    [].forEach.call(document.querySelectorAll('.paper-only'), function(x){ x.hidden = src !== 'paper'; });
+    var mode = ['crypto', 'trend'].map(function(b){ return DATA.live.META[b] && DATA.live.META[b].mode; }).filter(Boolean)[0];
+    $('f-money').textContent = src === 'paper' ? 'Không. Đây là sổ giấy' :
+      mode === 'live' ? 'Có. Lệnh thật trên Binance' : 'Không. Binance testnet, tiền ảo';
     $('f-c').textContent = factOf('crypto');
     $('f-t').textContent = factOf('trend');
     var strats = {};
     CLOSED.concat(OPEN).forEach(function(t){ strats[t.strategy] = 1; });
-    $('f-strat').innerHTML += Object.keys(strats).sort().map(function(s){
-      return '<option value="' + esc(s) + '">' + esc(s) + '</option>';
+    if (F.strat && !strats[F.strat]) F.strat = '';
+    $('f-strat').innerHTML = '<option value="">Mọi chiến lược</option>' + Object.keys(strats).sort().map(function(s){
+      return '<option value="' + esc(s) + '"' + (s === F.strat ? ' selected' : '') + '>' + esc(s) + '</option>';
     }).join('');
-
     var upd = ['crypto', 'trend'].map(function(b){ return META[b] && META[b].updatedAt; }).filter(Boolean).sort().pop();
-    status($('stt'), CLOSED.length + ' lệnh đã đóng · ' + OPEN.length + ' đang mở' +
-      (upd ? ' · sổ ghi lúc ' + upd : ''), CLOSED.length || OPEN.length ? 'live' : 'wait');
+    status($('stt'), (src === 'live' ? 'Lệnh của bot trên sàn · ' : 'Sổ giấy · ') + CLOSED.length + ' lệnh đã đóng · ' +
+      OPEN.length + ' đang mở' + (upd ? ' · ghi lúc ' + upd : ''), CLOSED.length || OPEN.length ? 'live' : 'wait');
     render();
     refreshPrices();
-    setInterval(refreshPrices, 30000);
-  });
+  }
 
   function factOf(bot){
     var d = META[bot];
@@ -161,7 +217,7 @@
       card('Đã đóng', vn(n) + ' lệnh', '', n < 30 ? 'cần ≥ 30 để kết luận' : ''),
       card('Tỷ lệ thắng', n ? vn(wins.length / n * 100, 1) + '%' : '—', '', n ? wins.length + ' lời · ' + loss.length + ' lỗ' : ''),
       card('Tổng lời lỗ', sg(tot, 2, ' USDT'), cls(tot), n ? sg(sum(rows, 'pct'), 2, '%') + ' cộng dồn' : ''),
-      card('R trung bình', rs.length ? sg(sum(rs, 'r') / rs.length, 2, 'R') : '—', cls(rs.length && sum(rs, 'r')), rs.length ? 'chưa trừ phí · ' + rs.length + ' lệnh' : 'bot xu hướng không đặt R'),
+      card('R trung bình', rs.length ? sg(sum(rs, 'r') / rs.length, 2, 'R') : '—', cls(rs.length && sum(rs, 'r')), rs.length ? (SRC === 'live' ? 'đã gồm phí sàn' : 'chưa trừ phí') + ' · ' + rs.length + ' lệnh' : 'bot xu hướng không đặt R'),
       card('Lệnh lời TB', wins.length ? sg(sum(wins, 'pct') / wins.length, 2, '%') : '—', 'c-up'),
       card('Lệnh lỗ TB', loss.length ? sg(sum(loss, 'pct') / loss.length, 2, '%') : '—', 'c-down'),
       card('Sụt vốn lớn nhất', n ? vn(dd, 2) + ' USDT' : '—', dd < 0 ? 'c-down' : '', 'từ đỉnh lời cộng dồn'),
@@ -233,10 +289,11 @@
         var p = LIVE[t.symbol] || t.lastPrice, m = p ? money(t, p) : null;
         var stopD = t.stop && p ? (t.stop / p - 1) * 100 : null;
         var tgt = t.tp || t.exitLevel, tgtD = tgt && p ? (tgt / p - 1) * 100 : null;
-        return '<tr><td class="l"><span class="sym">' + esc(pair(t.symbol)) + '</span></td>' +
+        return '<tr><td class="l"><span class="sym">' + esc(pair(t.symbol)) + '</span>' +
+          (t.user ? '<small>bạn đã giành quyền</small>' : '') + '</td>' +
           '<td class="l"><span class="tag tag-bot">' + BOTS[t.bot].label + '</span> ' + esc(t.strategy) + '</td>' +
-          '<td>' + when(t.entryTs) + '</td><td>' + px(t.entry) + '</td>' +
-          '<td>' + px(p) + (LIVE[t.symbol] ? '' : '<small>giá trong sổ</small>') + '</td>' +
+          '<td>' + when(t.entryTs) + '</td><td>' + px(t.entry) + fillNote(t, t.fill, t.entry) + '</td>' +
+          '<td>' + px(p) + (LIVE[t.symbol] || !p ? '' : '<small>giá trong sổ</small>') + '</td>' +
           '<td class="' + cls(m && m.pct) + '">' + (m ? sg(m.pct, 2, '%') + '<small>' + sg(m.usdt, 2, ' USDT') + '</small>' : '—') + '</td>' +
           '<td>' + px(t.stop) + (stopD != null ? '<small>cách ' + vn(stopD, 1) + '%</small>' : '') + '</td>' +
           '<td>' + px(tgt) + (tgtD != null ? '<small>' + (t.tp ? 'chốt lời' : 'ngưỡng thoát') + ' · ' + sg(tgtD, 1, '%') + '</small>' : '') + '</td>' +
@@ -250,6 +307,12 @@
     if (summaryQueued) return;
     summaryQueued = true;
     requestAnimationFrame(function(){ summaryQueued = false; renderSummary(); });
+  }
+
+  // Trên testnet giá khớp lệch giá thật: ghi kèm giá khớp trên sàn để đối chiếu.
+  function fillNote(t, fill, shown){
+    if (!t.real || !fill || !shown) return '';
+    return Math.abs(fill / shown - 1) > 0.0005 ? '<small>khớp sàn ' + px(fill) + '</small>' : '';
   }
 
   /* ---------- 03 lịch sử ---------- */
@@ -281,8 +344,8 @@
         var rs = REASON[t.reason] || [t.reason || '—', ''];
         return '<tr><td class="l"><span class="sym">' + esc(pair(t.symbol)) + '</span></td>' +
           '<td class="l"><span class="tag tag-bot">' + BOTS[t.bot].label + '</span> ' + esc(t.strategy) + '</td>' +
-          '<td>' + when(t.entryTs) + '</td><td>' + px(t.entry) + '</td>' +
-          '<td>' + when(t.exitTs) + '</td><td>' + px(t.exitPrice) + '</td>' +
+          '<td>' + when(t.entryTs) + '</td><td>' + px(t.entry) + fillNote(t, t.fill, t.entry) + '</td>' +
+          '<td>' + when(t.exitTs) + '</td><td>' + px(t.exitPrice) + fillNote(t, t.exitFill, t.exitPrice) + '</td>' +
           '<td>' + dur(t.hold) + '</td>' +
           '<td class="' + cls(t.pct) + '">' + sg(t.pct, 2, '%') + '<small>' + sg(t.usdt, 2, ' USDT') + '</small></td>' +
           '<td class="' + cls(t.r) + '">' + (t.r == null ? '—' : sg(t.r, 2, 'R')) + '</td>' +
@@ -342,6 +405,12 @@
       render();
     });
   }
+  $('f-src').addEventListener('click', function(e){
+    var b = e.target.closest('.chip');
+    if (!b) return;
+    store('solenh.src', b.getAttribute('data-v'));
+    setSource(b.getAttribute('data-v'));
+  });
   chips('f-bot', 'bot');
   chips('f-res', 'res');
   $('f-strat').addEventListener('change', function(){ F.strat = this.value; render(); });
