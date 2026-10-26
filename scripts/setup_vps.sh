@@ -160,7 +160,9 @@ EOF
 sudo -u bot chmod 600 $HOME_BOT/.ssh/config
 grep -q github.com $HOME_BOT/.ssh/known_hosts 2>/dev/null || \
   sudo -u bot bash -c "ssh-keyscan -t ed25519 github.com >> $HOME_BOT/.ssh/known_hosts 2>/dev/null"
-if sudo -u bot ssh -o BatchMode=yes -T git@github.com 2>&1 | grep -q "successfully authenticated"; then
+# ssh -T luôn thoát mã 1 (GitHub không cho shell) — lấy chữ trả về rồi mới tìm, kẻo pipefail báo sai.
+gh=$(sudo -u bot ssh -o BatchMode=yes -T git@github.com 2>&1 || true)
+if echo "$gh" | grep -q "successfully authenticated"; then
   echo "   GitHub đã nhận khoá — VPS đẩy được sổ lệnh."
 else
   echo "   CHƯA đẩy được lên GitHub. Thêm dòng sau vào repo → Settings → Deploy keys"
