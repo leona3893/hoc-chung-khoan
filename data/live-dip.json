@@ -1,5 +1,130 @@
 {
- "open": [],
+ "open": [
+  {
+   "key": "vcr-DOGEUSDT-1793307600000",
+   "symbol": "DOGEUSDT",
+   "strategy": "vcr",
+   "entryTs": 1793307600000,
+   "entryMs": 1793307923565,
+   "entryTime": "2026-10-30 04:05",
+   "qty": 266.0,
+   "cost": 19.952659999999998,
+   "entryPrice": 0.07501,
+   "paperEntry": 0.07508,
+   "paperStop0": 0.07132599999999999,
+   "paperTp": 0.082588,
+   "k": 0.9990676611614278,
+   "botOrderIds": [
+    991675,
+    991676,
+    991677
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 288718,
+    "orders": [
+     991676,
+     991677
+    ]
+   },
+   "ver": 1,
+   "liveStop": 0.07125949999999999,
+   "liveTp": 0.08251099999999999
+  },
+  {
+   "key": "vcr-TAOUSDT-1793307600000",
+   "symbol": "TAOUSDT",
+   "strategy": "vcr",
+   "entryTs": 1793307600000,
+   "entryMs": 1793307924150,
+   "entryTime": "2026-10-30 04:05",
+   "qty": 0.0841,
+   "cost": 19.990569999999998,
+   "entryPrice": 237.7,
+   "paperEntry": 237.5,
+   "paperStop0": 225.625,
+   "paperTp": 261.25,
+   "k": 1.0008421052631578,
+   "botOrderIds": [
+    409459,
+    409460,
+    409461
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 288719,
+    "orders": [
+     409460,
+     409461
+    ]
+   },
+   "ver": 1,
+   "liveStop": 225.81499999999997,
+   "liveTp": 261.46999999999997
+  },
+  {
+   "key": "rsi_vol_gated-HBARUSDT-1793307600000",
+   "symbol": "HBARUSDT",
+   "strategy": "rsi_vol_gated",
+   "entryTs": 1793307600000,
+   "entryMs": 1793307924650,
+   "entryTime": "2026-10-30 04:05",
+   "qty": 288.0,
+   "cost": 19.95264,
+   "entryPrice": 0.06928,
+   "paperEntry": 0.0693,
+   "paperStop0": 0.06583499999999999,
+   "paperTp": 0.07623,
+   "k": 0.9997113997113997,
+   "botOrderIds": [
+    1122264,
+    1122265,
+    1122266
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 288720,
+    "orders": [
+     1122265,
+     1122266
+    ]
+   },
+   "ver": 1,
+   "liveStop": 0.06581599999999999,
+   "liveTp": 0.076208
+  },
+  {
+   "key": "rsi_vol_gated-BNBUSDT-1793307600000",
+   "symbol": "BNBUSDT",
+   "strategy": "rsi_vol_gated",
+   "entryTs": 1793307600000,
+   "entryMs": 1793307925166,
+   "entryTime": "2026-10-30 04:05",
+   "qty": 0.028,
+   "cost": 19.49808,
+   "entryPrice": 696.36,
+   "paperEntry": 693.21,
+   "paperStop0": 658.5495,
+   "paperTp": 762.5310000000001,
+   "k": 1.004544077552257,
+   "botOrderIds": [
+    3290674,
+    3290675,
+    3290676
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 288721,
+    "orders": [
+     3290675,
+     3290676
+    ]
+   },
+   "ver": 1,
+   "liveStop": 661.542,
+   "liveTp": 765.9960000000001
+  }
+ ],
  "closed": [
   {
    "key": "vcr-NEARUSDT-1793257200000",
@@ -556,5 +681,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-10-30 00:05"
+ "updatedAt": "2026-10-30 04:05"
 }
