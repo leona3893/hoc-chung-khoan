@@ -1,41 +1,6 @@
 {
- "open": [
-  {
-   "key": "vcr-ADAUSDT-1793239200000",
-   "symbol": "ADAUSDT",
-   "strategy": "vcr",
-   "entryTs": 1793239200000,
-   "entryMs": 1793239523081,
-   "entryTime": "2026-10-29 09:05",
-   "qty": 100.7,
-   "cost": 19.988950000000003,
-   "entryPrice": 0.1985,
-   "paperEntry": 0.1983,
-   "paperStop0": 0.188385,
-   "paperTp": 0.21813000000000002,
-   "k": 1.0010085728693898,
-   "botOrderIds": [
-    436136,
-    436137,
-    436138,
-    445446,
-    445447,
-    446442,
-    446443
-   ],
-   "status": "bot",
-   "protect": {
-    "list": 286259,
-    "orders": [
-     446442,
-     446443
-    ]
-   },
-   "ver": 3,
-   "liveStop": 0.19233178517397884,
-   "liveTp": 0.21835000000000002,
-   "trailed": true
-  },
+ "open": [],
+ "closed": [
   {
    "key": "vcr-NEARUSDT-1793257200000",
    "symbol": "NEARUSDT",
@@ -61,21 +26,57 @@
     1171697,
     1171698
    ],
-   "status": "bot",
-   "protect": {
-    "list": 286260,
-    "orders": [
-     1171697,
-     1171698
-    ]
-   },
+   "status": "closed",
+   "protect": null,
    "ver": 4,
    "liveStop": 4.33101,
    "liveTp": 4.7586,
-   "trailed": true
-  }
- ],
- "closed": [
+   "trailed": true,
+   "exitReason": "tg",
+   "exitTime": "2026-10-30 00:40",
+   "exitQty": 4.6,
+   "exitPrice": 4.53,
+   "exitMs": 1793295615924,
+   "pnlUsdt": 0.9384,
+   "pnlPct": 4.72
+  },
+  {
+   "key": "vcr-ADAUSDT-1793239200000",
+   "symbol": "ADAUSDT",
+   "strategy": "vcr",
+   "entryTs": 1793239200000,
+   "entryMs": 1793239523081,
+   "entryTime": "2026-10-29 09:05",
+   "qty": 100.7,
+   "cost": 19.988950000000003,
+   "entryPrice": 0.1985,
+   "paperEntry": 0.1983,
+   "paperStop0": 0.188385,
+   "paperTp": 0.21813000000000002,
+   "k": 1.0010085728693898,
+   "botOrderIds": [
+    436136,
+    436137,
+    436138,
+    445446,
+    445447,
+    446442,
+    446443
+   ],
+   "status": "closed",
+   "protect": null,
+   "ver": 3,
+   "liveStop": 0.19233178517397884,
+   "liveTp": 0.21835000000000002,
+   "trailed": true,
+   "exitReason": "tg",
+   "exitTime": "2026-10-30 00:40",
+   "exitQty": 100.7,
+   "exitPrice": 0.2038,
+   "exitMs": 1793295615080,
+   "pnlUsdt": 0.5337,
+   "pnlPct": 2.67
+  },
   {
    "key": "vcr_peak-AVAXUSDT-1793250000000",
    "symbol": "AVAXUSDT",
@@ -555,5 +556,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-10-29 23:05"
+ "updatedAt": "2026-10-30 00:05"
 }
