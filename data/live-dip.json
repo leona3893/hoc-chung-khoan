@@ -48,19 +48,22 @@
    "botOrderIds": [
     1154682,
     1154683,
-    1154684
+    1154684,
+    1163495,
+    1163496
    ],
    "status": "bot",
    "protect": {
-    "list": 281817,
+    "list": 284435,
     "orders": [
-     1154683,
-     1154684
+     1163495,
+     1163496
     ]
    },
-   "ver": 1,
-   "liveStop": 4.109699999999999,
-   "liveTp": 4.7586
+   "ver": 2,
+   "liveStop": 4.18314,
+   "liveTp": 4.7586,
+   "trailed": true
   }
  ],
  "closed": [
@@ -543,5 +546,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-10-29 17:05"
+ "updatedAt": "2026-10-29 20:05"
 }
