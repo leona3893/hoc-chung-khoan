@@ -1,5 +1,37 @@
 {
- "open": [],
+ "open": [
+  {
+   "key": "vcr-ADAUSDT-1793239200000",
+   "symbol": "ADAUSDT",
+   "strategy": "vcr",
+   "entryTs": 1793239200000,
+   "entryMs": 1793239523081,
+   "entryTime": "2026-10-29 09:05",
+   "qty": 100.7,
+   "cost": 19.988950000000003,
+   "entryPrice": 0.1985,
+   "paperEntry": 0.1983,
+   "paperStop0": 0.188385,
+   "paperTp": 0.21813000000000002,
+   "k": 1.0010085728693898,
+   "botOrderIds": [
+    436136,
+    436137,
+    436138
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 279673,
+    "orders": [
+     436137,
+     436138
+    ]
+   },
+   "ver": 1,
+   "liveStop": 0.188575,
+   "liveTp": 0.21835000000000002
+  }
+ ],
  "closed": [
   {
    "key": "vcr-WLDUSDT-1792918800000",
@@ -442,5 +474,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-10-26 08:05"
+ "updatedAt": "2026-10-29 09:05"
 }
