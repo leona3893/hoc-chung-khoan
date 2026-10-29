@@ -30,6 +30,37 @@
    "ver": 1,
    "liveStop": 0.188575,
    "liveTp": 0.21835000000000002
+  },
+  {
+   "key": "vcr_peak-AVAXUSDT-1793250000000",
+   "symbol": "AVAXUSDT",
+   "strategy": "vcr_peak",
+   "entryTs": 1793250000000,
+   "entryMs": 1793250323281,
+   "entryTime": "2026-10-29 12:05",
+   "qty": 2.29,
+   "cost": 19.984830000000002,
+   "entryPrice": 8.727,
+   "paperEntry": 8.729,
+   "paperStop0": 8.292549999999999,
+   "paperTp": 9.6019,
+   "k": 0.9997708786802614,
+   "botOrderIds": [
+    1280076,
+    1280077,
+    1280078
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 281012,
+    "orders": [
+     1280077,
+     1280078
+    ]
+   },
+   "ver": 1,
+   "liveStop": 8.29065,
+   "liveTp": 9.599700000000002
   }
  ],
  "closed": [
@@ -474,5 +505,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-10-29 09:05"
+ "updatedAt": "2026-10-29 12:05"
 }
