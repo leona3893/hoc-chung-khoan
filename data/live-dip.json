@@ -61,6 +61,37 @@
    "ver": 1,
    "liveStop": 8.29065,
    "liveTp": 9.599700000000002
+  },
+  {
+   "key": "vcr-NEARUSDT-1793257200000",
+   "symbol": "NEARUSDT",
+   "strategy": "vcr",
+   "entryTs": 1793257200000,
+   "entryMs": 1793257524060,
+   "entryTime": "2026-10-29 14:05",
+   "qty": 4.6,
+   "cost": 19.899599999999996,
+   "entryPrice": 4.326,
+   "paperEntry": 4.326,
+   "paperStop0": 4.109699999999999,
+   "paperTp": 4.7586,
+   "k": 1.0,
+   "botOrderIds": [
+    1154682,
+    1154683,
+    1154684
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 281817,
+    "orders": [
+     1154683,
+     1154684
+    ]
+   },
+   "ver": 1,
+   "liveStop": 4.109699999999999,
+   "liveTp": 4.7586
   }
  ],
  "closed": [
@@ -505,5 +536,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-10-29 12:05"
+ "updatedAt": "2026-10-29 14:05"
 }
