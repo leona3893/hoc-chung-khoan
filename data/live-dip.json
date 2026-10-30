@@ -32,37 +32,6 @@
    "liveTp": 0.08251099999999999
   },
   {
-   "key": "vcr-TAOUSDT-1793307600000",
-   "symbol": "TAOUSDT",
-   "strategy": "vcr",
-   "entryTs": 1793307600000,
-   "entryMs": 1793307924150,
-   "entryTime": "2026-10-30 04:05",
-   "qty": 0.0841,
-   "cost": 19.990569999999998,
-   "entryPrice": 237.7,
-   "paperEntry": 237.5,
-   "paperStop0": 225.625,
-   "paperTp": 261.25,
-   "k": 1.0008421052631578,
-   "botOrderIds": [
-    409459,
-    409460,
-    409461
-   ],
-   "status": "bot",
-   "protect": {
-    "list": 288719,
-    "orders": [
-     409460,
-     409461
-    ]
-   },
-   "ver": 1,
-   "liveStop": 225.81499999999997,
-   "liveTp": 261.46999999999997
-  },
-  {
    "key": "rsi_vol_gated-HBARUSDT-1793307600000",
    "symbol": "HBARUSDT",
    "strategy": "rsi_vol_gated",
@@ -125,37 +94,6 @@
    "liveTp": 765.9960000000001
   },
   {
-   "key": "vcr_peak-LINKUSDT-1793311200000",
-   "symbol": "LINKUSDT",
-   "strategy": "vcr_peak",
-   "entryTs": 1793311200000,
-   "entryMs": 1793311524205,
-   "entryTime": "2026-10-30 05:05",
-   "qty": 1.82,
-   "cost": 19.99088,
-   "entryPrice": 10.984,
-   "paperEntry": 10.974,
-   "paperStop0": 10.4253,
-   "paperTp": 12.0714,
-   "k": 1.0009112447603425,
-   "botOrderIds": [
-    1495185,
-    1495186,
-    1495187
-   ],
-   "status": "bot",
-   "protect": {
-    "list": 289928,
-    "orders": [
-     1495186,
-     1495187
-    ]
-   },
-   "ver": 1,
-   "liveStop": 10.4348,
-   "liveTp": 12.0824
-  },
-  {
    "key": "vcr_peak-ETHUSDT-1793311200000",
    "symbol": "ETHUSDT",
    "strategy": "vcr_peak",
@@ -188,6 +126,82 @@
   }
  ],
  "closed": [
+  {
+   "key": "vcr_peak-LINKUSDT-1793311200000",
+   "symbol": "LINKUSDT",
+   "strategy": "vcr_peak",
+   "entryTs": 1793311200000,
+   "entryMs": 1793311524205,
+   "entryTime": "2026-10-30 05:05",
+   "qty": 1.82,
+   "cost": 19.99088,
+   "entryPrice": 10.984,
+   "paperEntry": 10.974,
+   "paperStop0": 10.4253,
+   "paperTp": 12.0714,
+   "k": 1.0009112447603425,
+   "botOrderIds": [
+    1495185,
+    1495186,
+    1495187
+   ],
+   "status": "closed",
+   "protect": {
+    "list": 289928,
+    "orders": [
+     1495186,
+     1495187
+    ]
+   },
+   "ver": 1,
+   "liveStop": 10.4348,
+   "liveTp": 12.0824,
+   "exitReason": "stop",
+   "exitTime": "2026-10-30 08:05",
+   "exitQty": 1.82,
+   "exitPrice": 10.397,
+   "exitMs": 1793322323868,
+   "pnlUsdt": -1.0683,
+   "pnlPct": -5.34
+  },
+  {
+   "key": "vcr-TAOUSDT-1793307600000",
+   "symbol": "TAOUSDT",
+   "strategy": "vcr",
+   "entryTs": 1793307600000,
+   "entryMs": 1793307924150,
+   "entryTime": "2026-10-30 04:05",
+   "qty": 0.0841,
+   "cost": 19.990569999999998,
+   "entryPrice": 237.7,
+   "paperEntry": 237.5,
+   "paperStop0": 225.625,
+   "paperTp": 261.25,
+   "k": 1.0008421052631578,
+   "botOrderIds": [
+    409459,
+    409460,
+    409461
+   ],
+   "status": "closed",
+   "protect": {
+    "list": 288719,
+    "orders": [
+     409460,
+     409461
+    ]
+   },
+   "ver": 1,
+   "liveStop": 225.81499999999997,
+   "liveTp": 261.46999999999997,
+   "exitReason": "stop",
+   "exitTime": "2026-10-30 08:05",
+   "exitQty": 0.0841,
+   "exitPrice": 222.9,
+   "exitMs": 1793322322648,
+   "pnlUsdt": -1.2447,
+   "pnlPct": -6.23
+  },
   {
    "key": "vcr-NEARUSDT-1793257200000",
    "symbol": "NEARUSDT",
@@ -743,5 +757,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-10-30 05:05"
+ "updatedAt": "2026-10-30 08:05"
 }
