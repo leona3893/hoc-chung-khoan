@@ -1,35 +1,37 @@
 {
- "open": [
+ "open": [],
+ "closed": [
   {
-   "key": "vcr-DOGEUSDT-1793307600000",
-   "symbol": "DOGEUSDT",
-   "strategy": "vcr",
-   "entryTs": 1793307600000,
-   "entryMs": 1793307923565,
-   "entryTime": "2026-10-30 04:05",
-   "qty": 266.0,
-   "cost": 19.952659999999998,
-   "entryPrice": 0.07501,
-   "paperEntry": 0.07508,
-   "paperStop0": 0.07132599999999999,
-   "paperTp": 0.082588,
-   "k": 0.9990676611614278,
+   "key": "vcr_peak-ETHUSDT-1793311200000",
+   "symbol": "ETHUSDT",
+   "strategy": "vcr_peak",
+   "entryTs": 1793311200000,
+   "entryMs": 1793311524742,
+   "entryTime": "2026-10-30 05:05",
+   "qty": 0.0088,
+   "cost": 19.906040000000004,
+   "entryPrice": 2262.05,
+   "paperEntry": 2258.86,
+   "paperStop0": 2145.917,
+   "paperTp": 2484.7460000000005,
+   "k": 1.0014122167819166,
    "botOrderIds": [
-    991675,
-    991676,
-    991677
+    6717817,
+    6717818,
+    6717819
    ],
-   "status": "bot",
-   "protect": {
-    "list": 288718,
-    "orders": [
-     991676,
-     991677
-    ]
-   },
+   "status": "closed",
+   "protect": null,
    "ver": 1,
-   "liveStop": 0.07125949999999999,
-   "liveTp": 0.08251099999999999
+   "liveStop": 2148.9475,
+   "liveTp": 2488.2550000000006,
+   "exitReason": "tg",
+   "exitTime": "2026-10-30 08:25",
+   "exitQty": 0.0088,
+   "exitPrice": 2207.25,
+   "exitMs": 1793323523132,
+   "pnlUsdt": -0.4822,
+   "pnlPct": -2.42
   },
   {
    "key": "rsi_vol_gated-HBARUSDT-1793307600000",
@@ -50,51 +52,51 @@
     1122265,
     1122266
    ],
-   "status": "bot",
-   "protect": {
-    "list": 288720,
-    "orders": [
-     1122265,
-     1122266
-    ]
-   },
+   "status": "closed",
+   "protect": null,
    "ver": 1,
    "liveStop": 0.06581599999999999,
-   "liveTp": 0.076208
+   "liveTp": 0.076208,
+   "exitReason": "tg",
+   "exitTime": "2026-10-30 08:25",
+   "exitQty": 288.0,
+   "exitPrice": 0.06855,
+   "exitMs": 1793323522283,
+   "pnlUsdt": -0.2102,
+   "pnlPct": -1.05
   },
   {
-   "key": "vcr_peak-ETHUSDT-1793311200000",
-   "symbol": "ETHUSDT",
-   "strategy": "vcr_peak",
-   "entryTs": 1793311200000,
-   "entryMs": 1793311524742,
-   "entryTime": "2026-10-30 05:05",
-   "qty": 0.0088,
-   "cost": 19.906040000000004,
-   "entryPrice": 2262.05,
-   "paperEntry": 2258.86,
-   "paperStop0": 2145.917,
-   "paperTp": 2484.7460000000005,
-   "k": 1.0014122167819166,
+   "key": "vcr-DOGEUSDT-1793307600000",
+   "symbol": "DOGEUSDT",
+   "strategy": "vcr",
+   "entryTs": 1793307600000,
+   "entryMs": 1793307923565,
+   "entryTime": "2026-10-30 04:05",
+   "qty": 266.0,
+   "cost": 19.952659999999998,
+   "entryPrice": 0.07501,
+   "paperEntry": 0.07508,
+   "paperStop0": 0.07132599999999999,
+   "paperTp": 0.082588,
+   "k": 0.9990676611614278,
    "botOrderIds": [
-    6717817,
-    6717818,
-    6717819
+    991675,
+    991676,
+    991677
    ],
-   "status": "bot",
-   "protect": {
-    "list": 289929,
-    "orders": [
-     6717818,
-     6717819
-    ]
-   },
+   "status": "closed",
+   "protect": null,
    "ver": 1,
-   "liveStop": 2148.9475,
-   "liveTp": 2488.2550000000006
-  }
- ],
- "closed": [
+   "liveStop": 0.07125949999999999,
+   "liveTp": 0.08251099999999999,
+   "exitReason": "tg",
+   "exitTime": "2026-10-30 08:25",
+   "exitQty": 266.0,
+   "exitPrice": 0.07385,
+   "exitMs": 1793323521407,
+   "pnlUsdt": -0.3086,
+   "pnlPct": -1.55
+  },
   {
    "key": "rsi_vol_gated-BNBUSDT-1793307600000",
    "symbol": "BNBUSDT",
