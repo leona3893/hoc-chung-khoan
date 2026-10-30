@@ -63,37 +63,6 @@
    "liveTp": 0.076208
   },
   {
-   "key": "rsi_vol_gated-BNBUSDT-1793307600000",
-   "symbol": "BNBUSDT",
-   "strategy": "rsi_vol_gated",
-   "entryTs": 1793307600000,
-   "entryMs": 1793307925166,
-   "entryTime": "2026-10-30 04:05",
-   "qty": 0.028,
-   "cost": 19.49808,
-   "entryPrice": 696.36,
-   "paperEntry": 693.21,
-   "paperStop0": 658.5495,
-   "paperTp": 762.5310000000001,
-   "k": 1.004544077552257,
-   "botOrderIds": [
-    3290674,
-    3290675,
-    3290676
-   ],
-   "status": "bot",
-   "protect": {
-    "list": 288721,
-    "orders": [
-     3290675,
-     3290676
-    ]
-   },
-   "ver": 1,
-   "liveStop": 661.542,
-   "liveTp": 765.9960000000001
-  },
-  {
    "key": "vcr_peak-ETHUSDT-1793311200000",
    "symbol": "ETHUSDT",
    "strategy": "vcr_peak",
@@ -126,6 +95,38 @@
   }
  ],
  "closed": [
+  {
+   "key": "rsi_vol_gated-BNBUSDT-1793307600000",
+   "symbol": "BNBUSDT",
+   "strategy": "rsi_vol_gated",
+   "entryTs": 1793307600000,
+   "entryMs": 1793307925166,
+   "entryTime": "2026-10-30 04:05",
+   "qty": 0.028,
+   "cost": 19.49808,
+   "entryPrice": 696.36,
+   "paperEntry": 693.21,
+   "paperStop0": 658.5495,
+   "paperTp": 762.5310000000001,
+   "k": 1.004544077552257,
+   "botOrderIds": [
+    3290674,
+    3290675,
+    3290676
+   ],
+   "status": "closed",
+   "protect": null,
+   "ver": 1,
+   "liveStop": 661.542,
+   "liveTp": 765.9960000000001,
+   "exitReason": "tg",
+   "exitTime": "2026-10-30 08:06",
+   "exitQty": 0.028,
+   "exitPrice": 694.02,
+   "exitMs": 1793322402040,
+   "pnlUsdt": -0.0655,
+   "pnlPct": -0.34
+  },
   {
    "key": "vcr_peak-LINKUSDT-1793311200000",
    "symbol": "LINKUSDT",
