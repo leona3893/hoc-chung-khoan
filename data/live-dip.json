@@ -1,5 +1,6 @@
 {
- "open": [
+ "open": [],
+ "closed": [
   {
    "key": "vcr_peak-ZAMAUSDT-1793433600000",
    "symbol": "ZAMAUSDT",
@@ -19,20 +20,19 @@
     1277401,
     1277402
    ],
-   "status": "bot",
-   "protect": {
-    "list": 306133,
-    "orders": [
-     1277401,
-     1277402
-    ]
-   },
+   "status": "closed",
+   "protect": null,
    "ver": 1,
    "liveStop": 0.0617025,
-   "liveTp": 0.071445
-  }
- ],
- "closed": [
+   "liveTp": 0.071445,
+   "exitReason": "strategy",
+   "exitTime": "2026-11-01 00:05",
+   "exitQty": 307.0,
+   "exitPrice": 0.06812,
+   "exitMs": 1793466323191,
+   "pnlUsdt": 0.9732,
+   "pnlPct": 4.88
+  },
   {
    "key": "vcr_peak-SOPHUSDT-1793433600000",
    "symbol": "SOPHUSDT",
@@ -824,5 +824,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-10-31 22:05"
+ "updatedAt": "2026-11-01 00:05"
 }
