@@ -30,7 +30,9 @@
    "ver": 1,
    "liveStop": 0.0617025,
    "liveTp": 0.071445
-  },
+  }
+ ],
+ "closed": [
   {
    "key": "vcr_peak-SOPHUSDT-1793433600000",
    "symbol": "SOPHUSDT",
@@ -50,20 +52,19 @@
     47032,
     47033
    ],
-   "status": "bot",
-   "protect": {
-    "list": 306134,
-    "orders": [
-     47032,
-     47033
-    ]
-   },
+   "status": "closed",
+   "protect": null,
    "ver": 1,
    "liveStop": 0.0015769999999999998,
-   "liveTp": 0.0018260000000000001
-  }
- ],
- "closed": [
+   "liveTp": 0.0018260000000000001,
+   "exitReason": "stop",
+   "exitTime": "2026-10-31 22:05",
+   "exitQty": 12048.0,
+   "exitPrice": 0.00159,
+   "exitMs": 1793459124123,
+   "pnlUsdt": -0.8434,
+   "pnlPct": -4.22
+  },
   {
    "key": "vcr_peak-ETHUSDT-1793311200000",
    "symbol": "ETHUSDT",
@@ -823,5 +824,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-10-31 15:05"
+ "updatedAt": "2026-10-31 22:05"
 }
