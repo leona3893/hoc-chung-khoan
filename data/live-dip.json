@@ -1,5 +1,6 @@
 {
- "open": [
+ "open": [],
+ "closed": [
   {
    "key": "vcr_peak-XPLUSDT-1793512800000",
    "symbol": "XPLUSDT",
@@ -19,20 +20,19 @@
     1408569,
     1408570
    ],
-   "status": "bot",
-   "protect": {
-    "list": 315760,
-    "orders": [
-     1408569,
-     1408570
-    ]
-   },
+   "status": "closed",
+   "protect": null,
    "ver": 1,
    "liveStop": 0.0700815,
-   "liveTp": 0.081147
-  }
- ],
- "closed": [
+   "liveTp": 0.081147,
+   "exitReason": "tg",
+   "exitTime": "2026-11-01 17:39",
+   "exitQty": 271.1,
+   "exitPrice": 0.0747,
+   "exitMs": 1793529560784,
+   "pnlUsdt": 0.2521,
+   "pnlPct": 1.26
+  },
   {
    "key": "vcr_peak-ZAMAUSDT-1793433600000",
    "symbol": "ZAMAUSDT",
@@ -856,5 +856,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-11-01 13:05"
+ "updatedAt": "2026-11-01 17:05"
 }
