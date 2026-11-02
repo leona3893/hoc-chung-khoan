@@ -30,6 +30,26 @@
    "ver": 1,
    "liveStop": 3.92445,
    "liveTp": 4.544100000000001
+  },
+  {
+   "key": "rsi_vol_gated-UUSDT-1793624400000",
+   "symbol": "UUSDT",
+   "strategy": "rsi_vol_gated",
+   "entryTs": 1793624400000,
+   "entryMs": 1793624719817,
+   "entryTime": "2026-11-02 20:05",
+   "qty": 20.0,
+   "cost": 19.990000000000002,
+   "entryPrice": 0.9995,
+   "paperEntry": 0.9995,
+   "paperStop0": 0.9495250000000001,
+   "paperTp": 1.09945,
+   "k": 1.0,
+   "botOrderIds": [
+    114402
+   ],
+   "status": "bot",
+   "protect": null
   }
  ],
  "closed": [
@@ -888,5 +908,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-11-02 14:05"
+ "updatedAt": "2026-11-02 20:05"
 }
