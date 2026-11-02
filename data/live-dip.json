@@ -1,37 +1,6 @@
 {
  "open": [
   {
-   "key": "vcr-NEARUSDT-1793602800000",
-   "symbol": "NEARUSDT",
-   "strategy": "vcr",
-   "entryTs": 1793602800000,
-   "entryMs": 1793603118845,
-   "entryTime": "2026-11-02 14:05",
-   "qty": 4.8,
-   "cost": 19.8288,
-   "entryPrice": 4.131,
-   "paperEntry": 4.132,
-   "paperStop0": 3.9253999999999993,
-   "paperTp": 4.5452,
-   "k": 0.9997579864472412,
-   "botOrderIds": [
-    1309190,
-    1309191,
-    1309192
-   ],
-   "status": "bot",
-   "protect": {
-    "list": 330085,
-    "orders": [
-     1309191,
-     1309192
-    ]
-   },
-   "ver": 1,
-   "liveStop": 3.92445,
-   "liveTp": 4.544100000000001
-  },
-  {
    "key": "rsi_vol_gated-UUSDT-1793624400000",
    "symbol": "UUSDT",
    "strategy": "rsi_vol_gated",
@@ -62,9 +31,109 @@
    "ver": 1,
    "liveStop": 0.9495250000000001,
    "liveTp": 1.09945
+  },
+  {
+   "key": "vcr-ZECUSDT-1793642400000",
+   "symbol": "ZECUSDT",
+   "strategy": "vcr",
+   "entryTs": 1793642400000,
+   "entryMs": 1793642723047,
+   "entryTime": "2026-11-03 01:05",
+   "qty": 0.016,
+   "cost": 18.851200000000002,
+   "entryPrice": 1178.2,
+   "paperEntry": 1177.45,
+   "paperStop0": 1118.5775,
+   "paperTp": 1295.1950000000002,
+   "k": 1.0006369697227058,
+   "botOrderIds": [
+    5195427,
+    5195428,
+    5195429
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 335166,
+    "orders": [
+     5195428,
+     5195429
+    ]
+   },
+   "ver": 1,
+   "liveStop": 1119.29,
+   "liveTp": 1296.02
+  },
+  {
+   "key": "rsi_vol_gated-ENAUSDT-1793642400000",
+   "symbol": "ENAUSDT",
+   "strategy": "rsi_vol_gated",
+   "entryTs": 1793642400000,
+   "entryMs": 1793642723840,
+   "entryTime": "2026-11-03 01:05",
+   "qty": 117.5,
+   "cost": 19.9985,
+   "entryPrice": 0.1702,
+   "paperEntry": 0.1701,
+   "paperStop0": 0.161595,
+   "paperTp": 0.18711000000000003,
+   "k": 1.0005878894767783,
+   "botOrderIds": [
+    708139,
+    708140,
+    708141
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 335167,
+    "orders": [
+     708140,
+     708141
+    ]
+   },
+   "ver": 1,
+   "liveStop": 0.16168999999999997,
+   "liveTp": 0.18722000000000003
   }
  ],
  "closed": [
+  {
+   "key": "vcr-NEARUSDT-1793602800000",
+   "symbol": "NEARUSDT",
+   "strategy": "vcr",
+   "entryTs": 1793602800000,
+   "entryMs": 1793603118845,
+   "entryTime": "2026-11-02 14:05",
+   "qty": 4.8,
+   "cost": 19.8288,
+   "entryPrice": 4.131,
+   "paperEntry": 4.132,
+   "paperStop0": 3.9253999999999993,
+   "paperTp": 4.5452,
+   "k": 0.9997579864472412,
+   "botOrderIds": [
+    1309190,
+    1309191,
+    1309192
+   ],
+   "status": "closed",
+   "protect": {
+    "list": 330085,
+    "orders": [
+     1309191,
+     1309192
+    ]
+   },
+   "ver": 1,
+   "liveStop": 3.92445,
+   "liveTp": 4.544100000000001,
+   "exitReason": "stop",
+   "exitTime": "2026-11-03 01:05",
+   "exitQty": 4.8,
+   "exitPrice": 3.9230000000000005,
+   "exitMs": 1793642721769,
+   "pnlUsdt": -0.9984,
+   "pnlPct": -5.04
+  },
   {
    "key": "vcr_peak-XPLUSDT-1793512800000",
    "symbol": "XPLUSDT",
@@ -920,5 +989,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-11-02 21:05"
+ "updatedAt": "2026-11-03 01:05"
 }
