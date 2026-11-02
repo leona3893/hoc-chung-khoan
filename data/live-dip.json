@@ -46,10 +46,22 @@
    "paperTp": 1.09945,
    "k": 1.0,
    "botOrderIds": [
-    114402
+    114402,
+    114716,
+    114717
    ],
    "status": "bot",
-   "protect": null
+   "protect": {
+    "list": 333287,
+    "orders": [
+     114716,
+     114717
+    ]
+   },
+   "trailed": false,
+   "ver": 1,
+   "liveStop": 0.9495250000000001,
+   "liveTp": 1.09945
   }
  ],
  "closed": [
@@ -908,5 +920,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-11-02 20:05"
+ "updatedAt": "2026-11-02 21:05"
 }
