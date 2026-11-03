@@ -49,19 +49,22 @@
    "botOrderIds": [
     5195427,
     5195428,
-    5195429
+    5195429,
+    5353773,
+    5353774
    ],
    "status": "bot",
    "protect": {
-    "list": 335166,
+    "list": 343716,
     "orders": [
-     5195428,
-     5195429
+     5353773,
+     5353774
     ]
    },
-   "ver": 1,
-   "liveStop": 1119.29,
-   "liveTp": 1296.02
+   "ver": 2,
+   "liveStop": 1124.6208934561976,
+   "liveTp": 1296.02,
+   "trailed": true
   },
   {
    "key": "rsi_vol_gated-ENAUSDT-1793642400000",
@@ -989,5 +992,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-11-03 01:05"
+ "updatedAt": "2026-11-03 20:05"
 }
