@@ -11,6 +11,12 @@ set -u
 APP=/home/bot/hoc-chung-khoan
 D=/home/bot/botdata
 cd "$APP" || exit 1
+# Lần đẩy trước có thể bỏ dở một rebase bị xung đột: `git reset --hard` trong run.sh không
+# xoá được trạng thái đó, mọi lần đẩy sau sẽ chết. Sổ thật nằm ở botdata/ nên bỏ rebase là an toàn.
+if [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; then
+  git rebase --abort 2>/dev/null || rm -rf .git/rebase-merge .git/rebase-apply
+  git reset -q --hard origin/main
+fi
 git remote set-url --push origin git@github.com:leona3893/hoc-chung-khoan.git
 
 for f in crypto-ideas trend-ideas live-dip live-trend; do
@@ -40,6 +46,15 @@ for i in 1 2 3; do
     echo "$(date -u '+%F %T') đã đẩy sổ lệnh lên GitHub"
     exit 0
   fi
+  # Xung đột thì bỏ rebase, lấy bản mới nhất rồi chép sổ đè lên và commit lại.
+  git rebase --abort 2>/dev/null
+  git fetch -q origin main && git reset -q --hard origin/main
+  for f in crypto-ideas trend-ideas live-dip live-trend; do
+    [ -f "$D/$f.json" ] && cp "$D/$f.json" "data/$f.json"
+  done
+  git add data/crypto-ideas.json data/trend-ideas.json data/live-dip.json data/live-trend.json 2>/dev/null
+  git diff --cached --quiet || git -c user.name="VPS bot" -c user.email="vps-bot@users.noreply.github.com" \
+    commit -q -m "Sổ lệnh VPS $(date -u '+%Y-%m-%d %H:%M UTC')"
   sleep 5
 done
 echo "$(date -u '+%F %T') LỖI: không đẩy được sổ lệnh lên GitHub" >&2
