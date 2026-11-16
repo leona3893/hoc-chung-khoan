@@ -13,7 +13,8 @@ giai đoạn BTC trên và dưới MA200 (một chiến lược bắt đáy số
 mà chết trong sóng giảm thì phải thấy được điều đó, không thì con số trung bình nói dối).
 
     python scripts/crypto.py                      # backtest đủ, dùng cache
-    python scripts/crypto.py --pairs 20           # chỉ 20 cặp thanh khoản nhất
+    python scripts/crypto.py --pairs 10           # chỉ 10 cặp đầu của rổ cố định
+    python scripts/crypto.py --full --pairs 30    # 30 cặp thanh khoản nhất toàn Binance
     python scripts/crypto.py --refresh            # tải lại nến
     python scripts/crypto.py --strategy vcr       # chạy một chiến lược
     python scripts/crypto.py --list               # xem danh sách chiến lược
@@ -325,6 +326,8 @@ def e_vcr_peak(x, i, p):
 
 STRATEGIES = {
     "vcr_peak": {"fn": s_vcr_peak, "exitFn": e_vcr_peak,
+                 # Mức thoát để đặt sẵn lệnh bán trên sàn (khớp khi giá CHẠM, không đợi nến đóng)
+                 "levelFn": lambda x, i, p: _sma24(x)[i],
                  "params": {"z": 2.5, "drop": 2.0, "confirm": 3},
                  "label": "vcr theo đúng cấu hình bot Hội Coin (bắt đáy, thoát khi về trung bình 24h)"},
     "momentum": {"fn": s_momentum, "exitFn": e_momentum, "params": {"look": 90},
@@ -450,35 +453,16 @@ def okx_history(symbol, interval, start):
     return [b for b in out if b[0] >= start]
 
 
-UNIVERSE_PATH = os.path.join(DATA_DIR, "crypto-universe.json")
+# Rổ cố định 16 coin lớn, lâu năm (giống rổ bot Peak Operator). Quét theo thanh khoản
+# toàn Binance thì rổ lẫn coin mới niêm yết, coin meme — backtest 24 tháng vcr_peak:
+# 30 cặp theo thanh khoản -70%, rổ 16 coin này -46% (vẫn âm, nhưng bớt lỗ rõ).
+CORE_PAIRS = [s + "USDT" for s in
+              "BTC ETH SOL BNB XRP ADA DOGE AVAX LINK DOT LTC TRX INJ ETC AAVE ICP".split()]
 
 
-def universe(limit, min_vol=1e7):
-    """Rổ cặp để quét — LUÔN là coin của Binance, không bao giờ lấy từ nơi khác.
-
-    Binance chặn IP của GitHub Actions, mà danh sách cặp của OKX có hàng trăm cổ
-    phiếu Mỹ token hoá đặt tên khác hẳn. Nên khi bị chặn, ta dùng lại bản chụp rổ
-    Binance đã lưu trong repo thay vì hỏi sàn khác. Nến thì vẫn lấy từ OKX được,
-    vì lúc đó ta đã biết chính xác mình cần mã nào.
-    """
-    try:
-        pairs = liquid_pairs(limit, min_vol)
-        os.makedirs(DATA_DIR, exist_ok=True)
-        with open(UNIVERSE_PATH, "w", encoding="utf-8") as f:
-            json.dump({"updatedAt": datetime.now(VN_TZ).strftime("%Y-%m-%d %H:%M"),
-                       "source": "binance", "minVol": min_vol, "pairs": pairs},
-                      f, ensure_ascii=False, indent=1)
-        return pairs
-    except GeoBlocked:
-        if os.path.exists(UNIVERSE_PATH):
-            with open(UNIVERSE_PATH, encoding="utf-8") as f:
-                d = json.load(f)
-            pairs = [p for p in d.get("pairs", []) if not is_stock_token(p[:-4])][:limit]
-            print(f"[nguồn] Binance chặn vùng này — dùng rổ đã lưu "
-                  f"({len(pairs)} cặp, cập nhật {d.get('updatedAt')}).", file=sys.stderr)
-            return pairs
-        raise RuntimeError("Binance chặn vùng này và chưa có data/crypto-universe.json. "
-                           "Chạy script này một lần ở nơi gọi được Binance để tạo rổ.")
+def universe(limit=None, min_vol=None):
+    """Rổ cặp để quét: rổ cố định CORE_PAIRS, không gọi sàn nên không sợ bị chặn IP."""
+    return CORE_PAIRS[:limit] if limit else list(CORE_PAIRS)
 
 
 def liquid_pairs(limit, min_vol=1e7):
@@ -576,12 +560,18 @@ def simulate(name, strat, ctxs, calendar, regime, exits):
                     p["trailed"] = True
             px = reason = None
             exit_fn = strat.get("exitFn")
+            # Lệnh bán đặt sẵn ở mức tính từ nến đã đóng trước đó (i-1), cập nhật mỗi nến
+            lvl_fn = strat.get("levelFn") if exits.get("touchExit") else None
+            lvl = lvl_fn(x, i - 1, params) if lvl_fn else None
             if p["stop"] and x.l[i] <= p["stop"]:
                 px = min(x.o[i], p["stop"])
                 reason = "trail" if p["trailed"] else "stop"
             elif exits.get("tpPct") and p.get("tp") and x.h[i] >= p["tp"]:
                 px = max(x.o[i], p["tp"])
                 reason = "tp"
+            elif lvl and x.h[i] >= lvl:
+                px = max(x.o[i], lvl)
+                reason = "rule"
             elif exit_fn and exit_fn(x, i, params):
                 # Chiến lược theo xu hướng tự quyết lúc nào ra, không chốt lời cứng
                 px = x.c[i]
@@ -590,6 +580,13 @@ def simulate(name, strat, ctxs, calendar, regime, exits):
                 px = x.c[i]
                 reason = "max_hold"
             if px is None:
+                # Khóa lãi: đỉnh đã lên +lockAtPct thì dời cắt lỗ lên +lockToPct.
+                # Áp từ nến SAU — trong nến 1h không biết đỉnh hay đáy đến trước.
+                if exits.get("lockAtPct") and p["peak"] >= p["fill"] * (1 + exits["lockAtPct"] / 100):
+                    lock = p["fill"] * (1 + exits["lockToPct"] / 100)
+                    if not p["stop"] or lock > p["stop"]:
+                        p["stop"] = lock
+                        p["trailed"] = True
                 continue
             fill = px * (1 - COST["slip"])
             proceeds = fill * p["qty"] * (1 - COST["fee"])
@@ -726,7 +723,9 @@ def buy_hold(ctx, calendar):
 # ---------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--pairs", type=int, default=30, help="số cặp thanh khoản nhất")
+    ap.add_argument("--pairs", type=int, default=None, help="số cặp (mặc định cả rổ cố định)")
+    ap.add_argument("--full", action="store_true",
+                    help="quét theo thanh khoản toàn Binance thay vì rổ cố định (để so sánh)")
     ap.add_argument("--months", type=float, default=24, help="số tháng lịch sử")
     ap.add_argument("--strategy", help="chỉ chạy một chiến lược")
     ap.add_argument("--interval", default="1h", help="khung nến: 1h, 4h, 1d")
@@ -747,7 +746,7 @@ def main():
               f"(= {EXIT['maxHold'] * per} giờ)", file=sys.stderr)
 
     t0 = time.time()
-    pairs = liquid_pairs(args.pairs)
+    pairs = liquid_pairs(args.pairs or 30) if args.full else universe(args.pairs)
     if "BTCUSDT" not in pairs:
         pairs.append("BTCUSDT")
     print(f"{len(pairs)} cặp, {args.months:.0f} tháng nến {args.interval}.", file=sys.stderr)
@@ -783,6 +782,11 @@ def main():
         ("không chốt lời", {**EXIT, "tpPct": None}),
         ("không chốt lời, trail 10%", {**EXIT, "tpPct": None, "trailPct": 10.0}),
         ("giữ tối đa 240h", {**EXIT, "tpPct": None, "maxHold": max(3, 240 // per)}),
+        ("khóa lãi +3% → +3%", {**EXIT, "lockAtPct": 3.0, "lockToPct": 3.0}),
+        ("khóa lãi +3% → +0.5%", {**EXIT, "lockAtPct": 3.0, "lockToPct": 0.5}),
+        ("khóa lãi +5% → +1.5%", {**EXIT, "lockAtPct": 5.0, "lockToPct": 1.5}),
+        ("thoát khi chạm mức", {**EXIT, "touchExit": True}),
+        ("chạm mức + khóa +3% → +0.5%", {**EXIT, "touchExit": True, "lockAtPct": 3.0, "lockToPct": 0.5}),
     ]
 
     results = []

@@ -288,7 +288,8 @@ Thêm một chiến lược = viết một hàm `def s_xyz(x, i, p)` trả về 
 
 ```bash
 python scripts/crypto.py --list                 # danh sách chiến lược
-python scripts/crypto.py --pairs 30 --months 36 # backtest đủ, ~6 phút
+python scripts/crypto.py --months 36            # backtest rổ cố định 16 coin lớn
+python scripts/crypto.py --full --pairs 30      # so với 30 cặp thanh khoản nhất toàn Binance
 python scripts/crypto.py --strategy vcr         # chạy một cái
 ```
 

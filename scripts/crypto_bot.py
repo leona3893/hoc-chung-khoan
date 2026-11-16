@@ -46,7 +46,7 @@ VN_TZ = timezone(timedelta(hours=7))
 
 CFG = {
     "interval": "1h",         # khung nến bot làm việc
-    "pairs": 30,              # quét bao nhiêu cặp thanh khoản nhất
+    "pairs": None,            # None = cả rổ cố định C.CORE_PAIRS (16 coin lớn)
     # Mỗi chiến lược có suất lệnh riêng, chạy như một bot độc lập: chiến lược này đầy
     # suất không chiếm chỗ của chiến lược kia, và hai chiến lược được giữ cùng một cặp.
     # Trước đây 5 suất dùng chung nên vcr_peak (luôn báo trễ hơn vcr 1–3 nến, trên cùng
