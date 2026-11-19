@@ -1,5 +1,37 @@
 {
- "open": [],
+ "open": [
+  {
+   "key": "vcr_peak-AAVEUSDT-1795111200000",
+   "symbol": "AAVEUSDT",
+   "strategy": "vcr_peak",
+   "entryTs": 1795111200000,
+   "entryMs": 1795111514316,
+   "entryTime": "2026-11-20 01:05",
+   "qty": 0.191,
+   "cost": 19.97669,
+   "entryPrice": 104.59,
+   "paperEntry": 104.59,
+   "paperStop0": 99.3605,
+   "paperTp": 115.049,
+   "k": 1.0,
+   "botOrderIds": [
+    3610420,
+    3610421,
+    3610422
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 535052,
+    "orders": [
+     3610421,
+     3610422
+    ]
+   },
+   "ver": 1,
+   "liveStop": 99.3605,
+   "liveTp": 115.049
+  }
+ ],
  "closed": [
   {
    "key": "vcr-ASTERUSDT-1794780000000",
@@ -2490,5 +2522,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-11-16 11:05"
+ "updatedAt": "2026-11-20 01:05"
 }
