@@ -30,6 +30,37 @@
    "ver": 1,
    "liveStop": 99.3605,
    "liveTp": 115.049
+  },
+  {
+   "key": "rsi_vol_gated-INJUSDT-1795179600000",
+   "symbol": "INJUSDT",
+   "strategy": "rsi_vol_gated",
+   "entryTs": 1795179600000,
+   "entryMs": 1795179913788,
+   "entryTime": "2026-11-20 20:05",
+   "qty": 3.16,
+   "cost": 19.94276,
+   "entryPrice": 6.311,
+   "paperEntry": 6.309,
+   "paperStop0": 5.99355,
+   "paperTp": 6.939900000000001,
+   "k": 1.000317007449675,
+   "botOrderIds": [
+    3117445,
+    3117446,
+    3117447
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 543287,
+    "orders": [
+     3117446,
+     3117447
+    ]
+   },
+   "ver": 1,
+   "liveStop": 5.99545,
+   "liveTp": 6.9421
   }
  ],
  "closed": [
@@ -2522,5 +2553,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-11-20 01:05"
+ "updatedAt": "2026-11-20 20:05"
 }
