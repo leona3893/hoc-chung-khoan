@@ -141,19 +141,22 @@
    "botOrderIds": [
     157980,
     157981,
-    157982
+    157982,
+    159251,
+    159252
    ],
    "status": "bot",
    "protect": {
-    "list": 545556,
+    "list": 547718,
     "orders": [
-     157981,
-     157982
+     159251,
+     159252
     ]
    },
-   "ver": 1,
-   "liveStop": 5.0825,
-   "liveTp": 5.885
+   "ver": 2,
+   "liveStop": 5.0964,
+   "liveTp": 5.885,
+   "trailed": true
   },
   {
    "key": "vcr_peak-BTCUSDT-1795194000000",
@@ -2715,5 +2718,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-11-21 00:05"
+ "updatedAt": "2026-11-21 05:05"
 }
