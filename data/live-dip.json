@@ -123,6 +123,68 @@
    "ver": 1,
    "liveStop": 518.1394999999999,
    "liveTp": 599.951
+  },
+  {
+   "key": "vcr_peak-ETCUSDT-1795194000000",
+   "symbol": "ETCUSDT",
+   "strategy": "vcr_peak",
+   "entryTs": 1795194000000,
+   "entryMs": 1795194314921,
+   "entryTime": "2026-11-21 00:05",
+   "qty": 3.73,
+   "cost": 19.955499999999997,
+   "entryPrice": 5.35,
+   "paperEntry": 5.35,
+   "paperStop0": 5.0825,
+   "paperTp": 5.885,
+   "k": 1.0,
+   "botOrderIds": [
+    157980,
+    157981,
+    157982
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 545556,
+    "orders": [
+     157981,
+     157982
+    ]
+   },
+   "ver": 1,
+   "liveStop": 5.0825,
+   "liveTp": 5.885
+  },
+  {
+   "key": "vcr_peak-BTCUSDT-1795194000000",
+   "symbol": "BTCUSDT",
+   "strategy": "vcr_peak",
+   "entryTs": 1795194000000,
+   "entryMs": 1795194315442,
+   "entryTime": "2026-11-21 00:05",
+   "qty": 0.00033,
+   "cost": 19.5376269,
+   "entryPrice": 59204.93,
+   "paperEntry": 59224.24,
+   "paperStop0": 56263.028,
+   "paperTp": 65146.664000000004,
+   "k": 0.9996739510713857,
+   "botOrderIds": [
+    16070920,
+    16070921,
+    16070922
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 545557,
+    "orders": [
+     16070921,
+     16070922
+    ]
+   },
+   "ver": 1,
+   "liveStop": 56244.6835,
+   "liveTp": 65125.42300000001
   }
  ],
  "closed": [
@@ -2653,5 +2715,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-11-20 23:05"
+ "updatedAt": "2026-11-21 00:05"
 }
