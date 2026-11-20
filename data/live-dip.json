@@ -1,37 +1,6 @@
 {
  "open": [
   {
-   "key": "vcr_peak-AAVEUSDT-1795111200000",
-   "symbol": "AAVEUSDT",
-   "strategy": "vcr_peak",
-   "entryTs": 1795111200000,
-   "entryMs": 1795111514316,
-   "entryTime": "2026-11-20 01:05",
-   "qty": 0.191,
-   "cost": 19.97669,
-   "entryPrice": 104.59,
-   "paperEntry": 104.59,
-   "paperStop0": 99.3605,
-   "paperTp": 115.049,
-   "k": 1.0,
-   "botOrderIds": [
-    3610420,
-    3610421,
-    3610422
-   ],
-   "status": "bot",
-   "protect": {
-    "list": 535052,
-    "orders": [
-     3610421,
-     3610422
-    ]
-   },
-   "ver": 1,
-   "liveStop": 99.3605,
-   "liveTp": 115.049
-  },
-  {
    "key": "rsi_vol_gated-INJUSDT-1795179600000",
    "symbol": "INJUSDT",
    "strategy": "rsi_vol_gated",
@@ -92,9 +61,109 @@
    "ver": 1,
    "liveStop": 1.9569999999999999,
    "liveTp": 2.2660000000000005
+  },
+  {
+   "key": "vcr-DOTUSDT-1795190400000",
+   "symbol": "DOTUSDT",
+   "strategy": "vcr",
+   "entryTs": 1795190400000,
+   "entryMs": 1795190715245,
+   "entryTime": "2026-11-20 23:05",
+   "qty": 30.3,
+   "cost": 19.998,
+   "entryPrice": 0.66,
+   "paperEntry": 0.66,
+   "paperStop0": 0.627,
+   "paperTp": 0.7260000000000001,
+   "k": 1.0,
+   "botOrderIds": [
+    776728,
+    776729,
+    776730
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 545039,
+    "orders": [
+     776729,
+     776730
+    ]
+   },
+   "ver": 1,
+   "liveStop": 0.627,
+   "liveTp": 0.7260000000000001
+  },
+  {
+   "key": "vcr-BNBUSDT-1795190400000",
+   "symbol": "BNBUSDT",
+   "strategy": "vcr",
+   "entryTs": 1795190400000,
+   "entryMs": 1795190715788,
+   "entryTime": "2026-11-20 23:05",
+   "qty": 0.036,
+   "cost": 19.634759999999996,
+   "entryPrice": 545.41,
+   "paperEntry": 545.11,
+   "paperStop0": 517.8545,
+   "paperTp": 599.6210000000001,
+   "k": 1.0005503476362567,
+   "botOrderIds": [
+    6663954,
+    6663955,
+    6663956
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 545041,
+    "orders": [
+     6663955,
+     6663956
+    ]
+   },
+   "ver": 1,
+   "liveStop": 518.1394999999999,
+   "liveTp": 599.951
   }
  ],
  "closed": [
+  {
+   "key": "vcr_peak-AAVEUSDT-1795111200000",
+   "symbol": "AAVEUSDT",
+   "strategy": "vcr_peak",
+   "entryTs": 1795111200000,
+   "entryMs": 1795111514316,
+   "entryTime": "2026-11-20 01:05",
+   "qty": 0.191,
+   "cost": 19.97669,
+   "entryPrice": 104.59,
+   "paperEntry": 104.59,
+   "paperStop0": 99.3605,
+   "paperTp": 115.049,
+   "k": 1.0,
+   "botOrderIds": [
+    3610420,
+    3610421,
+    3610422
+   ],
+   "status": "closed",
+   "protect": {
+    "list": 535052,
+    "orders": [
+     3610421,
+     3610422
+    ]
+   },
+   "ver": 1,
+   "liveStop": 99.3605,
+   "liveTp": 115.049,
+   "exitReason": "stop",
+   "exitTime": "2026-11-20 23:05",
+   "exitQty": 0.191,
+   "exitPrice": 98.92,
+   "exitMs": 1795190714143,
+   "pnlUsdt": -1.083,
+   "pnlPct": -5.42
+  },
   {
    "key": "vcr-ASTERUSDT-1794780000000",
    "symbol": "ASTERUSDT",
@@ -2584,5 +2653,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-11-20 21:05"
+ "updatedAt": "2026-11-20 23:05"
 }
