@@ -61,6 +61,37 @@
    "ver": 1,
    "liveStop": 5.99545,
    "liveTp": 6.9421
+  },
+  {
+   "key": "rsi_vol_gated-ICPUSDT-1795183200000",
+   "symbol": "ICPUSDT",
+   "strategy": "rsi_vol_gated",
+   "entryTs": 1795183200000,
+   "entryMs": 1795183514412,
+   "entryTime": "2026-11-20 21:05",
+   "qty": 9.7,
+   "cost": 19.982,
+   "entryPrice": 2.06,
+   "paperEntry": 2.06,
+   "paperStop0": 1.9569999999999999,
+   "paperTp": 2.2660000000000005,
+   "k": 1.0,
+   "botOrderIds": [
+    823619,
+    823620,
+    823621
+   ],
+   "status": "bot",
+   "protect": {
+    "list": 543865,
+    "orders": [
+     823620,
+     823621
+    ]
+   },
+   "ver": 1,
+   "liveStop": 1.9569999999999999,
+   "liveTp": 2.2660000000000005
   }
  ],
  "closed": [
@@ -2553,5 +2584,5 @@
  ],
  "mode": "testnet",
  "seenSell": {},
- "updatedAt": "2026-11-20 20:05"
+ "updatedAt": "2026-11-20 21:05"
 }
